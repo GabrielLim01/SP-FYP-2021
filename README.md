@@ -3,9 +3,9 @@
 ## Naming syntaxes **FOLLOW PLEASE**
 
 ###### newFeature/FeatureName
-  
+
 ###### FIXME/IssueName
-  
+
 **DO NOT CREATE BRANCHES AFTER YOUR NAME BECAUSE IT MAKES NO SENSE**
 
 **DO NOT DO MULTIPLE TASKS IN ONE BRANCH, BREAK IT DOWN TO PER FEATURE**
@@ -17,3 +17,14 @@
 - THIS IS NOT A PLAYGROUND REPO SO **DO NOT** push anything funny.
 
 ## CHEERS! ALL THE BEST FOR FYP
+
+Basic Git commands:
+
+- Git push
+- Git pull
+- Git checkout -b <branchName>
+- Git status
+- Git stash
+- Git pop
+
+**Merging of branches will only be done by Gabriel. He is the main IC for this.**
