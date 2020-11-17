@@ -28,3 +28,12 @@ Basic Git commands:
 - Git pop
 
 **Merging of branches will only be done by Gabriel. He is the main IC for this.**
+
+# Instructions to running the project:
+
+- Be sure to download nodejs in your machine first (Run node -v in your terminal to check)
+- Clone the project.
+- In the terminal, run npm install to install the node packages.
+- In the terminal, run "npm run dev"
+  Backend will be on http://localhost:9000
+  Client will be on http://localhost:3000
