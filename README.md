@@ -2,9 +2,9 @@
 
 ## Naming syntaxes **FOLLOW PLEASE**
 
-###### newFeature/FeatureName
+###### newFeature-FeatureName
 
-###### FIXME/IssueName
+###### FIXME-IssueName
 
 **DO NOT CREATE BRANCHES AFTER YOUR NAME BECAUSE IT MAKES NO SENSE**
 
