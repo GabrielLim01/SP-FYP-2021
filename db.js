@@ -1,11 +1,14 @@
 const mysql = require('mysql');
+const dotenv = require('dotenv');
+let instance = null;
+dotenv.config();
 
 // Create Database Connection
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '123456',
-    database: 'financial_literacy'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.MySQL_DB
 });
 
 // To Connect
@@ -16,4 +19,10 @@ db.connect((err) => {
     console.log('Connection Successful!');
 });
 
-module.exports = db;
+class DbService {
+    static getDbServiceInstance() {
+        return instance ? instance : new DbService();
+    }
+}
+
+module.exports = DbService;
