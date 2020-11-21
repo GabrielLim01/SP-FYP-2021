@@ -102,7 +102,7 @@ Setting line-endings in git to false by default:
 
 # TROUBLESHOOTING
 
-* Why I got error when running npm run dev?
+* **Why I got error when running npm run dev?**
 
 Make sure you have nodejs installed. Then run npm install in your local directory to import all the node_module dependencies.
 
@@ -112,12 +112,12 @@ For me I had to install react, react-scripts, react-dom and semantic-ui-css sepa
 
 If you still have errors, PM either me or Wei Xian.
 
-* I cannot run the npm run dev command after the first time, help!
+* **I cannot run the npm run dev command after the first time, help!**
 
 It is possible that you have forgotten to terminate the first npm run dev process, so ports 3000 and 9000 are still being occupied.
 Run this command to kill all node processes: ```taskkill /F /IM node.exe```
 
-* I keep getting ECONNREFUSED errors when I try to run the server, help!
+* **I keep getting ECONNREFUSED errors when I try to run the server, help!**
 
 We have set up a MySQL Database on our side already. You have to install MySQL (including the Server and Connector add-ons), and then you should see a new default connection already created for you in the MySQL Workbench (It was MySQL80 for me). 
 
