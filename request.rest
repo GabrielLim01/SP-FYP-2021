@@ -1,0 +1,29 @@
+http://localhost:9000/quizDashboard
+
+###
+POST http://localhost:9000/createNew
+Content-Type: application/json
+
+{
+    "categoryId": 3,
+    "title": "peepeepoopoo",
+    "desc": "sadsadasd",
+    "fiqPoints": 500
+    
+}
+
+###
+DELETE  http://localhost:9000/delete/2
+
+###
+PATCH  http://localhost:9000/update/11
+Content-Type: application/json
+
+{
+    "categoryId": 3,
+    "title": "peepeepoopoo",
+    "desc": "sadsadasd",
+    "fiqPoints": 500
+    
+}
+
