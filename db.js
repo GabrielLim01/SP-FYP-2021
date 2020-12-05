@@ -45,19 +45,19 @@ class DbService {
     try {
       const insertId = await new Promise((resolve, reject) => {
         const query =
-          "INSERT INTO quiz (categoryId, quizId, quizName, quizDesc, fiqPoints) VALUES (?,0,?,?,?);";
+          "INSERT INTO quiz (categoryId, quizName, quizDesc, fiqPoints) VALUES (?,?,?,?);";
 
         connection.query(
           query,
           [categoryId, title, desc, fiqPoints],
           (err, result) => {
             if (err) reject(new Error(err.message));
-            resolve(result.insertId);
+            resolve(result);
           }
         );
       });
       return {
-        insertId: insertId,
+        insertId: insertId.insertId,
         categoryid: categoryId,
         name: title,
         description: desc,
