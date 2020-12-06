@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 
-class LoginForm extends React.Component {
+class RegistrationForm extends React.Component {
     render() {
         const containerStyle = {
             container: {
@@ -50,4 +50,4 @@ class LoginForm extends React.Component {
 }
 
 
-export default LoginForm;
+export default RegistrationForm;
