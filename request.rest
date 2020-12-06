@@ -5,10 +5,10 @@ POST http://localhost:9000/createNew
 Content-Type: application/json
 
 {
-    "categoryId": 3,
+    "categoryId": 1,
     "title": "peepeepoopoo",
     "desc": "sadsadasd",
-    "fiqPoints": 500
+    "fiqPoints": 200
     
 }
 
