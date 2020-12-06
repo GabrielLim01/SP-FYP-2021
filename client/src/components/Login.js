@@ -10,13 +10,6 @@ class LoginForm extends React.Component {
             }
         };
 
-        let adminDialogBox = '';
-        if (window.location.pathname !== '/admin') {
-            adminDialogBox = <div className="ui message"><Link to="/admin">Login as an Administrator</Link></div>;
-        } else {
-            adminDialogBox = <div className="ui message"><Link to="/">Login as a User</Link></div>;
-        }
-
         return (
             <div className="container" style={{containerStyle}}>
                 <div className="ui middle aligned center aligned grid">
@@ -46,7 +39,6 @@ class LoginForm extends React.Component {
                         <div className="ui message">
                             New to us? <Link to="/register">Sign up</Link>
                         </div>
-                        {adminDialogBox}
                     </div>
                 </div>
             </div>
