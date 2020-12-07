@@ -51,12 +51,18 @@ app.post("/user", async (req, res) => {
 });
 
 // authenticate
-app.post("/authenticate", (request, response) => {
-  const db = dbService.getDbServiceInstance();
+app.post("/authenticate", (req, res) => {
+  try {
+    const username = req.body.username;
+    const password = req.body.password;
 
-  const result = db.authenticate();
+    const db = dbService.getDbServiceInstance();
 
-  result
-    .then((data) => response.json({ data: data }))
-    .catch((err) => console.log(err));
+    const result = db.authenticate(username, password);
+
+    result.then((data) => res.json({ data: data }));
+  } catch (err) {
+    console.log(error);
+    res.status(500).send();
+  }
 });

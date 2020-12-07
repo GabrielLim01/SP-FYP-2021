@@ -45,8 +45,7 @@ class DbService {
   async insertNewUser(name, pwd) {
     try {
       const insertId = await new Promise((resolve, reject) => {
-        const query =
-          "INSERT INTO users (name, password) VALUES (?,?);";
+        const query = "INSERT INTO users (name, password) VALUES (?,?);";
 
         connection.query(query, [name, pwd], (err, result) => {
           if (err) reject(new Error(err.message));
@@ -79,22 +78,22 @@ class DbService {
     }
   }
 
-  async authenticate({ username, password }) {
+  async authenticate(username, password) {
     try {
       const response = await new Promise((resolve, reject) => {
-        const query = "SELECT * FROM users WHERE name=?;";
+        const query = "SELECT password from users where name=?";
 
-        connection.query(query, ['test'], (err, results) => {
-          // if user not found
-          if (err) reject(new Error(err.message))
- 
-          // // if incorrect password
-          // if (!(bcrypt.compare(password, results.password)))
-          //   reject("Incorrect password!")
+        connection.query(query, [username], (err, results) => {
+          console.log(results);
+          const JSONresults = JSON.stringify(results);
+          console.log(JSONresults);
 
-          resolve(results);
+          bcrypt.compare(password, JSONresults, (err, outcome) => {
+            if (!outcome) console.log("fail");
+            else console.log("success");
+          });
         });
-      }); 
+      });
       return response;
     } catch (error) {
       console.log(error);

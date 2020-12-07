@@ -26,6 +26,6 @@ POST http://localhost:9000/authenticate
 Content-Type: application/json
 
 {
-    "username": "test",
-    "password" : "testtest"
+    "username": "sef",
+    "password" : "uihiggugigiguig"
 }
