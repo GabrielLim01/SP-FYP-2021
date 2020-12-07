@@ -20,12 +20,19 @@
   },
   "homepage": "https://github.com/WeiXian042901/fyp_repository#readme",
   "dependencies": {
+    "axios": "^0.21.0",
     "bcrypt": "^5.0.0",
     "concurrently": "^5.3.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
+    "eslint": "^7.15.0",
     "express": "^4.17.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "^4.0.1",
+    "semantic-ui-css": "^2.4.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"

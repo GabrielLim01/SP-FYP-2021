@@ -45,10 +45,11 @@ class DbService {
     try {
       const insertId = await new Promise((resolve, reject) => {
         const query =
-          "INSERT INTO users (name, password, insertId) VALUES (?,?,0);";
+          "INSERT INTO users (name, password) VALUES (?,?);";
 
         connection.query(query, [name, pwd], (err, result) => {
           if (err) reject(new Error(err.message));
+          resolve(result);
         });
       });
       return {

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+import axios from 'axios';
+import { Redirect } from "react-router-dom";
 
 const validateForm = (errors) => {
     let valid = true;
@@ -60,11 +61,23 @@ class RegistrationForm extends React.Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
-        if (validateForm(this.state.errors)) {
-            console.info('Valid Form')
-        } else {
-            console.error('Invalid Form')
-        }
+        // if (validateForm(this.state.errors)) {
+        //     console.info('Valid Form')
+        // } else {
+        //     console.error('Invalid Form')
+        // }
+
+        axios.post('http://localhost:9000/users', {
+          name: "test",
+          password: "12345678"
+        })
+        .then((result) => {
+            alert("Success!");
+            // <Redirect to="/" /> 
+        })
+        .catch((error) => {
+          alert(error)
+        });
     }
 
 
