@@ -1,5 +1,6 @@
 const mysql = require("mysql");
 const dotenv = require("dotenv");
+const bcrypt = require("bcrypt");
 let instance = null;
 dotenv.config();
 
@@ -72,6 +73,28 @@ class DbService {
           resolve(results);
         });
       });
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async authenticate({ username, password }) {
+    try {
+      const response = await new Promise((resolve, reject) => {
+        const query = "SELECT * FROM users WHERE name=?;";
+
+        connection.query(query, ['test'], (err, results) => {
+          // if user not found
+          if (err) reject(new Error(err.message))
+ 
+          // // if incorrect password
+          // if (!(bcrypt.compare(password, results.password)))
+          //   reject("Incorrect password!")
+
+          resolve(results);
+        });
+      }); 
       return response;
     } catch (error) {
       console.log(error);

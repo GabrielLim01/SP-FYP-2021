@@ -49,3 +49,14 @@ app.post("/user", async (req, res) => {
     res.status(500).send();
   }
 });
+
+// authenticate
+app.post("/authenticate", (request, response) => {
+  const db = dbService.getDbServiceInstance();
+
+  const result = db.authenticate();
+
+  result
+    .then((data) => response.json({ data: data }))
+    .catch((err) => console.log(err));
+});

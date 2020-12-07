@@ -19,3 +19,13 @@ Content-Type: application/json
     "name": "sef",
     "password" : "uihiggugigiguig"
 }
+
+###
+
+POST http://localhost:9000/authenticate
+Content-Type: application/json
+
+{
+    "username": "test",
+    "password" : "testtest"
+}

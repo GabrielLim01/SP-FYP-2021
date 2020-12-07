@@ -1,17 +1,17 @@
 import React from 'react';
 import axios from 'axios';
 import { Redirect } from "react-router-dom";
-import { minUserNameLength, minPasswordLength, host } from '../common.js';
+import { minUsernameLength, minPasswordLength, host } from '../common.js';
 
 class RegistrationForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userName: null,
+            username: null,
             password: null,
-            confirmPassowrd: null,
+            confirmPassword: null,
             errors: {
-                userName: '',
+                username: '',
                 password: '',
                 confirmPassword: '',
             }
@@ -27,9 +27,9 @@ class RegistrationForm extends React.Component {
         // need to add a rule to match confirmPassword to password input, and special characters validation rules
         switch (name) {
             case 'userName':
-                errors.userName =
-                    value.length < minUserNameLength
-                        ? `Username must be at least ${minUserNameLength} characters long!`
+                errors.username =
+                    value.length < minUsernameLength
+                        ? `Username must be at least ${minUsernameLength} characters long!`
                         : '';
                 break;
             case 'password':
@@ -67,7 +67,6 @@ class RegistrationForm extends React.Component {
             });
     }
 
-
     render() {
         const { errors } = this.state;
 
@@ -92,9 +91,9 @@ class RegistrationForm extends React.Component {
                                 <div className="field">
                                     <div className="ui left icon input">
                                         <i className="user icon"></i>
-                                        <input type="text" name="userName" placeholder="Username" onChange={this.handleChange} noValidate />
+                                        <input type="text" name="username" placeholder="Username" onChange={this.handleChange} noValidate />
                                     </div>
-                                    {errors.userName.length > 0 && <span className='error' style={{ color: 'red' }}>{errors.userName}</span>}
+                                    {errors.username.length > 0 && <span className='error' style={{ color: 'red' }}>{errors.username}</span>}
                                 </div>
                                 <div className="field">
                                     <div className="ui left icon input">
