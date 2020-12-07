@@ -43,10 +43,7 @@ app.post("/user", async (req, res) => {
 
     const result = db.insertNewUser(name, hashedPassword);
 
-    result
-      .then((data) => res.json({ data: data }))
-      .catch((err) => console.log(err)); // remove?
-
+    result.then((data) => res.json({ data: data }));
   } catch (error) {
     console.log(error);
     res.status(500).send();
