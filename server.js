@@ -29,7 +29,7 @@ app.get("/getAll", (request, response) => {
 });
 
 // Create
-app.post("/users", async (req, res) => {
+app.post("/user", async (req, res) => {
   try {
     const name = req.body.name;
     const salt = await bcrypt.genSalt();
@@ -45,8 +45,10 @@ app.post("/users", async (req, res) => {
 
     result
       .then((data) => res.json({ data: data }))
-      .catch((err) => console.log(err));
-  } catch {
+      .catch((err) => console.log(err)); // remove?
+
+  } catch (error) {
+    console.log(error);
     res.status(500).send();
   }
 });

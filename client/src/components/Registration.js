@@ -1,15 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { Redirect } from "react-router-dom";
-
-const validateForm = (errors) => {
-    let valid = true;
-    Object.values(errors).forEach(
-        // if we have an error string set valid to false
-        (val) => val.length > 0 && (valid = false)
-    );
-    return valid;
-}
+import { minUserNameLength, minPasswordLength, host } from '../common.js';
 
 class RegistrationForm extends React.Component {
     constructor(props) {
@@ -36,20 +28,20 @@ class RegistrationForm extends React.Component {
         switch (name) {
             case 'userName':
                 errors.userName =
-                    value.length < 3
-                        ? 'Username must be at least 3 characters long!'
+                    value.length < minUserNameLength
+                        ? `Username must be at least ${minUserNameLength} characters long!`
                         : '';
                 break;
             case 'password':
                 errors.password =
-                    value.length < 8
-                        ? 'Password must be at least 8 characters long!'
+                    value.length < minPasswordLength
+                        ? `Password must be at least ${minPasswordLength} characters long!`
                         : '';
                 break;
             case 'confirmPassword':
                 errors.confirmPassword =
-                    value.length < 8
-                        ? 'Password must be at least 8 characters long!'
+                    value !== this.state.password
+                        ? `Passwords do not match!`
                         : '';
                 break;
             default:
@@ -61,23 +53,18 @@ class RegistrationForm extends React.Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
-        // if (validateForm(this.state.errors)) {
-        //     console.info('Valid Form')
-        // } else {
-        //     console.error('Invalid Form')
-        // }
 
-        axios.post('http://localhost:9000/users', {
-          name: "test",
-          password: "12345678"
+        axios.post(host + '/user', {
+            name: "test",
+            password: "12345678"
         })
-        .then((result) => {
-            alert("Success!");
-            // <Redirect to="/" /> 
-        })
-        .catch((error) => {
-          alert(error)
-        });
+            .then((result) => {
+                alert("Success!");
+                //<Redirect to="/" /> 
+            })
+            .catch((error) => {
+                alert(error)
+            });
     }
 
 
