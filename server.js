@@ -33,7 +33,7 @@ app.post("/user", async (req, res) => {
   try {
     const name = req.body.name;
     const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    const hashedPassword = await bcrypt.hashSync(req.body.password, salt);
     console.log(hashedPassword);
     console.log(salt);
 

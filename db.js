@@ -81,17 +81,15 @@ class DbService {
   async authenticate(username, password) {
     try {
       const response = await new Promise((resolve, reject) => {
-        const query = "SELECT password from users where name=?";
+        const query = "SELECT * from users where name=?";
 
         connection.query(query, [username], (err, results) => {
-          console.log(results);
-          const JSONresults = JSON.stringify(results);
-          console.log(JSONresults);
+          const JSONresults = JSON.parse(JSON.stringify(results));
+          console.log(JSONresults[0].password);
+          console.log(`This is plaintext pwd ${password}`);
 
-          bcrypt.compare(password, JSONresults, (err, outcome) => {
-            if (!outcome) console.log("fail");
-            else console.log("success");
-          });
+          const verify = bcrypt.compareSync(password, JSONresults[0].password);
+          console.log(verify);
         });
       });
       return response;

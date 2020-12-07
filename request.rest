@@ -6,7 +6,7 @@ POST http://localhost:9000/user
 Content-Type: application/json
 
 {
-    "name": "sef",
+    "name": "test",
     "password": "password"
 }
 
@@ -26,6 +26,6 @@ POST http://localhost:9000/authenticate
 Content-Type: application/json
 
 {
-    "username": "sef",
-    "password" : "uihiggugigiguig"
+    "username": "test",
+    "password" : "password"
 }
