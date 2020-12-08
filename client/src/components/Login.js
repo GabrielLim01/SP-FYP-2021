@@ -6,6 +6,7 @@ import { host } from '../common.js';
 // MISSING FEATURES
 // 1. Input Validation
 // 2. Storing of user login status in a session attribute, managed by localStorage (?)
+// 3. RBAC logic not implemented
 
 class LoginForm extends React.Component {
     constructor(props) {
@@ -30,21 +31,22 @@ class LoginForm extends React.Component {
         // this.state.user = { username: this.state.username, password: this.state.password };
         // alert(this.state.user.username + this.state.user.password)
 
-        axios.post('http://localhost:9000/authenticate', {
+        axios.post(host + '/authenticate', {
             username: this.state.username,
             password: this.state.password
         })
             .then((response) => {
-                // response promise is fulfilled
-                console.log(response.data)
-                alert(`Then Response:${response.data.data}`);
-              }, (error) => {
-                // response promise is rejected
-                alert("Then Error: " + error);
-              })
-              // catch errors made by axios posting (should never be invoked in theory)
+
+                // If response.data.data has the access token string, it means the user is authenticated, so redirect them to dashboard
+                // Otherwise, response.data.data will contain the error string instead, and user will be left on the login page
+                // This is a temporary workaround for authentication and will need to be modified for RBAC logic later (e.g. users, admins login)
+                if (response.data.data === 'Congrats') {
+                    window.location.href = '/dashboard';
+                }
+            })
+
             .catch((error) => {
-                alert("Caught Error: " + error);
+                alert(error);
             });
 
         // // set the state of the user

@@ -83,7 +83,6 @@ class DbService {
   }
 
   // POST /authenticate
-  // Not returning proper error messages or authenticating properly
   async authenticate(username, password) {
     try {
       const response = await new Promise((resolve, reject) => {
@@ -92,17 +91,19 @@ class DbService {
         connection.query(query, [username], (err, results) => {
 
           // Case 1 - Reject promise if query fails
-          if (err) throw new Error(`There are some errors with the query statement. ${err}`);
+          if (err) reject(`There are some errors with the query statement. ${err}`);
 
           const JSONresults = JSON.parse(JSON.stringify(results));
           const verify = bcrypt.compareSync(password, JSONresults[0].password);
 
-          // Case 2 - Reject promise if passwords do not match
-          if (!verify) reject("Passwords do not match!");
-
-          // Case 3 - Resolve promise and return an access token string if everything passes
-          const accessToken = "Congrats";
-          resolve(accessToken);
+          // Case 2 - Reject promise if passwords do not match, otherwise resolve promise with the access token
+          if (!verify) {
+            reject("Passwords do not match!")
+          }
+          else {
+            const accessToken = "Congrats";
+            resolve(accessToken);
+          }
         });
       });
 
@@ -110,7 +111,12 @@ class DbService {
 
     } catch (error) {
       // Catch rejected promises (errors)
-      console.log("Hi there, " + error);
+      console.log(error);
+
+      // If a promise is rejected above, logic gets passed to this catch block, so a return error statement 
+      // is needed in order to pass the error string to server.js
+      // This might not be the best practice, but without further research, not sure if there is a better way to pass error message info
+      return error;
     }
   }
 }

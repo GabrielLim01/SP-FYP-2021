@@ -62,10 +62,13 @@ app.post("/authenticate", (req, res) => {
 
     const db = dbService.getDbServiceInstance();
 
+    // const result is a Promise, not raw JSON data
     const result = db.authenticate(username, password);
   
+    // In order to access the data of the Promise, you have to do a .then((data => console.log(data))),
+    // then use res.json to send the data back to the front-end (axios.POST)
     result.then((data) => {
-        console.log(data)
+        // console.log(data)
         res.json({ data: data });
     })
     // should not be invoked normally
