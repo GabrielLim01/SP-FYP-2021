@@ -1,6 +1,7 @@
 const mysql = require("mysql");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
+const { response } = require("express");
 let instance = null;
 dotenv.config();
 
@@ -84,14 +85,26 @@ class DbService {
         const query = "SELECT * from users where name=?";
 
         connection.query(query, [username], (err, results) => {
-          const JSONresults = JSON.parse(JSON.stringify(results));
-          console.log(JSONresults[0].password);
-          console.log(`This is plaintext pwd ${password}`);
-
-          const verify = bcrypt.compareSync(password, JSONresults[0].password);
-          console.log(verify);
+          if (err) {
+            reject(
+              new Error(
+                `There are some errors with the query statement. ${err}`
+              )
+            );
+            resolve(results);
+          } else {
+            if (results.length > 0) {
+              const JSONresults = JSON.parse(JSON.stringify(results));
+              const verify = bcrypt.compareSync(
+                password,
+                JSONresults[0].password
+              );
+              if (!verify) console.log("Invalid Password!");
+            } else console.log("Invalid Username!");
+          }
         });
       });
+
       return response;
     } catch (error) {
       console.log(error);

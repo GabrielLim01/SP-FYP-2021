@@ -2,6 +2,7 @@ const express = require("express");
 
 const app = express();
 
+const Boom = require("boom");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -60,9 +61,16 @@ app.post("/authenticate", (req, res) => {
 
     const result = db.authenticate(username, password);
 
-    result.then((data) => res.json({ data: data }));
+    result
+      .then((data) => {
+        res.json({ data: data });
+        res.status(200).send("Valid request sent!");
+      })
+      .catch((err) => {
+        console.log(err);
+        res.json(Boom.notFound("Invalid Request"));
+      });
   } catch (err) {
-    console.log(error);
-    res.status(500).send();
+    res.json(Boom.notFound("Invalid Request"));
   }
 });
