@@ -26,6 +26,11 @@ POST http://localhost:9000/authenticate
 Content-Type: application/json
 
 {
+<<<<<<< Updated upstream
+    "username": "",
+    "password" : ""
+=======
     "username": "test",
-    "password" : "passworddfgdf"
+    "password" : "12345678"
+>>>>>>> Stashed changes
 }

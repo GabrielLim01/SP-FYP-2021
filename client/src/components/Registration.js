@@ -1,7 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import { Redirect } from "react-router-dom";
 import { minUsernameLength, minPasswordLength, host } from '../common.js';
+
+// BUG - Registration will proceed even if confirmPassword field is not filled in
 
 class RegistrationForm extends React.Component {
     constructor(props) {
@@ -23,8 +24,7 @@ class RegistrationForm extends React.Component {
         const { name, value } = event.target;
         let errors = this.state.errors;
 
-        // not sure how to add more rules per case yet
-        // need to add a rule to match confirmPassword to password input, and special characters validation rules
+        // Not sure how to add more rules per case yet
         switch (name) {
             case 'userName':
                 errors.username =
@@ -55,12 +55,12 @@ class RegistrationForm extends React.Component {
         event.preventDefault();
 
         axios.post(host + '/user', {
-            name: "test",
-            password: "12345678"
+            name: this.state.username,
+            password: this.state.password
         })
             .then((result) => {
                 alert("Success!");
-                //<Redirect to="/" /> 
+                window.location.href = "/"
             })
             .catch((error) => {
                 alert(error)

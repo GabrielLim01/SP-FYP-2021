@@ -27,22 +27,41 @@ class DbService {
     return instance ? instance : new DbService();
   }
 
-  async getAllUsers() {
-    try {
-      const response = await new Promise((resolve, reject) => {
-        const query = "SELECT * FROM users;";
+  // NOT IN USE
+  // async getAllUsers() {
+  //   try {
+  //     const response = await new Promise((resolve, reject) => {
+  //       const query = "SELECT * FROM users;";
 
-        connection.query(query, (err, results) => {
-          if (err) reject(new Error(err.message));
-          resolve(results);
-        });
-      });
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  //       connection.query(query, (err, results) => {
+  //         if (err) reject(new Error(err.message));
+  //         resolve(results);
+  //       });
+  //     });
+  //     return response;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
+  // NOT IN USE
+  // async get(name) {
+  //   try {
+  //     const response = await new Promise((resolve, reject) => {
+  //       const query = "SELECT * FROM users WHERE name=?;";
+
+  //       connection.query(query, [name], (err, results) => {
+  //         if (err) reject(new Error(err.message));
+  //         resolve(results);
+  //       });
+  //     });
+  //     return response;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
+  // POST /user
   async insertNewUser(name, pwd) {
     try {
       const insertId = await new Promise((resolve, reject) => {
@@ -63,51 +82,35 @@ class DbService {
     }
   }
 
-  async get(name) {
-    try {
-      const response = await new Promise((resolve, reject) => {
-        const query = "SELECT * FROM users WHERE name=?;";
-
-        connection.query(query, [name], (err, results) => {
-          if (err) reject(new Error(err.message));
-          resolve(results);
-        });
-      });
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
+  // POST /authenticate
+  // Not returning proper error messages or authenticating properly
   async authenticate(username, password) {
     try {
       const response = await new Promise((resolve, reject) => {
         const query = "SELECT * from users where name=?";
 
         connection.query(query, [username], (err, results) => {
-          if (err) {
-            reject(
-              new Error(
-                `There are some errors with the query statement. ${err}`
-              )
-            );
-            resolve(results);
-          } else {
-            if (results.length > 0) {
-              const JSONresults = JSON.parse(JSON.stringify(results));
-              const verify = bcrypt.compareSync(
-                password,
-                JSONresults[0].password
-              );
-              if (!verify) console.log("Invalid Password!");
-            } else console.log("Invalid Username!");
-          }
+
+          // Case 1 - Reject promise if query fails
+          if (err) throw new Error(`There are some errors with the query statement. ${err}`);
+
+          const JSONresults = JSON.parse(JSON.stringify(results));
+          const verify = bcrypt.compareSync(password, JSONresults[0].password);
+
+          // Case 2 - Reject promise if passwords do not match
+          if (!verify) reject("Passwords do not match!");
+
+          // Case 3 - Resolve promise and return an access token string if everything passes
+          const accessToken = "Congrats";
+          resolve(accessToken);
         });
       });
 
       return response;
+
     } catch (error) {
-      console.log(error);
+      // Catch rejected promises (errors)
+      console.log("Hi there, " + error);
     }
   }
 }
