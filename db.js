@@ -27,7 +27,7 @@ class DbService {
 
   joinQuizTable() {
     const joinTableQuery =
-      "SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId INNER JOIN quiz_question_options ON quiz_question.quizQuestionId = quiz_question_options.quizQuestionId";
+      "SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId";
     return joinTableQuery;
   }
 
@@ -55,7 +55,6 @@ class DbService {
     try {
       return new Promise((resolve, reject) => {
         const query = `${this.joinQuizTable()} WHERE quiz.quizId = ?;`;
-        console.log(query);
 
         connection.query(query, this.intFormatter(id), (err, results) => {
           if (err) reject(err.message);
@@ -87,41 +86,17 @@ class DbService {
     }
   }
 
-  async createQuizQuestion(quizId, questionTitle, questionDesc, optionObject) {
+  async createQuizQuestion(quizId, question) {
     try {
       return new Promise((resolve, reject) => {
         const query =
-          "INSERT into quiz_question (quizId, quizQuestion, quizQuestionDesc) values (?,?,?);";
-        connection.query(
-          query,
-          [quizId, questionTitle, questionDesc],
-          (err, result) => {
-            if (!err) {
-              resolve(result);
-
-              var option = "";
-              var optionDesc = "";
-              var isCorrect = true;
-              const secondQuery =
-                "INSERT into quiz_question_options (quizId, quizQuestionId, optionTitle, optionDesc, correctAnswer) values (?,?,?,?,?);";
-
-              Object.entries(optionObject).forEach(([key, value]) => {
-                option = value.option;
-                optionDesc = value.optionDesc;
-                isCorrect = value.isCorrect;
-
-                connection.query(
-                  secondQuery,
-                  [quizId, result.insertId, option, optionDesc, isCorrect],
-                  (err, result) => {
-                    if (!err) resolve(result);
-                    else reject(err.message);
-                  }
-                );
-              });
-            } else console.log("error somewhere");
-          }
-        );
+          "INSERT into quiz_question (quizId, questionObject) values (?,?);";
+        connection.query(query, [quizId, question], (err, result) => {
+          if (!err) {
+            console.log("Questions created");
+            resolve(result);
+          } else console.log("error somewhere", err);
+        });
       });
     } catch (e) {
       throw e.message;

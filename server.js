@@ -52,11 +52,6 @@ var quizObject = {
           optionDesc: "",
           isCorrect: false,
         },
-        {
-          option: "Option 3",
-          optionDesc: "",
-          isCorrect: false,
-        },
       ],
     },
   ],
@@ -85,7 +80,13 @@ app.get("/quiz/:id", (request, response) => {
   result
     .then((data) => {
       console.log("Process was a success!");
-      response.json({ data: data });
+
+      quizObject = JSON.parse(JSON.stringify(data));
+      quizObject.forEach((question) => {
+        questionObject = JSON.parse(question.questionObject);
+        console.log(questionObject.options);
+      });
+      // response.json({ data: JSONobject.questionObject });
     })
     .catch((err) => console.log(err));
 });
@@ -120,20 +121,13 @@ app.post("/createNew", (request, response) => {
       const quizId = data.insertId;
       var createQuestion_result = new Promise((resolve, reject) => {});
 
-      var questionTitle = "";
-      var questionDesc = "";
-      var optionArray = [];
-
       const questionObject = quizObject.quizQuestion;
+      console.log(typeof questionObject);
       questionObject.forEach((question) => {
-        questionTitle = question.questionTitle;
-        questionDesc = question.questionDesc;
-        optionArray = question.options;
+        console.log(question);
         createQuestion_result = db.createQuizQuestion(
           quizId,
-          questionTitle,
-          questionDesc,
-          optionArray
+          JSON.stringify(question)
         );
       });
       createQuestion_result.catch((err) => console.log(err));
