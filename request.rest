@@ -5,8 +5,8 @@ POST http://localhost:9000/createNew
 Content-Type: application/json
 
 {
-    "categoryId": 1,
-    "title": "peepeepoopoo",
+    "categoryId": 4,
+    "title": "mat7",
     "desc": "sadsadasd",
     "fiqPoints": 200
     

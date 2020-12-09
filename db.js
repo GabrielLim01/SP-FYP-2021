@@ -21,7 +21,8 @@ connection.connect((err) => {
 
 class DbService {
   static getDbServiceInstance() {
-    return instance ? instance : new DbService();
+    if (!instance) instance = new DbService();
+    return instance;
   }
 
   async getAllQuizzes() {
@@ -43,7 +44,7 @@ class DbService {
 
   async createQuiz(title, desc, fiqPoints, categoryId) {
     try {
-      const insertId = await new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         const query =
           "INSERT INTO quiz (categoryId, quizName, quizDesc, fiqPoints) VALUES (?,?,?,?);";
 
@@ -51,20 +52,14 @@ class DbService {
           query,
           [categoryId, title, desc, fiqPoints],
           (err, result) => {
-            if (err) reject(new Error(err.message));
-            resolve(result);
+            // Checks the status of promise
+            if (err) reject(err.message);
+            else resolve(result);
           }
         );
       });
-      return {
-        insertId: insertId.insertId,
-        categoryid: categoryId,
-        name: title,
-        description: desc,
-        FIQ_Points: fiqPoints,
-      };
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      throw e.message;
     }
   }
 
@@ -85,7 +80,7 @@ class DbService {
         );
       });
 
-      return response === 1 ? true : false;
+      return response === 1;
     } catch (error) {
       console.log(error);
       return false;

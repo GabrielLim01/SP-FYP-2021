@@ -10,12 +10,7 @@ const dbService = require("./db");
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-app.get("/", (req, res) => {
-  const text = "Hello World from server.js";
-  res.json(text);
-});
+app.use(express.urlencoded({ extended: true }));
 
 const port = 9000;
 
@@ -44,8 +39,25 @@ app.post("/createNew", (request, response) => {
   const result = db.createQuiz(title, desc, fiqPoints, categoryId);
 
   result
-    .then((data) => response.json({ data: data }))
-    .catch((err) => console.log(err));
+    // this runs if promise is resolved
+    .then((data) => {
+      response.json({
+        insertId: data.insertId,
+        categoryid: categoryId,
+        name: title,
+        description: desc,
+        FIQ_Points: fiqPoints,
+      });
+    })
+    // this runs if promise is rejected
+    .catch((err) => {
+      if (err.includes("ER_NO_SUCH_TABLE"))
+        console.log("Table 'quiz' does not exist!");
+      else if (err.includes("ER_NO_REFERENCED"))
+        console.log("Foreign Key does not exist! Check parent table.");
+      // Please addon to this list if you encountered something new
+      else console.log("Some Caught Error ", err);
+    });
 });
 
 // update
