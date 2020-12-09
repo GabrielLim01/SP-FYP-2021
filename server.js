@@ -83,8 +83,9 @@ app.get("/quiz/:id", (request, response) => {
 
       quizObject = JSON.parse(JSON.stringify(data));
       quizObject.forEach((question) => {
+        console.log(question);
         questionObject = JSON.parse(question.questionObject);
-        console.log(questionObject.options);
+        // console.log(questionObject.options);
       });
       // response.json({ data: JSONobject.questionObject });
     })
