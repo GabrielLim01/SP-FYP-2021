@@ -13,7 +13,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE  http://localhost:9000/delete/2
+DELETE  http://localhost:9000/delete/1
 
 ###
 PATCH  http://localhost:9000/update/11
@@ -28,5 +28,5 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:9000/quiz/106
+GET http://localhost:9000/quiz/1
 

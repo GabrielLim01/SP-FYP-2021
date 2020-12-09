@@ -136,11 +136,7 @@ app.post("/createNew", (request, response) => {
           optionArray
         );
       });
-      createQuestion_result
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((err) => console.log(err));
+      createQuestion_result.catch((err) => console.log(err));
     })
     // this runs if promise is rejected
     .catch((err) => {

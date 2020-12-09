@@ -25,7 +25,7 @@ class DbService {
     return instance;
   }
 
-  joinTable() {
+  joinQuizTable() {
     const joinTableQuery =
       "SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId INNER JOIN quiz_question_options ON quiz_question.quizQuestionId = quiz_question_options.quizQuestionId";
     return joinTableQuery;
@@ -54,7 +54,7 @@ class DbService {
   async getQuizById(id) {
     try {
       return new Promise((resolve, reject) => {
-        const query = `${this.joinTable()} WHERE quiz.quizId = ?;`;
+        const query = `${this.joinQuizTable()} WHERE quiz.quizId = ?;`;
         console.log(query);
 
         connection.query(query, this.intFormatter(id), (err, results) => {
@@ -109,7 +109,6 @@ class DbService {
                 option = value.option;
                 optionDesc = value.optionDesc;
                 isCorrect = value.isCorrect;
-                console.log(quizId);
 
                 connection.query(
                   secondQuery,
