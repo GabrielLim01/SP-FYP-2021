@@ -51,12 +51,10 @@ app.post("/createNew", (request, response) => {
     })
     // this runs if promise is rejected
     .catch((err) => {
-      if (err.includes("ER_NO_SUCH_TABLE"))
-        console.log("Table 'quiz' does not exist!");
-      else if (err.includes("ER_NO_REFERENCED"))
+      if (err.includes("ER_NO_REFERENCED"))
         console.log("Foreign Key does not exist! Check parent table.");
       // Please addon to this list if you encountered something new
-      else console.log("Some Caught Error ", err);
+      else console.log("Some Caught Error:", err);
     });
 });
 
