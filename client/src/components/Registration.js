@@ -4,6 +4,13 @@ import { minUsernameLength, minPasswordLength, host } from '../common.js';
 
 // BUG - Registration will proceed even if confirmPassword field is not filled in
 
+// MISSING FEATURES
+// 1. Additional input fields (Role, Age Group, Email) and appropriate validation
+// 2. Possible validation rules as follows
+// Role/Age Group - Dropdown (so no client-side validation)
+// Email - Some regex that validates the input to 'resemble an actual email'
+// Password - Alphanumeric, can consider regex as well
+
 class RegistrationForm extends React.Component {
     constructor(props) {
         super(props);
@@ -24,25 +31,19 @@ class RegistrationForm extends React.Component {
         const { name, value } = event.target;
         let errors = this.state.errors;
 
-        // Not sure how to add more rules per case yet
         switch (name) {
-            case 'userName':
-                errors.username =
-                    value.length < minUsernameLength
-                        ? `Username must be at least ${minUsernameLength} characters long!`
-                        : '';
+            case 'username':
+                // Add more validation rules below by chaining if..elses as necessary
+                errors.username = '';
+                if (value.length < minUsernameLength) errors.username = 'Username must be 8 characters long!';
                 break;
             case 'password':
-                errors.password =
-                    value.length < minPasswordLength
-                        ? `Password must be at least ${minPasswordLength} characters long!`
-                        : '';
+                errors.password = '';
+                if (value.length < minPasswordLength) errors.password = `Password must be at least ${minPasswordLength} characters long!`;
                 break;
             case 'confirmPassword':
-                errors.confirmPassword =
-                    value !== this.state.password
-                        ? `Passwords do not match!`
-                        : '';
+                errors.confirmPassword = ''; 
+                if( value !== this.state.password) errors.confirmPassword = `Passwords do not match!`;
                 break;
             default:
                 break;

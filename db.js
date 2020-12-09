@@ -93,14 +93,15 @@ class DbService {
           // Case 1 - Reject promise if query fails
           if (err) reject(`There are some errors with the query statement. ${err}`);
 
-          const JSONresults = JSON.parse(JSON.stringify(results));
-          const verify = bcrypt.compareSync(password, JSONresults[0].password);
+          const jsonResults = JSON.parse(JSON.stringify(results));
+          const verify = bcrypt.compareSync(password, jsonResults[0].password);
 
           // Case 2 - Reject promise if passwords do not match, otherwise resolve promise with the access token
           if (!verify) {
             reject("Passwords do not match!")
           }
           else {
+            // Resolve promise with an access token string and send it back to the front-end
             const accessToken = "Congrats";
             resolve(accessToken);
           }
