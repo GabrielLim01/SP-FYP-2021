@@ -6,7 +6,7 @@ import { host } from '../common.js';
 // MISSING FEATURES
 // 1. Input Validation
 // 2. RBAC logic not implemented
-// 3. Improve on localStorage management logic
+// 3. Improve sessionStorage management logic
 
 class LoginForm extends React.Component {
     constructor(props) {
@@ -46,8 +46,8 @@ class LoginForm extends React.Component {
                     // so it has to be re-set here
                     let user = { user: {isLoggedIn: true, name: this.state.name} }
 
-                    // localStorage can only save strings, so convert the JSON object into strings
-                    localStorage.setItem("user", JSON.stringify(user));
+                    // sessionStorage can only save strings, so convert the JSON object into strings
+                    sessionStorage.setItem("user", JSON.stringify(user));
 
                     // Redirect when successful
                     window.location.href = '/dashboard';
@@ -69,13 +69,11 @@ class LoginForm extends React.Component {
         };
 
         // Logic to check if user is already logged in
-        // localStorage persists even when the browser window is closed
-        // If you want to test the behaviour without localStorage, clear your browser's cache
         let user = {};
         let loginStatus = false;
     
-        if (JSON.parse(localStorage.getItem("user") !== null)) {
-            user = JSON.parse(localStorage.getItem("user"));
+        if (JSON.parse(sessionStorage.getItem("user") !== null)) {
+            user = JSON.parse(sessionStorage.getItem("user"));
             loginStatus = user.user.isLoggedIn;
         }
 

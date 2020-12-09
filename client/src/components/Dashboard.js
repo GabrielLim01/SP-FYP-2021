@@ -5,7 +5,7 @@ class Dashboard extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
-        localStorage.removeItem("user")
+        sessionStorage.removeItem("user")
         window.location.href = '/'
     }
 
@@ -14,8 +14,8 @@ class Dashboard extends React.Component {
         let user = {};
         let loginStatus = false;
 
-        if (JSON.parse(localStorage.getItem("user") !== null)) {
-            user = JSON.parse(localStorage.getItem("user"));
+        if (JSON.parse(sessionStorage.getItem("user") !== null)) {
+            user = JSON.parse(sessionStorage.getItem("user"));
             loginStatus = user.user.isLoggedIn;
         }
 
