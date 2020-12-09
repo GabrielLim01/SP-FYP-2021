@@ -52,6 +52,11 @@ var quizObject = {
           optionDesc: "",
           isCorrect: false,
         },
+        {
+          option: "Option 3",
+          optionDesc: "",
+          isCorrect: false,
+        },
       ],
     },
   ],

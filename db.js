@@ -61,9 +61,8 @@ class DbService {
     }
   }
 
-  async createQuizQuestion(quizId, questionTitle, questionDesc, optionArray) {
+  async createQuizQuestion(quizId, questionTitle, questionDesc, optionObject) {
     try {
-      console.log(typeof optionArray);
       return new Promise((resolve, reject) => {
         const query =
           "INSERT into quiz_question (quizId, quizQuestion, quizQuestionDesc) values (?,?,?);";
@@ -76,31 +75,33 @@ class DbService {
                 `questions for quiz: ${quizId} are created. ${result.insertId}`
               );
               resolve(result);
-              const secondQuery = "";
-            } else console.log("error somewhere");
-          }
-        );
-      });
-    } catch (e) {
-      throw e.message;
-    }
-  }
 
-  async createQuizOptions() {
-    try {
-      return new Promise((resolve, reject) => {
-        const query =
-          "INSERT into quiz_question (quizId, quizQuestion, quizQuestionDesc) values (?,?,?);";
-        connection.query(
-          query,
-          [quizId, questionTitle, questionDesc],
-          (err, result) => {
-            if (!err) {
-              resolve(result);
-            } else {
-              console.log("error somewhere");
-              reject(err);
-            }
+              var option = "";
+              var optionDesc = "";
+              var isCorrect = true;
+              const secondQuery =
+                "INSERT into quiz_question_options (quizQuestionId, optionTitle, optionDesc, correctAnswer) values (?,?,?,?);";
+
+              Object.entries(optionObject).forEach(([key, value]) => {
+                option = value.option;
+                optionDesc = value.optionDesc;
+                isCorrect = value.isCorrect;
+
+                connection.query(
+                  secondQuery,
+                  [result.insertId, option, optionDesc, isCorrect],
+                  (err, result) => {
+                    if (!err) {
+                      console.log(
+                        `options for quiz: ${quizId} are created. ${result.insertId}`
+                      );
+                      console.log(result);
+                      resolve(result);
+                    } else console.log(err.message);
+                  }
+                );
+              });
+            } else console.log("error somewhere");
           }
         );
       });
