@@ -103,13 +103,13 @@ app.post("/createNew", (request, response) => {
   createQuiz_result
     // this runs if promise is resolved
     .then((data) => {
-      // response.json({
-      //   insertId: data.insertId,
-      //   categoryid: categoryId,
-      //   name: title,
-      //   description: desc,
-      //   FIQ_Points: fiqPoints,
-      // });
+      response.json({
+        insertId: data.insertId,
+        categoryid: categoryId,
+        name: title,
+        description: quizDesc,
+        FIQ_Points: fiqPoints,
+      });
       console.log("Quiz Created");
       // Next phase
       const quizId = data.insertId;
