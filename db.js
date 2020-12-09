@@ -27,18 +27,16 @@ class DbService {
 
   async getAllQuizzes() {
     try {
-      const response = await new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         const query = "SELECT * FROM quiz;";
 
         connection.query(query, (err, results) => {
-          if (err) reject(new Error(err.message));
-          resolve(results);
+          if (err) reject(err.message);
+          else resolve(results);
         });
       });
-      // console.log(response);
-      return response;
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      throw e.message;
     }
   }
 
@@ -66,7 +64,7 @@ class DbService {
   async updateDetailsById(id, title, desc, fiqPoints, categoryId) {
     try {
       id = parseInt(id, 10);
-      const response = await new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         const query =
           "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, fiqPoints = ?  WHERE quizId = ?";
 
@@ -79,8 +77,6 @@ class DbService {
           }
         );
       });
-
-      return response === 1;
     } catch (error) {
       console.log(error);
       return false;

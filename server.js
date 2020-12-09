@@ -23,7 +23,10 @@ app.get("/quizDashboard", (request, response) => {
   const result = db.getAllQuizzes();
 
   result
-    .then((data) => response.json({ data: data }))
+    .then((data) => {
+      console.log("Process was a success!");
+      response.json({ data: data });
+    })
     .catch((err) => console.log(err));
 });
 
@@ -48,6 +51,7 @@ app.post("/createNew", (request, response) => {
         description: desc,
         FIQ_Points: fiqPoints,
       });
+      console.log("Process was a success!");
     })
     // this runs if promise is rejected
     .catch((err) => {
@@ -72,7 +76,10 @@ app.patch("/update/:id", (request, response) => {
   const result = db.updateDetailsById(id, title, desc, fiqPoints, categoryId);
 
   result
-    .then((data) => response.json({ success: data }))
+    .then((data) => {
+      console.log("Process was a success!");
+      response.json({ data: data });
+    })
     .catch((err) => console.log(err));
 });
 
@@ -85,6 +92,9 @@ app.delete("/delete/:id", (request, response) => {
   const result = db.deleteQuizById(id);
 
   result
-    .then((data) => response.json({ success: data }))
+    .then((data) => {
+      console.log("Process was a success!");
+      response.json({ data: data });
+    })
     .catch((err) => console.log(err));
 });
