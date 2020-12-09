@@ -61,6 +61,54 @@ class DbService {
     }
   }
 
+  async createQuizQuestion(quizId, questionTitle, questionDesc, optionArray) {
+    try {
+      console.log(typeof optionArray);
+      return new Promise((resolve, reject) => {
+        const query =
+          "INSERT into quiz_question (quizId, quizQuestion, quizQuestionDesc) values (?,?,?);";
+        connection.query(
+          query,
+          [quizId, questionTitle, questionDesc],
+          (err, result) => {
+            if (!err) {
+              console.log(
+                `questions for quiz: ${quizId} are created. ${result.insertId}`
+              );
+              resolve(result);
+              const secondQuery = "";
+            } else console.log("error somewhere");
+          }
+        );
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
+
+  async createQuizOptions() {
+    try {
+      return new Promise((resolve, reject) => {
+        const query =
+          "INSERT into quiz_question (quizId, quizQuestion, quizQuestionDesc) values (?,?,?);";
+        connection.query(
+          query,
+          [quizId, questionTitle, questionDesc],
+          (err, result) => {
+            if (!err) {
+              resolve(result);
+            } else {
+              console.log("error somewhere");
+              reject(err);
+            }
+          }
+        );
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
+
   async updateDetailsById(id, title, desc, fiqPoints, categoryId) {
     try {
       id = parseInt(id, 10);
@@ -72,33 +120,29 @@ class DbService {
           query,
           [categoryId, title, desc, fiqPoints, id],
           (err, result) => {
-            if (err) reject(new Error(err.message));
+            if (err) reject(err.message);
             resolve(result.affectedRows);
           }
         );
       });
-    } catch (error) {
-      console.log(error);
-      return false;
+    } catch (e) {
+      throw e.message;
     }
   }
 
   async deleteQuizById(id) {
     try {
       id = parseInt(id, 10);
-      const response = await new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         const query = "DELETE FROM quiz WHERE quizId = ?";
 
         connection.query(query, [id], (err, result) => {
-          if (err) reject(new Error(err.message));
+          if (err) reject(err.message);
           resolve(result.affectedRows);
         });
       });
-
-      return response === 1 ? true : false;
-    } catch (error) {
-      console.log(error);
-      return false;
+    } catch (e) {
+      throw e.message;
     }
   }
 }

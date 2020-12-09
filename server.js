@@ -16,6 +16,56 @@ const port = 9000;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
 
+var quizObject = {
+  quizTitle: "Hello",
+  quizCategoryId: 1,
+  quizDesc: "",
+  fiqPoints: 100,
+  quizQuestion: [
+    {
+      questionTitle: "Question 1",
+      questionDesc: "",
+      options: [
+        {
+          option: "Option 1",
+          optionDesc: "",
+          isCorrect: true,
+        },
+        {
+          option: "Option 2",
+          optionDesc: "",
+          isCorrect: false,
+        },
+      ],
+    },
+    {
+      questionTitle: "Question 2",
+      questionDesc: "",
+      options: [
+        {
+          option: "Option 1",
+          optionDesc: "",
+          isCorrect: true,
+        },
+        {
+          option: "Option 2",
+          optionDesc: "",
+          isCorrect: false,
+        },
+      ],
+    },
+  ],
+};
+
+const str = JSON.stringify(quizObject, null, 4);
+
+app.get("/", (request, response) => {
+  response.json({
+    data: str,
+  });
+  console.log(quizObject);
+});
+
 // read
 app.get("/quizDashboard", (request, response) => {
   const db = dbService.getDbServiceInstance();
@@ -32,33 +82,61 @@ app.get("/quizDashboard", (request, response) => {
 
 // create
 app.post("/createNew", (request, response) => {
-  const title = request.body.title;
-  const desc = request.body.desc;
-  const fiqPoints = request.body.fiqPoints;
-  const categoryId = request.body.categoryId;
+  const title = quizObject.quizTitle;
+  const categoryId = quizObject.quizCategoryId;
+  const quizDesc = quizObject.quizDesc;
+  const fiqPoints = quizObject.fiqPoints;
 
   const db = dbService.getDbServiceInstance();
+  const createQuiz_result = db.createQuiz(
+    title,
+    quizDesc,
+    fiqPoints,
+    categoryId
+  );
 
-  const result = db.createQuiz(title, desc, fiqPoints, categoryId);
-
-  result
+  createQuiz_result
     // this runs if promise is resolved
     .then((data) => {
-      response.json({
-        insertId: data.insertId,
-        categoryid: categoryId,
-        name: title,
-        description: desc,
-        FIQ_Points: fiqPoints,
+      // response.json({
+      //   insertId: data.insertId,
+      //   categoryid: categoryId,
+      //   name: title,
+      //   description: desc,
+      //   FIQ_Points: fiqPoints,
+      // });
+      console.log("Quiz Created");
+      // Next phase
+      const quizId = data.insertId;
+      var createQuestion_result = new Promise((resolve, reject) => {});
+
+      var questionTitle = "";
+      var questionDesc = "";
+      var optionArray = [];
+
+      const questionObject = quizObject.quizQuestion;
+      questionObject.forEach((question) => {
+        questionTitle = question.questionTitle;
+        questionDesc = question.questionDesc;
+        optionArray = question.options;
+        createQuestion_result = db.createQuizQuestion(
+          quizId,
+          questionTitle,
+          questionDesc,
+          optionArray
+        );
       });
-      console.log("Process was a success!");
+      createQuestion_result
+        .then((data) => {
+          // questionObject can be accessed here :)
+          console.log(data);
+        })
+        .catch((err) => console.log(err));
     })
     // this runs if promise is rejected
     .catch((err) => {
-      if (err.includes("ER_NO_REFERENCED"))
-        console.log("Foreign Key does not exist! Check parent table.");
       // Please addon to this list if you encountered something new
-      else console.log("Some Caught Error:", err);
+      console.log("Some Caught Error:", err);
     });
 });
 
