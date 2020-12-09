@@ -5,16 +5,18 @@ import { host } from '../common.js';
 
 // MISSING FEATURES
 // 1. Input Validation
-// 2. Storing of user login status in a session attribute, managed by localStorage (?)
-// 3. RBAC logic not implemented
+// 2. RBAC logic not implemented
+// 3. Improve on localStorage management logic
 
 class LoginForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: null,
-            password: null
-            //,userLoggedIn: false
+            password: null,
+            user: {
+                isLoggedIn: false,
+                name: null
+            }
         };
     }
 
@@ -27,12 +29,10 @@ class LoginForm extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
-        // Incomplete session state management code
-        // this.state.user = { username: this.state.username, password: this.state.password };
-        // alert(this.state.user.username + this.state.user.password)
-
+        console.log(this.state.password)
+        
         axios.post(host + '/authenticate', {
-            username: this.state.username,
+            username: this.state.name,
             password: this.state.password
         })
             .then((response) => {
@@ -41,20 +41,23 @@ class LoginForm extends React.Component {
                 // Otherwise, response.data.data will contain the error string instead, and user will be left on the login page
                 // This is a temporary workaround for authentication and will need to be modified for RBAC logic later (e.g. users, admins login)
                 if (response.data.data === 'Congrats') {
+
+                    // this.setState under the handleChange() does not completely save the state of the this.state.name value,
+                    // so it has to be re-set here
+                    let user = { user: {isLoggedIn: true, name: this.state.name} }
+
+                    // localStorage can only save strings, so convert the JSON object into strings
+                    localStorage.setItem("user", JSON.stringify(user));
+
+                    // Redirect when successful
                     window.location.href = '/dashboard';
+                } else {
+                    alert("Error: " + response.data.data)
                 }
             })
-
             .catch((error) => {
                 alert(error);
             });
-
-        // // set the state of the user
-        // this.setState({user: response.data});
-
-        // // store the user in localStorage
-        // localStorage.setItem('user', response.data)
-        // console.log(response.data)
     }
 
     render() {
@@ -65,45 +68,57 @@ class LoginForm extends React.Component {
             }
         };
 
-        // Incomplete session state management code
-        // if (this.state.userLoggedIn) {
-        //     return <Redirect to="/dashboard" ></Redirect>
+        // Logic to check if user is already logged in
+        // localStorage persists even when the browser window is closed
+        // If you want to test the behaviour without localStorage, clear your browser's cache
+        let user = {};
+        let loginStatus = false;
+    
+        if (JSON.parse(localStorage.getItem("user") !== null)) {
+            user = JSON.parse(localStorage.getItem("user"));
+            loginStatus = user.user.isLoggedIn;
+        }
 
-        // } else {
-        return (
-            <div className="container" style={{ containerStyle }}>
-                <div className="ui middle aligned center aligned grid">
-                    <div className="column" style={{ maxWidth: '450px' }}>
-                        <h2 className="ui teal image header">
-                            <div className="content">
-                                Guru or Goondu
+        // If user is already logged in, redirect them immediately, else they have to fill out the login form first
+        if (loginStatus) {
+            return (
+                window.location.href = '/dashboard'
+            )
+        } else {
+            return (
+                <div className="container" style={{ containerStyle }}>
+                    <div className="ui middle aligned center aligned grid">
+                        <div className="column" style={{ maxWidth: '450px' }}>
+                            <h2 className="ui teal image header">
+                                <div className="content">
+                                    Guru or Goondu
                         </div>
-                        </h2>
-                        <form className="ui large form">
-                            <div className="ui stacked segment">
-                                <div className="field">
-                                    <div className="ui left icon input">
-                                        <i className="user icon"></i>
-                                        <input type="text" name="username" placeholder="Username" onChange={this.handleChange} />
+                            </h2>
+                            <form className="ui large form">
+                                <div className="ui stacked segment">
+                                    <div className="field">
+                                        <div className="ui left icon input">
+                                            <i className="user icon"></i>
+                                            <input type="text" name="name" placeholder="Username" onChange={this.handleChange} />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="field">
-                                    <div className="ui left icon input">
-                                        <i className="lock icon"></i>
-                                        <input type="password" name="password" placeholder="Password" onChange={this.handleChange} />
+                                    <div className="field">
+                                        <div className="ui left icon input">
+                                            <i className="lock icon"></i>
+                                            <input type="password" name="password" placeholder="Password" onChange={this.handleChange} />
+                                        </div>
                                     </div>
+                                    <div className="ui fluid large teal submit button" onClick={this.handleSubmit}>Login</div>
                                 </div>
-                                <div className="ui fluid large teal submit button" onClick={this.handleSubmit}>Login</div>
+                            </form>
+                            <div className="ui message">
+                                New to us? <Link to="/register">Sign up</Link>
                             </div>
-                        </form>
-                        <div className="ui message">
-                            New to us? <Link to="/register">Sign up</Link>
                         </div>
                     </div>
                 </div>
-            </div>
-        );
-        // }
+            );
+        }
     }
 }
 

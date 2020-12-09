@@ -112,7 +112,6 @@ class DbService {
 
     } catch (error) {
       // Catch rejected promises (errors)
-      console.log(error);
 
       // If a promise is rejected above, logic gets passed to this catch block, so a return error statement 
       // is needed in order to pass the error string to server.js
