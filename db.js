@@ -31,6 +31,11 @@ class DbService {
     return joinTableQuery;
   }
 
+  intFormatter(id) {
+    const int = parseInt(id, 10);
+    return int;
+  }
+
   async getAllQuizzes() {
     try {
       return new Promise((resolve, reject) => {
@@ -48,12 +53,11 @@ class DbService {
 
   async getQuizById(id) {
     try {
-      id = parseInt(id, 10);
       return new Promise((resolve, reject) => {
         const query = `${this.joinTable()} WHERE quiz.quizId = ?;`;
         console.log(query);
 
-        connection.query(query, id, (err, results) => {
+        connection.query(query, this.intFormatter(id), (err, results) => {
           if (err) reject(err.message);
           else resolve(results);
         });
@@ -73,7 +77,6 @@ class DbService {
           query,
           [categoryId, title, desc, fiqPoints],
           (err, result) => {
-            // Checks the status of promise
             if (err) reject(err.message);
             else resolve(result);
           }
@@ -94,9 +97,6 @@ class DbService {
           [quizId, questionTitle, questionDesc],
           (err, result) => {
             if (!err) {
-              console.log(
-                `questions for quiz: ${quizId} are created. ${result.insertId}`
-              );
               resolve(result);
 
               var option = "";
@@ -115,13 +115,8 @@ class DbService {
                   secondQuery,
                   [quizId, result.insertId, option, optionDesc, isCorrect],
                   (err, result) => {
-                    if (!err) {
-                      console.log(
-                        `options for quiz: ${quizId} are created. ${result.insertId}`
-                      );
-                      console.log(result);
-                      resolve(result);
-                    } else console.log(err.message);
+                    if (!err) resolve(result);
+                    else reject(err.message);
                   }
                 );
               });
@@ -136,14 +131,13 @@ class DbService {
 
   async updateDetailsById(id, title, desc, fiqPoints, categoryId) {
     try {
-      id = parseInt(id, 10);
       return new Promise((resolve, reject) => {
         const query =
           "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, fiqPoints = ?  WHERE quizId = ?";
 
         connection.query(
           query,
-          [categoryId, title, desc, fiqPoints, id],
+          [categoryId, title, desc, fiqPoints, this.intFormatter(id)],
           (err, result) => {
             if (err) reject(err.message);
             resolve(result.affectedRows);
@@ -157,11 +151,10 @@ class DbService {
 
   async deleteQuizById(id) {
     try {
-      id = parseInt(id, 10);
       return new Promise((resolve, reject) => {
         const query = "DELETE FROM quiz WHERE quizId = ?";
 
-        connection.query(query, [id], (err, result) => {
+        connection.query(query, [this.intFormatter(id)], (err, result) => {
           if (err) reject(err.message);
           resolve(result.affectedRows);
         });

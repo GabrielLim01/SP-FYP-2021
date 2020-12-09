@@ -62,15 +62,6 @@ var quizObject = {
   ],
 };
 
-const str = JSON.stringify(quizObject, null, 4);
-
-app.get("/", (request, response) => {
-  response.json({
-    data: str,
-  });
-  console.log(quizObject);
-});
-
 // read
 app.get("/quizDashboard", (request, response) => {
   const db = dbService.getDbServiceInstance();
@@ -147,7 +138,6 @@ app.post("/createNew", (request, response) => {
       });
       createQuestion_result
         .then((data) => {
-          // questionObject can be accessed here :)
           console.log(data);
         })
         .catch((err) => console.log(err));
