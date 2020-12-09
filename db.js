@@ -25,12 +25,35 @@ class DbService {
     return instance;
   }
 
+  joinTable() {
+    const joinTableQuery =
+      "SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId INNER JOIN quiz_question_options ON quiz_question.quizQuestionId = quiz_question_options.quizQuestionId";
+    return joinTableQuery;
+  }
+
   async getAllQuizzes() {
     try {
       return new Promise((resolve, reject) => {
         const query = "SELECT * FROM quiz;";
 
         connection.query(query, (err, results) => {
+          if (err) reject(err.message);
+          else resolve(results);
+        });
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
+
+  async getQuizById(id) {
+    try {
+      id = parseInt(id, 10);
+      return new Promise((resolve, reject) => {
+        const query = `${this.joinTable()} WHERE quiz.quizId = ?;`;
+        console.log(query);
+
+        connection.query(query, id, (err, results) => {
           if (err) reject(err.message);
           else resolve(results);
         });
@@ -80,16 +103,17 @@ class DbService {
               var optionDesc = "";
               var isCorrect = true;
               const secondQuery =
-                "INSERT into quiz_question_options (quizQuestionId, optionTitle, optionDesc, correctAnswer) values (?,?,?,?);";
+                "INSERT into quiz_question_options (quizId, quizQuestionId, optionTitle, optionDesc, correctAnswer) values (?,?,?,?,?);";
 
               Object.entries(optionObject).forEach(([key, value]) => {
                 option = value.option;
                 optionDesc = value.optionDesc;
                 isCorrect = value.isCorrect;
+                console.log(quizId);
 
                 connection.query(
                   secondQuery,
-                  [result.insertId, option, optionDesc, isCorrect],
+                  [quizId, result.insertId, option, optionDesc, isCorrect],
                   (err, result) => {
                     if (!err) {
                       console.log(

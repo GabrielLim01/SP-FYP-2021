@@ -85,6 +85,20 @@ app.get("/quizDashboard", (request, response) => {
     .catch((err) => console.log(err));
 });
 
+app.get("/quiz/:id", (request, response) => {
+  const { id } = request.params;
+  const db = dbService.getDbServiceInstance();
+
+  const result = db.getQuizById(id);
+
+  result
+    .then((data) => {
+      console.log("Process was a success!");
+      response.json({ data: data });
+    })
+    .catch((err) => console.log(err));
+});
+
 // create
 app.post("/createNew", (request, response) => {
   const title = quizObject.quizTitle;
