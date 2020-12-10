@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Icon } from 'semantic-ui-react'
 import DashboardMenu from './DashboardMenu.js'
 
-class Dashboard extends React.Component {
+class Quizzes extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -31,16 +31,15 @@ class Dashboard extends React.Component {
         // if (loginStatus) {
         return (
             <div className="container">
-                <DashboardMenu page={'dashboard'}></DashboardMenu>
+                <DashboardMenu page={'quizzes'}></DashboardMenu>
 
                 <div className="ui middle aligned center aligned grid">
                     <div className="column" style={{ maxWidth: '450px', paddingTop: '100px' }}>
                         <h1 className="ui header">
                             <div className="content">
-                                Welcome, {this.state.user.name}!
+                                Select a quiz!
                         </div>
                         </h1>
-                        <h2>What would you like to play today?</h2>
                         <form className="ui large form">
                             <div className="ui stacked segment">
                                 <div className="field">
@@ -57,16 +56,7 @@ class Dashboard extends React.Component {
                         </form>
                     </div>
                 </div>
-
             </div>
-            /* <div className="container">
-                    <div className="ui middle aligned center aligned grid">
-                        <div className="column" style={{ maxWidth: '450px' }}>
-                            <h1>Welcome, {user.user.name}!</h1>
-                            <div className="ui fluid large teal submit button" onClick={this.handleSubmit}>Logout</div>
-                        </div>
-                    </div>
-                </div> */
         );
         // } else {
         //     return (
@@ -77,4 +67,4 @@ class Dashboard extends React.Component {
 }
 
 
-export default Dashboard;
+export default Quizzes;

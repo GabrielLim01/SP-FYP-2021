@@ -81,12 +81,12 @@ class RegistrationForm extends React.Component {
         return (
             <div className="container" style={containerStyle}>
                 <div className="ui middle aligned center aligned grid">
-                    <div className="column" style={{ maxWidth: '450px' }}>
-                        <h2 className="ui teal image header">
+                    <div className="column" style={{ maxWidth: '450px', paddingTop: '100px'}}>
+                        <h1 className="ui teal image header">
                             <div className="content">
                                 Guru or Goondu
                         </div>
-                        </h2>
+                        </h1>
                         <form className="ui large form">
                             <div className="ui stacked segment">
                                 <div className="field">
