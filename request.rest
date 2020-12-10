@@ -16,17 +16,34 @@ Content-Type: application/json
 DELETE  http://localhost:9000/delete/1
 
 ###
-PATCH  http://localhost:9000/update/11
+PATCH  http://localhost:9000/update/18
 Content-Type: application/json
 
 {
     "categoryId": 3,
     "title": "peepeepoopoo",
     "desc": "sadsadasd",
-    "fiqPoints": 500
+    "fiqPoints": 500,
+    "quizQuestion": [{
+        "questionTitle": "Question 1",
+        "questionDesc": "",
+        "options": [{
+            "option": "Option xyz",
+            "optionDesc": "",
+            "isCorrect": true
+        }]
+    },{
+        "questionTitle": "Question 2",
+        "questionDesc": "",
+        "options": [{
+            "option": "Option xyz",
+            "optionDesc": "",
+            "isCorrect": true
+        }]
+    }]
     
 }
 
 ###
-GET http://localhost:9000/quiz/6
+GET http://localhost:9000/quiz/15
 

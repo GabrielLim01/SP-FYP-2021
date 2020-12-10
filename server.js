@@ -83,13 +83,14 @@ app.get("/quiz/:id", (request, response) => {
 
       quizObject = JSON.parse(JSON.stringify(data));
       quizObject.forEach((question) => {
-        console.log(question);
         questionObject = JSON.parse(question.questionObject);
-        // console.log(questionObject.options);
       });
-      // response.json({ data: JSONobject.questionObject });
+      return response.json({ data: data });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      // return response.status(500).send(err);
+      console.log(err);
+    });
 });
 
 // create
@@ -108,7 +109,6 @@ app.post("/createNew", (request, response) => {
   );
 
   createQuiz_result
-    // this runs if promise is resolved
     .then((data) => {
       response.json({
         insertId: data.insertId,
@@ -118,22 +118,21 @@ app.post("/createNew", (request, response) => {
         FIQ_Points: fiqPoints,
       });
       console.log("Quiz Created");
-      // Next phase
       const quizId = data.insertId;
       var createQuestion_result = new Promise((resolve, reject) => {});
 
       const questionObject = quizObject.quizQuestion;
-      console.log(typeof questionObject);
       questionObject.forEach((question) => {
-        console.log(question);
         createQuestion_result = db.createQuizQuestion(
           quizId,
           JSON.stringify(question)
         );
       });
-      createQuestion_result.catch((err) => console.log(err));
+      createQuestion_result.catch((err) =>
+        console.log("Some Caught Error:", err)
+      );
     })
-    // this runs if promise is rejected
+
     .catch((err) => {
       // Please addon to this list if you encountered something new
       console.log("Some Caught Error:", err);
@@ -148,15 +147,35 @@ app.patch("/update/:id", (request, response) => {
   const desc = request.body.desc;
   const fiqPoints = request.body.fiqPoints;
   const categoryId = request.body.categoryId;
+  const quizQuestionObject = request.body.quizQuestion;
+  console.log(quizQuestionObject);
 
   const db = dbService.getDbServiceInstance();
 
-  const result = db.updateDetailsById(id, title, desc, fiqPoints, categoryId);
+  const result = db.updateQuizDetailsById(
+    id,
+    title,
+    desc,
+    fiqPoints,
+    categoryId
+  );
 
   result
     .then((data) => {
       console.log("Process was a success!");
       response.json({ data: data });
+
+      // phase 2
+      var updateQuestions_result = new Promise((resolve, reject) => {});
+      quizQuestionObject.forEach((question) => {
+        updateQuestions_result = db.updateQuestionDetailsById(
+          id,
+          JSON.stringify(question)
+        );
+      });
+      updateQuestions_result.catch((err) =>
+        console.log("Some Caught Error:", err)
+      );
     })
     .catch((err) => console.log(err));
 });

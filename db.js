@@ -25,7 +25,7 @@ class DbService {
     return instance;
   }
 
-  joinQuizTable() {
+  joinQuizTableQuery() {
     const joinTableQuery =
       "SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId";
     return joinTableQuery;
@@ -41,9 +41,9 @@ class DbService {
       return new Promise((resolve, reject) => {
         const query = "SELECT * FROM quiz;";
 
-        connection.query(query, (err, results) => {
-          if (err) reject(err.message);
-          else resolve(results);
+        connection.query(query, (err, result) => {
+          if (!err) resolve(result);
+          else reject(err.message);
         });
       });
     } catch (e) {
@@ -54,11 +54,16 @@ class DbService {
   async getQuizById(id) {
     try {
       return new Promise((resolve, reject) => {
-        const query = `${this.joinQuizTable()} WHERE quiz.quizId = ?;`;
+        const query = `${this.joinQuizTableQuery()} WHERE quiz.quizId = ?;`;
 
-        connection.query(query, this.intFormatter(id), (err, results) => {
-          if (err) reject(err.message);
-          else resolve(results);
+        connection.query(query, this.intFormatter(id), (err, result) => {
+          if (!err) {
+            resolve(result);
+            console.log(result);
+          } else {
+            reject(err.message);
+            console.log(err.message);
+          }
         });
       });
     } catch (e) {
@@ -71,13 +76,14 @@ class DbService {
       return new Promise((resolve, reject) => {
         const query =
           "INSERT INTO quiz (categoryId, quizName, quizDesc, fiqPoints) VALUES (?,?,?,?);";
+        // console.log(title);
 
         connection.query(
           query,
           [categoryId, title, desc, fiqPoints],
           (err, result) => {
-            if (err) reject(err.message);
-            else resolve(result);
+            if (!err) resolve(result);
+            else reject(err.message);
           }
         );
       });
@@ -93,9 +99,9 @@ class DbService {
           "INSERT into quiz_question (quizId, questionObject) values (?,?);";
         connection.query(query, [quizId, question], (err, result) => {
           if (!err) {
-            console.log("Questions created");
+            console.log("Questions created. quizQuestionId:", result.insertId);
             resolve(result);
-          } else console.log("error somewhere", err);
+          } else reject(err.message);
         });
       });
     } catch (e) {
@@ -103,18 +109,40 @@ class DbService {
     }
   }
 
-  async updateDetailsById(id, title, desc, fiqPoints, categoryId) {
+  async updateQuizDetailsById(id, title, desc, fiqPoints, categoryId) {
     try {
       return new Promise((resolve, reject) => {
         const query =
           "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, fiqPoints = ?  WHERE quizId = ?";
-
         connection.query(
           query,
           [categoryId, title, desc, fiqPoints, this.intFormatter(id)],
           (err, result) => {
-            if (err) reject(err.message);
-            resolve(result.affectedRows);
+            if (!err) {
+              resolve(result.affectedRows);
+            } else reject(err.message);
+          }
+        );
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
+
+  async updateQuestionDetailsById(id, questionObject) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query =
+          "UPDATE quiz_question SET questionObject = ? WHERE quizId = ?";
+
+        connection.query(
+          query,
+          [questionObject, this.intFormatter(id)],
+          (err, result) => {
+            if (!err) {
+              console.log("Updated questions", result);
+              resolve(result.affectedRows);
+            } else reject(err.message);
           }
         );
       });
