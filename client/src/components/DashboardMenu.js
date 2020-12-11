@@ -17,7 +17,7 @@ export default class DashboardMenu extends Component {
 
     handleLogout = (event) => {
         event.preventDefault();
-        sessionStorage.removeItem('user');
+        sessionStorage.removeItem("user");
         window.location.href = '/';
     }
 

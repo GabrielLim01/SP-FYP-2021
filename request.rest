@@ -45,5 +45,22 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:9000/quiz/4
+
+POST http://localhost:9000/register 
+Content-Type: application/json
+
+{
+    "name": "Jason Teo", 
+    "password": "12345678"
+}
+
+###
+
+POST http://localhost:9000/authenticate 
+Content-Type: application/json
+
+{
+    "username": "Jason Teo", 
+    "password": "12345678"
+}
 

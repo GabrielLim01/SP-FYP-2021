@@ -2,6 +2,8 @@ const express = require("express");
 
 const app = express();
 
+const Boom = require("boom");
+const bcrypt = require("bcrypt");
 const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
@@ -119,7 +121,7 @@ app.post("/createNew", (request, response) => {
       });
       console.log("Quiz Created");
       const quizId = data.insertId;
-      var createQuizResult = new Promise((resolve, reject) => {});
+      var createQuizResult = new Promise((resolve, reject) => { });
 
       const questionObject = quizObject.questions;
       console.log(typeof questionObject);
@@ -165,7 +167,7 @@ app.patch("/update/:id", (request, response) => {
       response.json({ data: data });
 
       // phase 2
-      var updateQuestionsResult = new Promise((resolve, reject) => {});
+      var updateQuestionsResult = new Promise((resolve, reject) => { });
       quizQuestionObject.forEach((question) => {
         updateQuestionsResult = db.updateQuestionDetailsById(
           id,
@@ -193,4 +195,50 @@ app.delete("/delete/:id", (request, response) => {
       response.json({ data: data });
     })
     .catch((err) => console.log(err));
+});
+
+// POST /register
+app.post("/register", async (req, res) => {
+  try {
+    const name = req.body.name;
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hashSync(req.body.password, salt);
+
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.insertNewUser(name, hashedPassword);
+
+    result.then((data) => res.json({ data: data }));
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send();
+  }
+});
+
+// POST /authenticate
+app.post("/authenticate", (req, res) => {
+  try {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    const db = dbService.getDbServiceInstance();
+
+    // const result is a Promise, not raw JSON data
+    const result = db.authenticate(username, password);
+
+    // In order to access the data of the Promise, you have to do a .then((data => console.log(data))),
+    // then use res.json to send the data back to the front-end (axios.POST)
+    result.then((data) => {
+      res.json({ data: data });
+    })
+      // should not be invoked normally
+      .catch((err) => {
+        console.log("Server.js error: " + err);
+        res.json(Boom.notFound("Invalid Request"));
+      });
+
+  } catch (err) {
+    res.json(Boom.notFound("Invalid Request"));
+  }
 });

@@ -58,7 +58,7 @@ class Registration extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
-        axios.post(host + '/user', {
+        axios.post(host + '/register', {
             name: this.state.username,
             password: this.state.password
         })
