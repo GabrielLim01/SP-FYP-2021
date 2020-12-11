@@ -281,7 +281,7 @@ class DbService {
         const query = "DELETE FROM category WHERE categoryId = ?";
 
         connection.query(query, [this.intFormatter(id)], (err, result) => {
-          if (err) reject(err.message);
+          if (err) return reject(err.message);
           resolve(result.affectedRows);
         });
       });

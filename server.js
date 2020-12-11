@@ -281,10 +281,11 @@ app.get("/getAllCategories", async (request, response) => {
 //update
 //delete
 app.delete("/deleteCategory/:id", async (request, response) => {
-  const { idURL } = request.params;
+  //const { idURL } = request.params;
   // convert id to integer
-
-  console.log(id);
+  const id = parseInt(
+    request.path.substring(request.path.lastIndexOf("/") + 1)
+  );
 
   const db = dbService.getDbServiceInstance();
 
