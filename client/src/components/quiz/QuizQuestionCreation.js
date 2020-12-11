@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 const QuizQuestionCreation = () => (
     <div className="container">
         <div className="ui middle aligned center aligned grid">
-            {/* <div className="column" style={{ maxWidth: '450px', paddingTop: '100px' }}>
+            <div className="column" style={{ maxWidth: '450px', paddingTop: '100px' }}>
                 <h1 className="ui teal image header">
                     <div className="content">
                         Create your quiz!
@@ -36,31 +35,7 @@ const QuizQuestionCreation = () => (
                         </div>
                     </div>
                 </form>
-            </div> */}
-
-            <div class="ui doubling three column grid">
-                <div class="column">
-                    <div class="ui segment">Content</div>
-                </div>
-                <div class="column">
-                    <div class="ui segment">Content</div>
-                </div>
-                <div class="column"><div class="ui segment">Content</div>
-                </div>
-                <div class="column"><div class="ui segment">Content</div>
-                </div>
-                <div class="column"><div class="ui segment">Content</div>
-                </div>
-                <div class="column"><div class="ui segment">Content</div>
-                </div>
             </div>
-            {/* <div className="column" style={{ maxWidth: '450px', paddingTop: '100px' }}>
-                <h1 className="ui teal image header">
-                    <div className="content">
-                        Create your quiz!
-                        </div>
-                </h1>
-            </div> */}
         </div>
     </div >
 );

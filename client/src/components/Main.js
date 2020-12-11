@@ -9,7 +9,7 @@ import QuizCategorySelection from './quiz/QuizCategorySelection.js';
 import QuizSelection from './quiz/QuizSelection.js';
 import QuizCreation from './quiz/QuizCreation.js';
 
-// Should make quiz redirecting more dynamic
+// TO-DO - Establish a more dynamic component/page routing structure
 
 const Main = () => {
   return (

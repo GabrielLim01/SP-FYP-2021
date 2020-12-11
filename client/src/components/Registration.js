@@ -1,8 +1,11 @@
 import React from 'react';
 import axios from 'axios';
-import { minUsernameLength, minPasswordLength, host } from '../common.js';
+import { containerStyle, minUsernameLength, minPasswordLength, host } from '../common.js';
 
-// BUG - Registration will proceed even if confirmPassword field is not filled in
+// BUGS 
+// 1. Registration will proceed even if confirmPassword field is not filled in
+// 2. Error messages for each input field will default to display an error for 'username' since I cannot figure out
+// how to insert the dynamic value.name property in the middle of the errors object properties
 
 // MISSING FEATURES
 // 1. Additional input fields (Role, Age Group, Email) and appropriate validation
@@ -71,12 +74,11 @@ class Registration extends React.Component {
     render() {
         const { errors } = this.state;
 
-        const containerStyle = {
-            container: {
-                backgroundColor: '#DADADA',
-                height: '100%'
-            }
-        };
+        const inputs = [
+            { type: 'text', icon: 'user icon', name: 'username', placeholder: 'Username' },
+            { type: 'password', icon: 'lock icon', name: 'password', placeholder: 'Password' },
+            { type: 'password', icon: 'lock icon', name: 'confirmPassword', placeholder: 'Confirm Password' }
+        ];
 
         return (
             <div className="container" style={containerStyle}>
@@ -89,28 +91,18 @@ class Registration extends React.Component {
                         </h1>
                         <form className="ui large form">
                             <div className="ui stacked segment">
-                                <div className="field">
-                                    <div className="ui left icon input">
-                                        <i className="user icon"></i>
-                                        <input type="text" name="username" placeholder="Username" onChange={this.handleChange} noValidate />
-                                    </div>
-                                    {errors.username.length > 0 && <span className='error' style={{ color: 'red' }}>{errors.username}</span>}
-                                </div>
-                                <div className="field">
-                                    <div className="ui left icon input">
-                                        <i className="lock icon"></i>
-                                        <input type="password" name="password" placeholder="Password" onChange={this.handleChange} noValidate />
-                                    </div>
-                                    {errors.password.length > 0 && <span className='error' style={{ color: 'red' }}>{errors.password}</span>}
-                                </div>
-                                <div className="field">
-                                    <div className="ui left icon input">
-                                        <i className="lock icon"></i>
-                                        <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={this.handleChange} noValidate />
-                                    </div>
-                                    {errors.confirmPassword.length > 0 && <span className='error' style={{ color: 'red' }}>{errors.confirmPassword}</span>}
-                                </div>
-                                <div className="ui fluid large teal submit button" onClick={this.handleSubmit} noValidate>Register</div>
+                                {inputs.map((value, index) => {
+                                    return (
+                                        <div className="field" key={index}>
+                                            <div className="ui left icon input">
+                                                <i className={value.icon}></i>
+                                                <input type={value.type} name={value.name} placeholder={value.placeholder} onChange={this.handleChange} />
+                                            </div>
+                                            {errors.username.length > 0 && <span className='error' style={{ color: 'red' }}>{errors.username}</span>}
+                                        </div>
+                                    )
+                                })}
+                                <div className="ui fluid large teal submit button" onClick={this.handleSubmit}>Register</div>
                             </div>
                         </form>
                     </div>

@@ -1,12 +1,15 @@
 import React from 'react';
 import axios from 'axios';
 import { Link } from "react-router-dom";
-import { host } from '../common.js';
+import { host, containerStyle } from '../common.js';
+import verifyLogin from './verifyLogin.js'
 
 // MISSING FEATURES
-// 1. Input Validation
+// 1. Input validation
 // 2. RBAC logic not implemented
-// 3. Improve sessionStorage management logic
+
+// POSSIBLE ISSUES
+// 1. Break down mutable 'user' object into immutable data types, e.g. 'username'and 'userLoggedIn'
 
 class Login extends React.Component {
     constructor(props) {
@@ -14,8 +17,8 @@ class Login extends React.Component {
         this.state = {
             password: null,
             user: {
-                isLoggedIn: false,
-                name: null
+                name: null,
+                isLoggedIn: false
             }
         };
     }
@@ -37,19 +40,19 @@ class Login extends React.Component {
         })
             .then((response) => {
 
-                // If response.data.data has the access token string, it means the user is authenticated, so redirect them to dashboard
-                // Otherwise, response.data.data will contain the error string instead, and user will be left on the login page
-                // This is a temporary workaround for authentication and will need to be modified for RBAC logic later (e.g. users, admins login)
+                // If response.data.data has an access token string, it means the user is authenticated
+                // Otherwise, response.data.data will contain an error string instead, and the user will be left on the login page
+                // This is a temporary workaround for authentication and will need to be modified for RBAC logic later (e.g. regular users, admins)
                 if (response.data.data === 'Congrats') {
 
-                    // this.setState under the handleChange() does not completely save the state of the this.state.name value,
+                    // this.setState under the handleChange() does not permanently save the state of the this.state.name value,
                     // so it has to be re-set here
                     let user = { user: { isLoggedIn: true, name: this.state.name } }
 
-                    // sessionStorage can only save strings, so convert the JSON object into strings
+                    // sessionStorage can only save strings, so convert the JSON object into strings first
                     sessionStorage.setItem("user", JSON.stringify(user));
 
-                    // Redirect when successful
+                    // Redirect the user to dashboard when successful
                     window.location.href = '/dashboard';
                 } else {
                     alert("Error: " + response.data.data)
@@ -61,30 +64,14 @@ class Login extends React.Component {
     }
 
     render() {
-        const containerStyle = {
-            container: {
-                backgroundColor: '#DADADA',
-                height: '100%'
-            }
-        };
-
-        // Logic to check if user is already logged in
-        let user = {};
-        let loginStatus = false;
-
-        if (JSON.parse(sessionStorage.getItem("user") !== null)) {
-            user = JSON.parse(sessionStorage.getItem("user"));
-            loginStatus = user.user.isLoggedIn;
-        }
-
         // If user is already logged in, redirect them immediately, otherwise they have to fill in the login form first
-        if (loginStatus) {
+        if (verifyLogin()) {
             return (
                 window.location.href = '/dashboard'
             )
         } else {
             return (
-                <div className="container" style={{ containerStyle }}>
+                <div className="container" style={containerStyle}>
                     <div className="ui middle aligned center aligned grid">
                         <div className="column" style={{ maxWidth: '450px', paddingTop: '100px' }}>
                             <h1 className="ui teal image header">

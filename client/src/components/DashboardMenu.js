@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
-import { Dropdown, Input, Menu } from 'semantic-ui-react'
+import React, { Component } from 'react';
+import { Dropdown, Input, Menu } from 'semantic-ui-react';
+import { menuItems } from '../common.js';
 
 export default class DashboardMenu extends Component {
     state = { activeItem: this.props.page }
@@ -7,7 +8,7 @@ export default class DashboardMenu extends Component {
     handleItemClick = (e, { name }) => {
         this.setState({ activeItem: name })
 
-        if (name !== 'Home'){
+        if (name !== 'home') {
             window.location.href = `/${name}`;
         } else {
             window.location.href = '/dashboard';
@@ -16,7 +17,7 @@ export default class DashboardMenu extends Component {
 
     handleLogout = (event) => {
         event.preventDefault();
-        sessionStorage.removeItem("user");
+        sessionStorage.removeItem('user');
         window.location.href = '/';
     }
 
@@ -28,21 +29,15 @@ export default class DashboardMenu extends Component {
                 <Menu.Item
                     name='Guru or Goondu'
                 />
-                <Menu.Item
-                    name='Home'
-                    active={activeItem === 'dashboard'}
-                    onClick={this.handleItemClick}
-                />
-                <Menu.Item
-                    name='quizzes'
-                    active={activeItem === 'quizzes'}
-                    onClick={this.handleItemClick}
-                />
-                <Menu.Item
-                    name='quests'
-                    active={activeItem === 'quests'}
-                    onClick={this.handleItemClick}
-                />
+                {menuItems.map((value, index) => {
+                    return (
+                        <Menu.Item
+                            key={index}
+                            name={value.name}
+                            active={activeItem === value.path}
+                            onClick={this.handleItemClick} />
+                    )
+                })}
                 <Menu.Menu position='right'>
                     <Menu.Item>
                         <Input icon='search' placeholder='Search...' />
