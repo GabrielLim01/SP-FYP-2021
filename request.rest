@@ -1,4 +1,4 @@
-http://localhost:9000/quizDashboard
+GET http://localhost:9000/quizDashboard
 
 ###
 POST http://localhost:9000/createNew
@@ -64,3 +64,20 @@ Content-Type: application/json
     "password": "12345678"
 }
 
+###
+
+GET http://localhost:9000/getAllCategories
+
+###
+
+POST http://localhost:9000/createCategory
+Content-Type: application/json
+
+{
+    "catName":"Intellectual Property",
+    "catDesc":"IP for short."
+    
+}
+
+###
+DELETE  http://localhost:9000/deleteCategory/1.23

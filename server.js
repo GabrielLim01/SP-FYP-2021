@@ -121,7 +121,7 @@ app.post("/createNew", (request, response) => {
       });
       console.log("Quiz Created");
       const quizId = data.insertId;
-      var createQuizResult = new Promise((resolve, reject) => { });
+      var createQuizResult = new Promise((resolve, reject) => {});
 
       const questionObject = quizObject.questions;
       console.log(typeof questionObject);
@@ -167,7 +167,7 @@ app.patch("/update/:id", (request, response) => {
       response.json({ data: data });
 
       // phase 2
-      var updateQuestionsResult = new Promise((resolve, reject) => { });
+      var updateQuestionsResult = new Promise((resolve, reject) => {});
       quizQuestionObject.forEach((question) => {
         updateQuestionsResult = db.updateQuestionDetailsById(
           id,
@@ -198,18 +198,17 @@ app.delete("/delete/:id", (request, response) => {
 });
 
 // POST /register
-app.post("/register", async (req, res) => {
+app.post("/register", async (request, response) => {
   try {
-    const name = req.body.name;
+    const name = request.body.name;
     const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hashSync(req.body.password, salt);
+    const hashedPassword = await bcrypt.hashSync(request.body.password, salt);
 
     const db = dbService.getDbServiceInstance();
 
     const result = db.insertNewUser(name, hashedPassword);
 
-    result.then((data) => res.json({ data: data }));
-
+    result.then((data) => response.json({ data: data }));
   } catch (error) {
     console.log(error);
     res.status(500).send();
@@ -217,10 +216,10 @@ app.post("/register", async (req, res) => {
 });
 
 // POST /authenticate
-app.post("/authenticate", (req, res) => {
+app.post("/authenticate", (request, response) => {
   try {
-    const username = req.body.username;
-    const password = req.body.password;
+    const username = request.body.username;
+    const password = request.body.password;
 
     const db = dbService.getDbServiceInstance();
 
@@ -229,16 +228,72 @@ app.post("/authenticate", (req, res) => {
 
     // In order to access the data of the Promise, you have to do a .then((data => console.log(data))),
     // then use res.json to send the data back to the front-end (axios.POST)
-    result.then((data) => {
-      res.json({ data: data });
-    })
-      // should not be invoked normally
+    result
+      .then((data) => {
+        response.json({ data: data });
+      })
+
       .catch((err) => {
         console.log("Server.js error: " + err);
-        res.json(Boom.notFound("Invalid Request"));
+        response.json(Boom.notFound("Invalid Request"));
       });
-
   } catch (err) {
-    res.json(Boom.notFound("Invalid Request"));
+    response.json(Boom.notFound("Invalid Request"));
   }
+});
+
+//create
+app.post("/createCategory", async (request, response) => {
+  try {
+    const categoryName = request.body.catName;
+    const categoryDesc = request.body.catDesc;
+
+    const db = dbService.getDbServiceInstance();
+    let result = db.createCategory(categoryName, categoryDesc);
+
+    result
+      .then((data) => {
+        response.json({ data: data });
+      })
+
+      .catch((err) => {
+        console.log(`Error creating category: ${categoryName}`, err);
+        response.json(Boom.notFound("Invalid Request"));
+      });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send();
+  }
+});
+//read
+app.get("/getAllCategories", async (request, response) => {
+  const db = dbService.getDbServiceInstance();
+
+  const result = db.getAllCategories();
+
+  result
+    .then((data) => {
+      console.log("Process was a success!");
+      response.json({ data: data });
+    })
+    .catch((err) => console.log(err));
+});
+//update
+//delete
+app.delete("/deleteCategory/:id", async (request, response) => {
+  const { idURL } = request.params;
+  // convert id to integer
+
+  console.log(id);
+
+  const db = dbService.getDbServiceInstance();
+
+  const result = db.deleteCategoryById(id);
+
+  result
+    .then((data) => {
+      console.log("Process was a success!");
+      response.json({ data: data });
+    })
+    .catch((err) => console.log(err));
 });
