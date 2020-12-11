@@ -21,7 +21,7 @@ var quizObject = {
   quizCategoryId: 1,
   quizDesc: "",
   fiqPoints: 100,
-  quizQuestion: [
+  questions: [
     {
       questionTitle: "Question 1",
       questionDesc: "",
@@ -119,18 +119,17 @@ app.post("/createNew", (request, response) => {
       });
       console.log("Quiz Created");
       const quizId = data.insertId;
-      var createQuestion_result = new Promise((resolve, reject) => {});
+      var createQuizResult = new Promise((resolve, reject) => {});
 
-      const questionObject = quizObject.quizQuestion;
+      const questionObject = quizObject.questions;
+      console.log(typeof questionObject);
       questionObject.forEach((question) => {
-        createQuestion_result = db.createQuizQuestion(
+        createQuizResult = db.createQuizQuestion(
           quizId,
           JSON.stringify(question)
         );
       });
-      createQuestion_result.catch((err) =>
-        console.log("Some Caught Error:", err)
-      );
+      createQuizResult.catch((err) => console.log("Some Caught Error:", err));
     })
 
     .catch((err) => {
@@ -166,14 +165,14 @@ app.patch("/update/:id", (request, response) => {
       response.json({ data: data });
 
       // phase 2
-      var updateQuestions_result = new Promise((resolve, reject) => {});
+      var updateQuestionsResult = new Promise((resolve, reject) => {});
       quizQuestionObject.forEach((question) => {
-        updateQuestions_result = db.updateQuestionDetailsById(
+        updateQuestionsResult = db.updateQuestionDetailsById(
           id,
           JSON.stringify(question)
         );
       });
-      updateQuestions_result.catch((err) =>
+      updateQuestionsResult.catch((err) =>
         console.log("Some Caught Error:", err)
       );
     })

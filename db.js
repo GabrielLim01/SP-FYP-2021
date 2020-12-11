@@ -19,16 +19,13 @@ connection.connect((err) => {
   console.log("Connection Successful!");
 });
 
+const joinQuizTableQuery =
+  "SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId";
+
 class DbService {
   static getDbServiceInstance() {
     if (!instance) instance = new DbService();
     return instance;
-  }
-
-  joinQuizTableQuery() {
-    const joinTableQuery =
-      "SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId";
-    return joinTableQuery;
   }
 
   intFormatter(id) {
@@ -42,8 +39,8 @@ class DbService {
         const query = "SELECT * FROM quiz;";
 
         connection.query(query, (err, result) => {
-          if (!err) resolve(result);
-          else reject(err.message);
+          if (err) return reject(result);
+          resolve(err.message);
         });
       });
     } catch (e) {
@@ -54,16 +51,11 @@ class DbService {
   async getQuizById(id) {
     try {
       return new Promise((resolve, reject) => {
-        const query = `${this.joinQuizTableQuery()} WHERE quiz.quizId = ?;`;
+        const query = `${joinQuizTableQuery} WHERE quiz.quizId = ?;`;
 
         connection.query(query, this.intFormatter(id), (err, result) => {
-          if (!err) {
-            resolve(result);
-            console.log(result);
-          } else {
-            reject(err.message);
-            console.log(err.message);
-          }
+          if (err) return reject(err.message);
+          resolve(result);
         });
       });
     } catch (e) {
@@ -82,8 +74,8 @@ class DbService {
           query,
           [categoryId, title, desc, fiqPoints],
           (err, result) => {
-            if (!err) resolve(result);
-            else reject(err.message);
+            if (err) return reject(err.message);
+            resolve(result);
           }
         );
       });
@@ -98,10 +90,11 @@ class DbService {
         const query =
           "INSERT into quiz_question (quizId, questionObject) values (?,?);";
         connection.query(query, [quizId, question], (err, result) => {
-          if (!err) {
+          if (err) reject(err.message);
+          else {
             console.log("Questions created. quizQuestionId:", result.insertId);
             resolve(result);
-          } else reject(err.message);
+          }
         });
       });
     } catch (e) {
@@ -118,9 +111,8 @@ class DbService {
           query,
           [categoryId, title, desc, fiqPoints, this.intFormatter(id)],
           (err, result) => {
-            if (!err) {
-              resolve(result.affectedRows);
-            } else reject(err.message);
+            if (err) return reject(err.message);
+            resolve(result.affectedRows);
           }
         );
       });
@@ -139,10 +131,11 @@ class DbService {
           query,
           [questionObject, this.intFormatter(id)],
           (err, result) => {
-            if (!err) {
+            if (err) reject(err.message);
+            else {
               console.log("Updated questions", result);
               resolve(result.affectedRows);
-            } else reject(err.message);
+            }
           }
         );
       });
