@@ -8,7 +8,7 @@ import { host } from '../common.js';
 // 2. RBAC logic not implemented
 // 3. Improve sessionStorage management logic
 
-class LoginForm extends React.Component {
+class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -30,7 +30,7 @@ class LoginForm extends React.Component {
         event.preventDefault();
 
         console.log(this.state.password)
-        
+
         axios.post(host + '/authenticate', {
             username: this.state.name,
             password: this.state.password
@@ -44,7 +44,7 @@ class LoginForm extends React.Component {
 
                     // this.setState under the handleChange() does not completely save the state of the this.state.name value,
                     // so it has to be re-set here
-                    let user = { user: {isLoggedIn: true, name: this.state.name} }
+                    let user = { user: { isLoggedIn: true, name: this.state.name } }
 
                     // sessionStorage can only save strings, so convert the JSON object into strings
                     sessionStorage.setItem("user", JSON.stringify(user));
@@ -71,13 +71,13 @@ class LoginForm extends React.Component {
         // Logic to check if user is already logged in
         let user = {};
         let loginStatus = false;
-    
+
         if (JSON.parse(sessionStorage.getItem("user") !== null)) {
             user = JSON.parse(sessionStorage.getItem("user"));
             loginStatus = user.user.isLoggedIn;
         }
 
-        // If user is already logged in, redirect them immediately, else they have to fill out the login form first
+        // If user is already logged in, redirect them immediately, otherwise they have to fill in the login form first
         if (loginStatus) {
             return (
                 window.location.href = '/dashboard'
@@ -121,4 +121,4 @@ class LoginForm extends React.Component {
 }
 
 
-export default LoginForm;
+export default Login;

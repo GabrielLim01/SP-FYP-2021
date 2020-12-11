@@ -1,8 +1,13 @@
 import React from 'react';
-import { Button, Icon } from 'semantic-ui-react'
-import DashboardMenu from './DashboardMenu.js'
+import { Button } from 'semantic-ui-react'
+import DashboardMenu from '../DashboardMenu.js'
 
-class Quizzes extends React.Component {
+// TO-DO - Make component more dynamic by appending the name of the previous button clicked before the /categories
+// E.g. if 'quizzes' was clicked, URL should be /quizzes/categories
+// Then append the category name onto the back of the URL when a category is chosen
+// E.g. User clicked on 'technology' -> URl should be /quizzes/technology
+
+class QuizCategorySelection extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -12,9 +17,11 @@ class Quizzes extends React.Component {
         };
     }
 
-    handleClick = (event, {name}) => {
+    handleClick = (event, { name }) => {
         event.preventDefault();
-        window.location.href = `/${name}`;
+        const lowercaseName = name.toLowerCase();
+        // hardcoded for now
+        window.location.href = `/quizzes/${lowercaseName}`;
     }
 
     render() {
@@ -29,6 +36,15 @@ class Quizzes extends React.Component {
         // }
 
         // if (loginStatus) {
+
+
+        // Array of categories
+        const categories = ['Technology', 'Lifestyle', 'Finance'];
+
+
+        // TO-DO Front-end logic to populate categories array dynamically
+        // axios.get{ ... }
+
         return (
             <div className="container">
                 <DashboardMenu page={'quizzes'}></DashboardMenu>
@@ -37,21 +53,14 @@ class Quizzes extends React.Component {
                     <div className="column" style={{ maxWidth: '450px', paddingTop: '100px' }}>
                         <h1 className="ui header">
                             <div className="content">
-                                Select a quiz!
+                                Select a category!
                         </div>
                         </h1>
                         <form className="ui large form">
                             <div className="ui stacked segment">
-                                <div className="field">
-                                    <Button icon labelPosition='left' className='fluid large teal' name='quizzes' onClick={this.handleClick}>
-                                        <Icon name='clipboard' size='large' onClick={this.handleClick}/>Quizzes
-                                    </Button>
-                                </div>
-                                <div className="field">
-                                    <Button icon labelPosition='left' className='fluid large teal' name='quests' onClick={this.handleClick}>
-                                        <Icon name='exclamation' size='large' />Quests
-                                    </Button>
-                                </div>
+                                {categories.map((value) => {
+                                    return <div className="field"><Button icon labelPosition='left' className='fluid large teal' name={value} onClick={this.handleClick}>{value}</Button></div>
+                                })}
                             </div>
                         </form>
                     </div>
@@ -67,4 +76,4 @@ class Quizzes extends React.Component {
 }
 
 
-export default Quizzes;
+export default QuizCategorySelection;

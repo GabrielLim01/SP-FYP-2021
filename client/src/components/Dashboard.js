@@ -12,7 +12,7 @@ class Dashboard extends React.Component {
         };
     }
 
-    handleClick = (event, {name}) => {
+    handleClick = (event, { name }) => {
         event.preventDefault();
         window.location.href = `/${name}`;
     }
@@ -45,7 +45,7 @@ class Dashboard extends React.Component {
                             <div className="ui stacked segment">
                                 <div className="field">
                                     <Button icon labelPosition='left' className='fluid large teal' name='quizzes' onClick={this.handleClick}>
-                                        <Icon name='clipboard' size='large' onClick={this.handleClick}/>Quizzes
+                                        <Icon name='clipboard' size='large' />Quizzes
                                     </Button>
                                 </div>
                                 <div className="field">
@@ -57,16 +57,7 @@ class Dashboard extends React.Component {
                         </form>
                     </div>
                 </div>
-
             </div>
-            /* <div className="container">
-                    <div className="ui middle aligned center aligned grid">
-                        <div className="column" style={{ maxWidth: '450px' }}>
-                            <h1>Welcome, {user.user.name}!</h1>
-                            <div className="ui fluid large teal submit button" onClick={this.handleSubmit}>Logout</div>
-                        </div>
-                    </div>
-                </div> */
         );
         // } else {
         //     return (

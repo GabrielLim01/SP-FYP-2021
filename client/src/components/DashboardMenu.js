@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 import { Dropdown, Input, Menu } from 'semantic-ui-react'
 
-// BUG - Active item is hardcoded, consider implementing additional logic to make setting the active item dynamic
-
 export default class DashboardMenu extends Component {
     state = { activeItem: this.props.page }
 
     handleItemClick = (e, { name }) => {
         this.setState({ activeItem: name })
+
         if (name !== 'Home'){
             window.location.href = `/${name}`;
         } else {
@@ -16,6 +15,7 @@ export default class DashboardMenu extends Component {
     }
 
     handleLogout = (event) => {
+        event.preventDefault();
         sessionStorage.removeItem("user");
         window.location.href = '/';
     }

@@ -11,7 +11,7 @@ import { minUsernameLength, minPasswordLength, host } from '../common.js';
 // Email - Some regex that validates the input to 'resemble an actual email'
 // Password - Alphanumeric, can consider regex as well
 
-class RegistrationForm extends React.Component {
+class Registration extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -33,7 +33,7 @@ class RegistrationForm extends React.Component {
 
         switch (name) {
             case 'username':
-                // Add more validation rules below by chaining if..elses as necessary
+                // Add more validation rules below by chaining if...elses as necessary
                 errors.username = '';
                 if (value.length < minUsernameLength) errors.username = 'Username must be 8 characters long!';
                 break;
@@ -42,8 +42,8 @@ class RegistrationForm extends React.Component {
                 if (value.length < minPasswordLength) errors.password = `Password must be at least ${minPasswordLength} characters long!`;
                 break;
             case 'confirmPassword':
-                errors.confirmPassword = ''; 
-                if( value !== this.state.password) errors.confirmPassword = `Passwords do not match!`;
+                errors.confirmPassword = '';
+                if (value !== this.state.password) errors.confirmPassword = `Passwords do not match!`;
                 break;
             default:
                 break;
@@ -81,7 +81,7 @@ class RegistrationForm extends React.Component {
         return (
             <div className="container" style={containerStyle}>
                 <div className="ui middle aligned center aligned grid">
-                    <div className="column" style={{ maxWidth: '450px', paddingTop: '100px'}}>
+                    <div className="column" style={{ maxWidth: '450px', paddingTop: '100px' }}>
                         <h1 className="ui teal image header">
                             <div className="content">
                                 Guru or Goondu
@@ -121,4 +121,4 @@ class RegistrationForm extends React.Component {
 }
 
 
-export default RegistrationForm;
+export default Registration;
