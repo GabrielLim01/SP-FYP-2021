@@ -1,7 +1,5 @@
 const mysql = require("mysql");
 const dotenv = require("dotenv");
-const bcrypt = require("bcrypt");
-const { response } = require("express");
 let instance = null;
 dotenv.config();
 
@@ -11,7 +9,6 @@ const connection = mysql.createConnection({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.MySQL_DB,
-  port: 3306,
 });
 
 // To Connect
@@ -22,101 +19,143 @@ connection.connect((err) => {
   console.log("Connection Successful!");
 });
 
+const joinQuizTableQuery =
+  "SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId";
+
 class DbService {
   static getDbServiceInstance() {
-    return instance ? instance : new DbService();
+    if (!instance) instance = new DbService();
+    return instance;
   }
 
-  // NOT IN USE
-  // async getAllUsers() {
-  //   try {
-  //     const response = await new Promise((resolve, reject) => {
-  //       const query = "SELECT * FROM users;";
+  intFormatter(id) {
+    const int = parseInt(id, 10);
+    return int;
+  }
 
-  //       connection.query(query, (err, results) => {
-  //         if (err) reject(new Error(err.message));
-  //         resolve(results);
-  //       });
-  //     });
-  //     return response;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
-  // NOT IN USE
-  // async get(name) {
-  //   try {
-  //     const response = await new Promise((resolve, reject) => {
-  //       const query = "SELECT * FROM users WHERE name=?;";
-
-  //       connection.query(query, [name], (err, results) => {
-  //         if (err) reject(new Error(err.message));
-  //         resolve(results);
-  //       });
-  //     });
-  //     return response;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
-  // POST /user
-  async insertNewUser(name, pwd) {
+  async getAllQuizzes() {
     try {
-      const insertId = await new Promise((resolve, reject) => {
-        const query = "INSERT INTO users (name, password) VALUES (?,?);";
+      return new Promise((resolve, reject) => {
+        const query = "SELECT * FROM quiz;";
 
-        connection.query(query, [name, pwd], (err, result) => {
-          if (err) reject(new Error(err.message));
-          resolve(result);
+        connection.query(query, (err, result) => {
+          if (err) return reject(result);
+          resolve(err.message);
         });
       });
-      return {
-        name: name,
-        password: pwd,
-        insertId: insertId,
-      };
-    } catch (error) {
-      console.log(error.message);
+    } catch (e) {
+      throw e.message;
     }
   }
 
-  // POST /authenticate
-  async authenticate(username, password) {
+  async getQuizById(id) {
     try {
-      const response = await new Promise((resolve, reject) => {
-        const query = "SELECT * from users where name=?";
+      return new Promise((resolve, reject) => {
+        const query = `${joinQuizTableQuery} WHERE quiz.quizId = ?;`;
 
-        connection.query(query, [username], (err, results) => {
+        connection.query(query, this.intFormatter(id), (err, result) => {
+          if (err) return reject(err.message);
+          resolve(result);
+        });
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
 
-          // Case 1 - Reject promise if query fails
-          if (err) reject(`There are some errors with the query statement. ${err}`);
+  async createQuiz(title, desc, fiqPoints, categoryId) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query =
+          "INSERT INTO quiz (categoryId, quizName, quizDesc, fiqPoints) VALUES (?,?,?,?);";
+        // console.log(title);
 
-          const jsonResults = JSON.parse(JSON.stringify(results));
-          const verify = bcrypt.compareSync(password, jsonResults[0].password);
-
-          // Case 2 - Reject promise if passwords do not match, otherwise resolve promise with the access token
-          if (!verify) {
-            reject("Passwords do not match!")
+        connection.query(
+          query,
+          [categoryId, title, desc, fiqPoints],
+          (err, result) => {
+            if (err) return reject(err.message);
+            resolve(result);
           }
+        );
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
+
+  async createQuizQuestion(quizId, question) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query =
+          "INSERT into quiz_question (quizId, questionObject) values (?,?);";
+        connection.query(query, [quizId, question], (err, result) => {
+          if (err) reject(err.message);
           else {
-            // Resolve promise with an access token string and send it back to the front-end
-            const accessToken = "Congrats";
-            resolve(accessToken);
+            console.log("Questions created. quizQuestionId:", result.insertId);
+            resolve(result);
           }
         });
       });
+    } catch (e) {
+      throw e.message;
+    }
+  }
 
-      return response;
+  async updateQuizDetailsById(id, title, desc, fiqPoints, categoryId) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query =
+          "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, fiqPoints = ?  WHERE quizId = ?";
+        connection.query(
+          query,
+          [categoryId, title, desc, fiqPoints, this.intFormatter(id)],
+          (err, result) => {
+            if (err) return reject(err.message);
+            resolve(result.affectedRows);
+          }
+        );
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
 
-    } catch (error) {
-      // Catch rejected promises (errors)
+  async updateQuestionDetailsById(id, questionObject) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query =
+          "UPDATE quiz_question SET questionObject = ? WHERE quizId = ?";
 
-      // If a promise is rejected above, logic gets passed to this catch block, so a return error statement 
-      // is needed in order to pass the error string to server.js
-      // This might not be the best practice, but without further research, not sure if there is a better way to pass error message info
-      return error;
+        connection.query(
+          query,
+          [questionObject, this.intFormatter(id)],
+          (err, result) => {
+            if (err) reject(err.message);
+            else {
+              console.log("Updated questions", result);
+              resolve(result.affectedRows);
+            }
+          }
+        );
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
+
+  async deleteQuizById(id) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query = "DELETE FROM quiz WHERE quizId = ?";
+
+        connection.query(query, [this.intFormatter(id)], (err, result) => {
+          if (err) reject(err.message);
+          resolve(result.affectedRows);
+        });
+      });
+    } catch (e) {
+      throw e.message;
     }
   }
 }
