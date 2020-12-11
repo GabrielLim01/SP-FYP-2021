@@ -98,7 +98,7 @@ class Registration extends React.Component {
                                                 <i className={value.icon}></i>
                                                 <input type={value.type} name={value.name} placeholder={value.placeholder} onChange={this.handleChange} />
                                             </div>
-                                            {errors.username.length > 0 && <span className='error' style={{ color: 'red' }}>{errors.username}</span>}
+                                            {errors[value.name].length > 0 && <span className='error' style={{ color: 'red' }}>{errors[value.name]}</span>}
                                         </div>
                                     )
                                 })}
