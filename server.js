@@ -2,7 +2,6 @@ const express = require("express");
 
 const app = express();
 
-const Boom = require("boom");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -58,6 +57,10 @@ var quizObject = {
     },
   ],
 };
+
+function isbetween(x, min, max) {
+  return x >= min && x <= max;
+}
 
 // read
 app.get("/quizDashboard", (request, response) => {
@@ -235,10 +238,10 @@ app.post("/authenticate", (request, response) => {
 
       .catch((err) => {
         console.log("Server.js error: " + err);
-        response.json(Boom.notFound("Invalid Request"));
+        response.status(500).send();
       });
   } catch (err) {
-    response.json(Boom.notFound("Invalid Request"));
+    response.status(500).send();
   }
 });
 
@@ -258,7 +261,7 @@ app.post("/createCategory", async (request, response) => {
 
       .catch((err) => {
         console.log(`Error creating category: ${categoryName}`, err);
-        response.json(Boom.notFound("Invalid Request"));
+        response.status(500).send();
       });
   } catch (error) {
     console.log(error);
@@ -281,9 +284,21 @@ app.get("/getAllCategories", async (request, response) => {
 //update
 //delete
 app.delete("/deleteCategory/:id", async (request, response) => {
-  const id = parseInt(
-    request.path.substring(request.path.lastIndexOf("/") + 1)
-  );
+  let id = parseInt(request.params.id, 10);
+  const db = dbService.getDbServiceInstance();
+  const counter = db.getAllCategories();
+  counter
+    .then((data) => {
+      const obj = JSON.parse(JSON.stringify(data));
+      if (isbetween(id, 0, Object.keys(obj).length)) {
+      } else {
+        response.status(400).send();
+      }
+    })
+    .catch((err) => {
+      console.log("Server.js error: " + err);
+      response.status(500).send();
+    });
 
   // const db = dbService.getDbServiceInstance();
 
