@@ -77,7 +77,7 @@ app.get("/quizDashboard", (request, response) => {
 });
 
 app.get("/quiz/:id", (request, response) => {
-  const { id } = request.params;
+  let id = parseInt(request.params.id, 10);
   const db = dbService.getDbServiceInstance();
 
   const result = db.getQuizById(id);
@@ -145,7 +145,7 @@ app.post("/createNew", (request, response) => {
 
 // update
 app.patch("/update/:id", (request, response) => {
-  const { id } = request.params;
+  let id = parseInt(request.params.id, 10);
 
   const title = request.body.title;
   const desc = request.body.desc;
@@ -186,7 +186,7 @@ app.patch("/update/:id", (request, response) => {
 
 // delete
 app.delete("/delete/:id", (request, response) => {
-  const { id } = request.params;
+  let id = parseInt(request.params.id, 10);
 
   const db = dbService.getDbServiceInstance();
 
@@ -281,33 +281,57 @@ app.get("/getAllCategories", async (request, response) => {
     })
     .catch((err) => console.log(err));
 });
+
 //update
+app.patch("/updateCategory/:id", (request, response) => {
+  let id = parseInt(request.params.id, 10);
+  const categoryName = request.body.catName;
+  const categoryDesc = request.body.catDesc;
+
+  const db = dbService.getDbServiceInstance();
+  const result = db.updateCategoryById(id, categoryName, categoryDesc);
+
+  result
+    .then((data) => {
+      console.log(`Updating category of id: ${id} was a success!`);
+      response.json({ data: data });
+    })
+    .catch((err) => {
+      console.log(err);
+      response.status(400).send(`Update failed`);
+    });
+});
+
 //delete
 app.delete("/deleteCategory/:id", async (request, response) => {
   let id = parseInt(request.params.id, 10);
   const db = dbService.getDbServiceInstance();
-  const counter = db.getAllCategories();
-  counter
+  const result = db.getAllCategories();
+  result
     .then((data) => {
       const obj = JSON.parse(JSON.stringify(data));
+
       if (isbetween(id, 0, Object.keys(obj).length)) {
+        const outcome = db.deleteCategoryById(id);
+        outcome
+          .then((data) => {
+            console.log(`Deletion of category of id: ${id} was a success!`);
+            response.json({ data: data });
+          })
+          .catch((err) => {
+            if (err.includes("ER_ROW_IS_REFERENCED_2"))
+              console.log(
+                `Category with id: ${id} is being referenced by quiz(zes).`
+              );
+          });
       } else {
-        response.status(400).send();
+        response
+          .status(400)
+          .send(`The id: ${id} you provided was not valid. Please try again.`);
       }
     })
     .catch((err) => {
-      console.log("Server.js error: " + err);
+      console.log("Server error: " + err);
       response.status(500).send();
     });
-
-  // const db = dbService.getDbServiceInstance();
-
-  // const result = db.deleteCategoryById(id);
-
-  // result
-  //   .then((data) => {
-  //     console.log("Process was a success!");
-  //     response.json({ data: data });
-  //   })
-  //   .catch((err) => console.log(err));
 });
