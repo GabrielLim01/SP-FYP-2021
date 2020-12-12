@@ -281,20 +281,18 @@ app.get("/getAllCategories", async (request, response) => {
 //update
 //delete
 app.delete("/deleteCategory/:id", async (request, response) => {
-  //const { idURL } = request.params;
-  // convert id to integer
   const id = parseInt(
     request.path.substring(request.path.lastIndexOf("/") + 1)
   );
 
-  const db = dbService.getDbServiceInstance();
+  // const db = dbService.getDbServiceInstance();
 
-  const result = db.deleteCategoryById(id);
+  // const result = db.deleteCategoryById(id);
 
-  result
-    .then((data) => {
-      console.log("Process was a success!");
-      response.json({ data: data });
-    })
-    .catch((err) => console.log(err));
+  // result
+  //   .then((data) => {
+  //     console.log("Process was a success!");
+  //     response.json({ data: data });
+  //   })
+  //   .catch((err) => console.log(err));
 });
