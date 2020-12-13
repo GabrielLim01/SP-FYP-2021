@@ -75,9 +75,9 @@ class Registration extends React.Component {
         const { errors } = this.state;
 
         const inputs = [
-            { type: 'text', icon: 'user icon', name: 'username', placeholder: 'Username' },
-            { type: 'password', icon: 'lock icon', name: 'password', placeholder: 'Password' },
-            { type: 'password', icon: 'lock icon', name: 'confirmPassword', placeholder: 'Confirm Password' }
+            { type: 'text', icon: 'user', name: 'username', placeholder: 'Username' },
+            { type: 'password', icon: 'lock', name: 'password', placeholder: 'Password' },
+            { type: 'password', icon: 'lock', name: 'confirmPassword', placeholder: 'Confirm Password' }
         ];
 
         return (
@@ -95,7 +95,7 @@ class Registration extends React.Component {
                                     return (
                                         <div className="field" key={index}>
                                             <div className="ui left icon input">
-                                                <i className={value.icon}></i>
+                                                <i className={value.icon + " icon"}></i>
                                                 <input type={value.type} name={value.name} placeholder={value.placeholder} onChange={this.handleChange} />
                                             </div>
                                             {errors[value.name].length > 0 && <span className='error' style={{ color: 'red' }}>{errors[value.name]}</span>}

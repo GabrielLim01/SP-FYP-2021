@@ -12,7 +12,7 @@ class QuizCategorySelection extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: 'Gabriel'
+        
         };
     }
 
@@ -55,6 +55,10 @@ class QuizCategorySelection extends React.Component {
                                             </div>
                                         )
                                     })}
+                                </div>
+                                <h2>Or...</h2>
+                                <div className="field">
+                                    <Button icon labelPosition='left' className='fluid large blue' name="categoryCreation" onClick={this.handleClick}>Create a Category!</Button>
                                 </div>
                             </form>
                         </div>
