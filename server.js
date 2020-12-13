@@ -21,11 +21,13 @@ var quizObject = {
   quizTitle: "Hello",
   quizCategoryId: 1,
   quizDesc: "",
-  fiqPoints: 100,
+  totalPoints: 100,
   questions: [
     {
       questionTitle: "Question 1",
       questionDesc: "",
+      fiqPoints: 50,
+      timeLimit: 30,
       options: [
         {
           option: "Option 1",
@@ -42,6 +44,8 @@ var quizObject = {
     {
       questionTitle: "Question 2",
       questionDesc: "",
+      fiqPoints: 50,
+      timeLimit: 30,
       options: [
         {
           option: "Option 1",
@@ -103,13 +107,13 @@ app.post("/createNew", (request, response) => {
   const title = quizObject.quizTitle;
   const categoryId = quizObject.quizCategoryId;
   const quizDesc = quizObject.quizDesc;
-  const fiqPoints = quizObject.fiqPoints;
+  const totalPoints = quizObject.totalPoints;
 
   const db = dbService.getDbServiceInstance();
   const createQuiz_result = db.createQuiz(
     title,
     quizDesc,
-    fiqPoints,
+    totalPoints,
     categoryId
   );
 
@@ -120,11 +124,11 @@ app.post("/createNew", (request, response) => {
         categoryid: categoryId,
         name: title,
         description: quizDesc,
-        FIQ_Points: fiqPoints,
+        totalPoints: totalPoints,
       });
       console.log("Quiz Created");
       const quizId = data.insertId;
-      var createQuizResult = new Promise((resolve, reject) => {});
+      var createQuizResult = new Promise((resolve, reject) => { });
 
       const questionObject = quizObject.questions;
       console.log(typeof questionObject);
@@ -149,7 +153,7 @@ app.patch("/update/:id", (request, response) => {
 
   const title = request.body.title;
   const desc = request.body.desc;
-  const fiqPoints = request.body.fiqPoints;
+  const totalPoints = request.body.totalPoints;
   const categoryId = request.body.categoryId;
   const quizQuestionObject = request.body.quizQuestion;
   console.log(quizQuestionObject);
@@ -160,7 +164,7 @@ app.patch("/update/:id", (request, response) => {
     id,
     title,
     desc,
-    fiqPoints,
+    totalPoints,
     categoryId
   );
 
@@ -170,7 +174,7 @@ app.patch("/update/:id", (request, response) => {
       response.json({ data: data });
 
       // phase 2
-      var updateQuestionsResult = new Promise((resolve, reject) => {});
+      var updateQuestionsResult = new Promise((resolve, reject) => { });
       quizQuestionObject.forEach((question) => {
         updateQuestionsResult = db.updateQuestionDetailsById(
           id,
@@ -211,7 +215,7 @@ app.post("/register", async (request, response) => {
 
     const result = db.insertNewUser(name, hashedPassword);
 
-    result.then((data) => response.json({ data: data }));
+    result.then((data) => res.json({ data: data }));
   } catch (error) {
     console.log(error);
     res.status(500).send();
@@ -233,15 +237,15 @@ app.post("/authenticate", (request, response) => {
     // then use res.json to send the data back to the front-end (axios.POST)
     result
       .then((data) => {
-        response.json({ data: data });
+        res.json({ data: data });
       })
-
+      // should not be invoked normally
       .catch((err) => {
         console.log("Server.js error: " + err);
-        response.status(500).send();
+        //res.json(Boom.notFound("Invalid Request"));
       });
   } catch (err) {
-    response.status(500).send();
+    //res.json(Boom.notFound("Invalid Request"));
   }
 });
 
@@ -268,6 +272,7 @@ app.post("/createCategory", async (request, response) => {
     response.status(500).send();
   }
 });
+
 //read
 app.get("/getAllCategories", async (request, response) => {
   const db = dbService.getDbServiceInstance();
