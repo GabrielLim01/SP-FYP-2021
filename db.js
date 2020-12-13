@@ -64,16 +64,16 @@ class DbService {
     }
   }
 
-  async createQuiz(title, desc, fiqPoints, categoryId) {
+  async createQuiz(title, desc, totalPoints, categoryId) {
     try {
       return new Promise((resolve, reject) => {
         const query =
-          "INSERT INTO quiz (categoryId, quizName, quizDesc, fiqPoints) VALUES (?,?,?,?);";
+          "INSERT INTO quiz (categoryId, quizName, quizDesc, totalPoints) VALUES (?,?,?,?);";
         // console.log(title);
 
         connection.query(
           query,
-          [categoryId, title, desc, fiqPoints],
+          [categoryId, title, desc, totalPoints],
           (err, result) => {
             if (err) return reject(err.message);
             resolve(result);
@@ -103,14 +103,14 @@ class DbService {
     }
   }
 
-  async updateQuizDetailsById(id, title, desc, fiqPoints, categoryId) {
+  async updateQuizDetailsById(id, title, desc, totalPoints, categoryId) {
     try {
       return new Promise((resolve, reject) => {
         const query =
-          "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, fiqPoints = ?  WHERE quizId = ?";
+          "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, totalPoints = ?  WHERE quizId = ?";
         connection.query(
           query,
-          [categoryId, title, desc, fiqPoints, this.intFormatter(id)],
+          [categoryId, title, desc, totalPoints, this.intFormatter(id)],
           (err, result) => {
             if (err) return reject(err.message);
             resolve(result.affectedRows);
@@ -188,18 +188,17 @@ class DbService {
         const query = "SELECT * from users where name=?";
 
         connection.query(query, [username], (err, results) => {
-
           // Case 1 - Reject promise if query fails
-          if (err) reject(`There are some errors with the query statement. ${err}`);
+          if (err)
+            reject(`There are some errors with the query statement. ${err}`);
 
           const jsonResults = JSON.parse(JSON.stringify(results));
           const verify = bcrypt.compareSync(password, jsonResults[0].password);
 
           // Case 2 - Reject promise if passwords do not match, otherwise resolve promise with the access token
           if (!verify) {
-            reject("Passwords do not match!")
-          }
-          else {
+            reject("Passwords do not match!");
+          } else {
             // Resolve promise with an access token string and send it back to the front-end
             const accessToken = "Congrats";
             resolve(accessToken);
@@ -208,11 +207,10 @@ class DbService {
       });
 
       return response;
-
     } catch (error) {
       // Catch rejected promises (errors)
 
-      // If a promise is rejected above, logic gets passed to this catch block, so a return error statement 
+      // If a promise is rejected above, logic gets passed to this catch block, so a return error statement
       // is needed in order to pass the error string to server.js
       // This might not be the best practice, but without further research, not sure if there is a better way to pass error message info
       return error;

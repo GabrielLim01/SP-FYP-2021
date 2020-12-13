@@ -2,7 +2,6 @@ const express = require("express");
 
 const app = express();
 
-const Boom = require("boom");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -22,11 +21,13 @@ var quizObject = {
   quizTitle: "Hello",
   quizCategoryId: 1,
   quizDesc: "",
-  fiqPoints: 100,
+  totalPoints: 100,
   questions: [
     {
       questionTitle: "Question 1",
       questionDesc: "",
+      fiqPoints: 50,
+      timeLimit: 30,
       options: [
         {
           option: "Option 1",
@@ -43,6 +44,8 @@ var quizObject = {
     {
       questionTitle: "Question 2",
       questionDesc: "",
+      fiqPoints: 50,
+      timeLimit: 30,
       options: [
         {
           option: "Option 1",
@@ -100,13 +103,13 @@ app.post("/createNew", (request, response) => {
   const title = quizObject.quizTitle;
   const categoryId = quizObject.quizCategoryId;
   const quizDesc = quizObject.quizDesc;
-  const fiqPoints = quizObject.fiqPoints;
+  const totalPoints = quizObject.totalPoints;
 
   const db = dbService.getDbServiceInstance();
   const createQuiz_result = db.createQuiz(
     title,
     quizDesc,
-    fiqPoints,
+    totalPoints,
     categoryId
   );
 
@@ -117,11 +120,11 @@ app.post("/createNew", (request, response) => {
         categoryid: categoryId,
         name: title,
         description: quizDesc,
-        FIQ_Points: fiqPoints,
+        totalPoints: totalPoints,
       });
       console.log("Quiz Created");
       const quizId = data.insertId;
-      var createQuizResult = new Promise((resolve, reject) => { });
+      var createQuizResult = new Promise((resolve, reject) => {});
 
       const questionObject = quizObject.questions;
       console.log(typeof questionObject);
@@ -146,7 +149,7 @@ app.patch("/update/:id", (request, response) => {
 
   const title = request.body.title;
   const desc = request.body.desc;
-  const fiqPoints = request.body.fiqPoints;
+  const totalPoints = request.body.totalPoints;
   const categoryId = request.body.categoryId;
   const quizQuestionObject = request.body.quizQuestion;
   console.log(quizQuestionObject);
@@ -157,7 +160,7 @@ app.patch("/update/:id", (request, response) => {
     id,
     title,
     desc,
-    fiqPoints,
+    totalPoints,
     categoryId
   );
 
@@ -167,7 +170,7 @@ app.patch("/update/:id", (request, response) => {
       response.json({ data: data });
 
       // phase 2
-      var updateQuestionsResult = new Promise((resolve, reject) => { });
+      var updateQuestionsResult = new Promise((resolve, reject) => {});
       quizQuestionObject.forEach((question) => {
         updateQuestionsResult = db.updateQuestionDetailsById(
           id,
@@ -209,7 +212,6 @@ app.post("/register", async (req, res) => {
     const result = db.insertNewUser(name, hashedPassword);
 
     result.then((data) => res.json({ data: data }));
-
   } catch (error) {
     console.log(error);
     res.status(500).send();
@@ -229,16 +231,16 @@ app.post("/authenticate", (req, res) => {
 
     // In order to access the data of the Promise, you have to do a .then((data => console.log(data))),
     // then use res.json to send the data back to the front-end (axios.POST)
-    result.then((data) => {
-      res.json({ data: data });
-    })
+    result
+      .then((data) => {
+        res.json({ data: data });
+      })
       // should not be invoked normally
       .catch((err) => {
         console.log("Server.js error: " + err);
-        res.json(Boom.notFound("Invalid Request"));
+        //res.json(Boom.notFound("Invalid Request"));
       });
-
   } catch (err) {
-    res.json(Boom.notFound("Invalid Request"));
+    //res.json(Boom.notFound("Invalid Request"));
   }
 });
