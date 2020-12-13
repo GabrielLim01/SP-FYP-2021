@@ -81,3 +81,14 @@ Content-Type: application/json
 
 ###
 DELETE  http://localhost:9000/deleteCategory/-100.78
+
+
+###
+PATCH http://localhost:9000/updateCategory/2
+Content-Type: application/json
+
+{
+    "catName":"Intellectual Property",
+    "catDesc":"IP for short."
+    
+}
