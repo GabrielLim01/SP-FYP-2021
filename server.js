@@ -8,6 +8,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const dbService = require("./db");
+const { response } = require("express");
 
 app.use(cors());
 app.use(express.json());
@@ -61,6 +62,19 @@ var quizObject = {
     },
   ],
 };
+function validateID(x) {
+  let regex = new RegExp("^[0-9]+$");
+  let result = regex.test(x);
+  return result;
+}
+
+function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}
+
+function isBlank(str) {
+  return !str || 0 === str.length;
+}
 
 function validateID(x) {
   let regex = new RegExp("^[0-9]+$");
@@ -76,272 +90,220 @@ function validateString(x) {
 // read
 app.get("/quizDashboard", (request, response) => {
   const db = dbService.getDbServiceInstance();
-
   const result = db.getAllQuizzes();
-
   result
     .then((data) => {
-      console.log("Process was a success!");
       response.json({ data: data });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => response.status(400).send(`Fetching of data failed.`, err));
 });
 
 app.get("/quiz/:id", (request, response) => {
-  let id = parseInt(request.params.id, 10);
   const db = dbService.getDbServiceInstance();
-
-  const result = db.getQuizById(id);
-
-  result
-    .then((data) => {
-      console.log("Process was a success!");
-
-      quizObject = JSON.parse(JSON.stringify(data));
-      quizObject.forEach((question) => {
-        questionObject = JSON.parse(question.questionObject);
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.getQuizById(request.params.id);
+    result
+      .then((data) => {
+        if (!isEmpty(data)) {
+          const quizObject = JSON.parse(JSON.stringify(data));
+          response.json({ data: quizObject });
+        } else
+          response
+            .status(400)
+            .send(`Quiz of id: ${request.params.id} is not present.`);
+      })
+      .catch((err) => {
+        response
+          .status(400)
+          .send(
+            `Unable to retrieve specified quiz of id: ${request.params.id}.`,
+            err
+          );
       });
-      return response.json({ data: data });
-    })
-    .catch((err) => {
-      // return response.status(500).send(err);
-      console.log(err);
-    });
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
 });
 
 // create
 app.post("/createNew", (request, response) => {
-  const title = quizObject.quizTitle;
-  const categoryId = quizObject.quizCategoryId;
-  const quizDesc = quizObject.quizDesc;
-  const totalPoints = quizObject.totalPoints;
+  const title = quizObject.quizTitle; // to be changed
+  const categoryId = quizObject.quizCategoryId; // to be changed
+  const quizDesc = quizObject.quizDesc; // to be changed
+  const totalPoints = quizObject.totalPoints; // to be changed
 
-  const db = dbService.getDbServiceInstance();
-  const createQuiz_result = db.createQuiz(
-    title,
-    quizDesc,
-    totalPoints,
-    categoryId
-  );
+  if (!isBlank(title) && !isBlank(categoryId) && !isBlank(totalPoints)) {
+    const db = dbService.getDbServiceInstance();
+    const createQuizResult = db.createQuiz(
+      title,
+      quizDesc,
+      totalPoints,
+      categoryId
+    );
 
-  createQuiz_result
-    .then((data) => {
-      response.json({
-        insertId: data.insertId,
-        categoryid: categoryId,
-        name: title,
-        description: quizDesc,
-        totalPoints: totalPoints,
-      });
-      console.log("Quiz Created");
-      const quizId = data.insertId;
-
-      let createQuizResult = new Promise((resolve, reject) => {});
-
-      const questionObject = quizObject.questions;
-      console.log(typeof questionObject);
-      questionObject.forEach((question) => {
-        createQuizResult = db.createQuizQuestion(
-          quizId,
-          JSON.stringify(question)
+    createQuizResult
+      .then((data) => {
+        response.json({
+          insertId: data.insertId,
+          categoryid: categoryId,
+          name: title,
+          description: quizDesc,
+          totalPoints: totalPoints,
+        });
+        const quizId = data.insertId;
+        let createQuestionResult = new Promise((resolve, reject) => {});
+        const questionObject = quizObject.questions;
+        questionObject.forEach((question) => {
+          createQuestionResult = db.createQuizQuestion(
+            quizId,
+            JSON.stringify(question)
+          );
+        });
+        createQuestionResult.catch((err) =>
+          response.status(400).send(`Creation of questions failed.`, err)
         );
-      });
-      createQuizResult.catch((err) => console.log("Some Caught Error:", err));
-    })
+      })
 
-    .catch((err) => {
-      // Please addon to this list if you encountered something new
-      console.log("Some Caught Error:", err);
-    });
+      .catch((err) => {
+        // Please addon to this list if you encountered something new
+        response.status(400).send(`Creation of quiz failed.`, err);
+      });
+  } else
+    response.status(400).send(`Title / categoryId / totalPoints is(are) empty`);
 });
 
 // update
-app.patch("/update/:id", (request, response) => {
-  let id = parseInt(request.params.id, 10);
+app.patch("/quiz/:id", (request, response) => {
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const title = request.body.title;
+    const desc = request.body.desc;
+    const totalPoints = request.body.totalPoints;
+    const categoryId = request.body.categoryId;
+    const quizQuestionObject = request.body.quizQuestion;
 
-  const title = request.body.title;
-  const desc = request.body.desc;
-  const totalPoints = request.body.totalPoints;
-  const categoryId = request.body.categoryId;
-  const quizQuestionObject = request.body.quizQuestion;
-  console.log(quizQuestionObject);
+    const db = dbService.getDbServiceInstance();
+    const result = db.updateQuizDetailsById(
+      request.params.id,
+      title,
+      desc,
+      totalPoints,
+      categoryId
+    );
 
-  const db = dbService.getDbServiceInstance();
+    result
+      .then((data) => {
+        response.json({ data: data });
 
-  const result = db.updateQuizDetailsById(
-    id,
-    title,
-    desc,
-    totalPoints,
-    categoryId
-  );
-
-  result
-    .then((data) => {
-      console.log("Process was a success!");
-      response.json({ data: data });
-
-      // phase 2
-
-      let updateQuestionsResult = new Promise((resolve, reject) => {});
-
-      quizQuestionObject.forEach((question) => {
-        updateQuestionsResult = db.updateQuestionDetailsById(
-          id,
-          JSON.stringify(question)
+        var updateQuestionsResult = new Promise((resolve, reject) => {});
+        quizQuestionObject.forEach((question) => {
+          updateQuestionsResult = db.updateQuestionDetailsById(
+            request.params.id,
+            JSON.stringify(question)
+          );
+        });
+        updateQuestionsResult.catch((err) =>
+          response
+            .status(400)
+            .send(
+              `Updating of questions where quiz id equals to ${request.params.id} has failed.`,
+              err
+            )
         );
-      });
-      updateQuestionsResult.catch((err) =>
-        console.log("Some Caught Error:", err)
+      })
+      .catch((err) =>
+        response
+          .status(400)
+          .send(
+            `Updating of quiz where id equals to ${request.params.id} has failed.`,
+            err
+          )
       );
-    })
-    .catch((err) => console.log(err));
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
 });
 
 // delete
-app.delete("/delete/:id", (request, response) => {
-  let id = parseInt(request.params.id, 10);
+app.delete("/quiz/:id", (request, response) => {
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const db = dbService.getDbServiceInstance();
 
-  const db = dbService.getDbServiceInstance();
+    const result = db.deleteQuizById(id);
 
-  const result = db.deleteQuizById(id);
-
-  result
-    .then((data) => {
-      console.log("Process was a success!");
-      response.json({ data: data });
-    })
-    .catch((err) => console.log(err));
+    result
+      .then((data) => {
+        response.json({ data: data });
+      })
+      .catch((err) =>
+        response
+          .status(400)
+          .send(
+            `Deletion of quiz where id equals to ${request.params.id} has failed.`
+          )
+      );
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
 });
 
 // POST /register
-app.post("/register", async (request, response) => {
+app.post("/register", async (request, respond) => {
   const name = request.body.name;
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hashSync(request.body.password, salt);
+  const password = request.body.password;
+  if (!isBlank(name) && !isBlank(password)) {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hashSync(password, salt);
 
   const db = dbService.getDbServiceInstance();
 
   const result = db.insertNewUser(name, hashedPassword);
 
-  result
-    .then((data) => response.json({ data: data }))
-    .catch((err) => response.status(500).send("Server.js error: ", err));
+    result
+      .then((data) => respond.json({ data: data }))
+      .catch((err) =>
+        response
+          .status(400)
+          .send(
+            `Registering of user where username equals to ${name} has failed.`,
+            err
+          )
+      );
+  } else response.status(400).send(`Name / Password is(are) empty.`);
 });
 
 // POST /authenticate
 app.post("/authenticate", (request, response) => {
   const username = request.body.username;
   const password = request.body.password;
-  const db = dbService.getDbServiceInstance();
-  const result = db.authenticate(username, password);
-  result
-    .then((data) => {
-      response.json({ data: data });
-    })
 
-    .catch((err) => {
-      response.status(500).send("Server.js error: ", err);
-    });
-});
+  if (!isBlank(username) && !isBlank(password)) {
+    const db = dbService.getDbServiceInstance();
 
-//create
-app.post("/category", async (request, response) => {
-  const categoryName = request.body.catName;
-  const categoryDesc = request.body.catDesc;
-  let isValid = validateString(categoryName);
-  const db = dbService.getDbServiceInstance();
-  if (isValid) {
-    let result = db.createCategory(categoryName, categoryDesc);
+    const result = db.authenticate(username, password);
 
     result
       .then((data) => {
-        response.json({ data: data });
+        response.status(200).send(`User is authenticated`);
       })
       .catch((err) => {
-        response
-          .status(500)
-          .send(`Error creating category: ${categoryName}`, err);
-      });
-  } else
-    response
-      .status(400)
-      .send(
-        `${categoryName} contained illegal characters. Please check again.`
-      );
-});
-//read
-app.get("/category", async (request, response) => {
-  const db = dbService.getDbServiceInstance();
-
-  const result = db.getAllCategories();
-
-  result
-    .then((data) => {
-      response.json({ data: data });
-    })
-    .catch((err) => response.status(400).send(`${err}`));
-});
-
-//update
-app.patch("/category/:id", (request, response) => {
-  const categoryName = request.body.catName;
-  const categoryDesc = request.body.catDesc;
-  const db = dbService.getDbServiceInstance();
-  let isValid = validateID(request.params.id);
-  if (isValid) {
-    const result = db.updateCategoryById(
-      request.params.id,
-      categoryName,
-      categoryDesc
-    );
-    result
-      .then((data) => {
-        response
-          .status(200)
-          .send(
-            ` Updating category of id: ${request.params.id} was a success!`
-          );
-      })
-      .catch((err) =>
         response
           .status(400)
-          .send(`${err}, updating of ${request.params.id} failed`)
-      );
-  } else
-    response
-      .status(400)
-      .send(
-        `${request.params.id} contained illegal characters. Please check again.`
-      );
-});
-
-//delete
-app.delete("/category/:id", async (request, response) => {
-  const db = dbService.getDbServiceInstance();
-  let isValid = validateID(request.params.id);
-  if (isValid) {
-    const result = db.deleteCategoryById(request.params.id);
-    result
-      .then((data) => {
-        response
-          .status(200)
           .send(
-            ` Deletion of category of id: ${request.params.id} was a success!`
+            `Authentication of user where username equals to ${username} has failed.`,
+            err
           );
-      })
-      .catch((err) => {
-        if (err.includes("ER_ROW_IS_REFERENCED"))
-          response
-            .status(400)
-            .send(
-              `Category with id: ${request.params.id} is being referenced by quiz(zes).`
-            );
       });
-  } else
-    response
-      .status(400)
-      .send(
-        `${request.params.id} contained illegal characters. Please check again.`
-      );
+  } else response.status(400).send(`Username / Password is(are) empty.`);
 });
