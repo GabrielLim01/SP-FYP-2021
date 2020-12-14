@@ -1,11 +1,7 @@
 import React from 'react';
 import axios from 'axios';
-<<<<<<< Updated upstream
-import { containerStyle, minUsernameLength, minPasswordLength, host } from '../common.js';
-=======
 import { minUsernameLength, minPasswordLength, host } from '../common.js';
 import GuruOrGoonduIcon from '../GuruOrGoonduIcon.jpg'
->>>>>>> Stashed changes
 
 // BUGS 
 // 1. Registration will proceed even if confirmPassword field is not filled in

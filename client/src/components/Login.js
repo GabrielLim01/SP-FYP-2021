@@ -1,15 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import axios from 'axios';
 import { Link } from "react-router-dom";
-<<<<<<< Updated upstream
-import { host, containerStyle } from '../common.js';
-import verifyLogin from './verifyLogin.js'
-=======
 import { host } from '../common.js';
+import verifyLogin from './verifyLogin.js'
 import GuruOrGoonduIcon from '../GuruOrGoonduIcon.jpg'
 
 
->>>>>>> Stashed changes
 
 // MISSING FEATURES
 // 1. Input validation
@@ -71,30 +67,8 @@ class Login extends React.Component {
     }
 
     render() {
-<<<<<<< Updated upstream
         // If user is already logged in, redirect them immediately, otherwise they have to fill in the login form first
         if (verifyLogin()) {
-=======
-        const containerStyle = {
-            container: {
-                
-                backgroundColor: '#DADADA',
-                height: '100%'
-            }
-        };
-
-        // Logic to check if user is already logged in
-        let user = {};
-        let loginStatus = false;
-    
-        if (JSON.parse(sessionStorage.getItem("user") !== null)) {
-            user = JSON.parse(sessionStorage.getItem("user"));
-            loginStatus = user.user.isLoggedIn;
-        }
-
-        // If user is already logged in, redirect them immediately, else they have to fill out the login form first
-        if (loginStatus) {
->>>>>>> Stashed changes
             return (
                 window.location.href = '/dashboard'
             )
