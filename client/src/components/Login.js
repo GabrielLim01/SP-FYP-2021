@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { Link } from "react-router-dom";
-import { host } from '../common.js';
+import { host, containerStyle } from '../common.js';
 import verifyLogin from './verifyLogin.js'
 import GuruOrGoonduIcon from '../GuruOrGoonduIcon.jpg'
 
@@ -77,13 +77,13 @@ class Login extends React.Component {
                 <div className="container" style={containerStyle}>
                     <div className="ui middle aligned center aligned grid">
                         <div className="column" style={{ maxWidth: '450px' }}>
-                            <h2 className="ui teal image header">
+                            <h2 className="ui blue image header">
                                 
                                  <div className="AppIcon">
                                  <img src={GuruOrGoonduIcon} alt="AppIcon"/>
                                  </div>
 
-                                <div className="content">
+                                <div className="content" >
                                     Guru or Goondu
                         </div>
                             </h2>
