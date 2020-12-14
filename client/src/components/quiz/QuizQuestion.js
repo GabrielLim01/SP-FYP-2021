@@ -21,8 +21,8 @@ class QuizQuestion extends React.Component {
 
         return (
             <div className="container">
-                <div className="ui middle aligned center aligned grid">
-                    <div className="column" style={{ maxWidth: '450px' }}>
+                <div className="ui middle aligned grid">
+                    <div className="column" style={{ maxWidth: '30%', margin: 'auto' }}>
                         <form className="ui large form">
                             <div className="ui stacked segment">
                                 <h2>Question {number}</h2>

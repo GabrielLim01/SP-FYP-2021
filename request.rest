@@ -66,11 +66,11 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:9000/getAllCategories
+GET http://localhost:9000/category
 
 ###
 
-POST http://localhost:9000/createCategory
+POST http://localhost:9000/category
 Content-Type: application/json
 
 {
@@ -80,4 +80,15 @@ Content-Type: application/json
 }
 
 ###
-DELETE  http://localhost:9000/deleteCategory/-100.78
+DELETE  http://localhost:9000/category/4
+
+
+###
+PATCH http://localhost:9000/category/15
+Content-Type: application/json
+
+{
+    "catName":"Intellectual Property",
+    "catDesc":"IP for short."
+    
+}

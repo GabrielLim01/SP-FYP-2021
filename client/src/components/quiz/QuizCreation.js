@@ -4,6 +4,7 @@ import DashboardMenu from '../DashboardMenu.js';
 import QuizQuestion from './QuizQuestion.js';
 import verifyLogin from '../verifyLogin.js';
 import { host } from '../../common.js';
+import { Form, Grid, Accordion, TextArea, Icon, Dropdown } from 'semantic-ui-react';
 
 // UNFINISHED
 // 1. Overall quiz creation layout is not very good, needs a revamp
@@ -97,37 +98,32 @@ class QuizCreation extends React.Component {
                 <div className="container">
                     <DashboardMenu page='quizzes'></DashboardMenu>
                     <h1 className="ui teal image header">
-                        <div className="content">
-                            Create your quiz!
-                        </div>
-
+                        Create your quiz!
                     </h1>
-                    <div className="ui middle aligned center aligned grid">
-                        <div className="column" style={{ maxWidth: '450px' }}>
-                            <form className="ui large form">
-                                <div className="field">
-                                    <h2>Quiz Name</h2>
-                                    <input type="text" name="quizName" placeholder="Quiz Name" onChange={this.handleChange} />
-                                </div>
-                                <div className="field">
-                                    <h2>Quiz Category</h2>
-                                    <input type="text" name="quizCategory" placeholder="Quiz Category" onChange={this.handleChange} />
-                                </div>
-                                <div className="field">
-                                    <h2>FIQ per question</h2>
-                                    <input type="text" name="points" placeholder="Points" onChange={this.handleChange} />
-                                </div>
-                                <div className="field">
-                                    <div className="ui fluid large teal button" onClick={this.onAddQuestion}>Add Question</div>
-                                </div>
-                                <div className="field">
-                                    <div className="ui fluid large blue button" onClick={this.handleSubmit}>Save</div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                    <Form>
+                        <Grid columns='equal' verticalAlign='middle' style={{ maxWidth: '80%', margin: 'auto' }}>
+                            <Grid.Column>
+                                <h3>Quiz Title</h3>
+                                <input type="text" name="quizName" placeholder="Title" onChange={this.handleChange} />
+                                <h3>Quiz Description</h3>
+                                <TextArea name='quizDesc' placeholder='Description' onChange={this.handleChange} />
+                            </Grid.Column>
+                            <Grid.Column>
+                                <h3>Quiz Category</h3>
+                                <input type="text" name="quizCategory" placeholder="Category" onChange={this.handleChange} />
+                                <h3>FIQ per question</h3>
+                                <input type="text" name="points" placeholder="Points" onChange={this.handleChange} />
+                            </Grid.Column>
+                            <Grid.Column>
+                                <div className="ui fluid large teal button" onClick={this.onAddQuestion}>Add Question</div>
+                                <br />
+                                <div className="ui fluid large blue button" onClick={this.handleSubmit}>Save</div>
+                            </Grid.Column>
+
+                        </Grid>
+                    </Form >
                     {questions}
-                </div>
+                </div >
             )
         }
     }
