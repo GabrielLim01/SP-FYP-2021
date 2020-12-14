@@ -99,6 +99,174 @@ app.get("/quizDashboard", (request, response) => {
 });
 
 app.get("/quiz/:id", (request, response) => {
+<<<<<<< HEAD
+=======
+  let id = parseInt(request.params.id, 10);
+  const db = dbService.getDbServiceInstance();
+
+  const result = db.getQuizById(id);
+
+  result
+    .then((data) => {
+      console.log("Process was a success!");
+
+      quizObject = JSON.parse(JSON.stringify(data));
+      quizObject.forEach((question) => {
+        questionObject = JSON.parse(question.questionObject);
+      });
+      return response.json({ data: data });
+    })
+    .catch((err) => {
+      // return response.status(500).send(err);
+      console.log(err);
+    });
+});
+
+// create
+app.post("/createNew", (request, response) => {
+  const title = quizObject.quizTitle;
+  const categoryId = quizObject.quizCategoryId;
+  const quizDesc = quizObject.quizDesc;
+  const totalPoints = quizObject.totalPoints;
+
+  const db = dbService.getDbServiceInstance();
+  const createQuiz_result = db.createQuiz(
+    title,
+    quizDesc,
+    totalPoints,
+    categoryId
+  );
+
+  createQuiz_result
+    .then((data) => {
+      response.json({
+        insertId: data.insertId,
+        categoryid: categoryId,
+        name: title,
+        description: quizDesc,
+        totalPoints: totalPoints,
+      });
+      console.log("Quiz Created");
+      const quizId = data.insertId;
+
+      let createQuizResult = new Promise((resolve, reject) => {});
+
+
+      const questionObject = quizObject.questions;
+      console.log(typeof questionObject);
+      questionObject.forEach((question) => {
+        createQuizResult = db.createQuizQuestion(
+          quizId,
+          JSON.stringify(question)
+        );
+      });
+      createQuizResult.catch((err) => console.log("Some Caught Error:", err));
+    })
+
+    .catch((err) => {
+      // Please addon to this list if you encountered something new
+      console.log("Some Caught Error:", err);
+    });
+});
+
+// update
+app.patch("/update/:id", (request, response) => {
+  let id = parseInt(request.params.id, 10);
+
+  const title = request.body.title;
+  const desc = request.body.desc;
+  const totalPoints = request.body.totalPoints;
+  const categoryId = request.body.categoryId;
+  const quizQuestionObject = request.body.quizQuestion;
+  console.log(quizQuestionObject);
+
+  const db = dbService.getDbServiceInstance();
+
+  const result = db.updateQuizDetailsById(
+    id,
+    title,
+    desc,
+    totalPoints,
+    categoryId
+  );
+
+  result
+    .then((data) => {
+      console.log("Process was a success!");
+      response.json({ data: data });
+
+      // phase 2
+
+      let updateQuestionsResult = new Promise((resolve, reject) => {});
+
+      quizQuestionObject.forEach((question) => {
+        updateQuestionsResult = db.updateQuestionDetailsById(
+          id,
+          JSON.stringify(question)
+        );
+      });
+      updateQuestionsResult.catch((err) =>
+        console.log("Some Caught Error:", err)
+      );
+    })
+    .catch((err) => console.log(err));
+});
+
+// delete
+app.delete("/delete/:id", (request, response) => {
+  let id = parseInt(request.params.id, 10);
+
+  const db = dbService.getDbServiceInstance();
+
+  const result = db.deleteQuizById(id);
+
+  result
+    .then((data) => {
+      console.log("Process was a success!");
+      response.json({ data: data });
+    })
+    .catch((err) => console.log(err));
+});
+
+// POST /register
+app.post("/register", async (request, response) => {
+  const name = request.body.name;
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hashSync(request.body.password, salt);
+
+  const db = dbService.getDbServiceInstance();
+
+
+  const result = db.insertNewUser(name, hashedPassword);
+
+  result
+    .then((data) => response.json({ data: data }))
+    .catch((err) => response.status(500).send("Server.js error: ", err));
+
+});
+
+// POST /authenticate
+app.post("/authenticate", (request, response) => {
+  const username = request.body.username;
+  const password = request.body.password;
+  const db = dbService.getDbServiceInstance();
+  const result = db.authenticate(username, password);
+  result
+    .then((data) => {
+      response.json({ data: data });
+    })
+
+    .catch((err) => {
+      response.status(500).send("Server.js error: ", err);
+    });
+});
+
+//create
+app.post("/category", async (request, response) => {
+  const categoryName = request.body.catName;
+  const categoryDesc = request.body.catDesc;
+  let isValid = validateString(categoryName);
+>>>>>>> parent of 4b46b15... code clean up
   const db = dbService.getDbServiceInstance();
   let isValid = validateID(request.params.id);
   if (isValid) {
@@ -256,6 +424,19 @@ app.delete("/quiz/:id", (request, response) => {
       .send(
         `${request.params.id} contained illegal characters. Please check again.`
       );
+    result
+      .then((data) => {
+        res.json({ data: data });
+      })
+      // should not be invoked normally
+      .catch((err) => {
+        console.log("Server.js error: " + err);
+        //res.json(Boom.notFound("Invalid Request"));
+      });
+  } catch (err) {
+
+  }
+
 });
 
 // POST /register
