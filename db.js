@@ -64,16 +64,16 @@ class DbService {
     }
   }
 
-  async createQuiz(title, desc, fiqPoints, categoryId) {
+  async createQuiz(title, desc, totalPoints, categoryId) {
     try {
       return new Promise((resolve, reject) => {
         const query =
-          "INSERT INTO quiz (categoryId, quizName, quizDesc, fiqPoints) VALUES (?,?,?,?);";
+          "INSERT INTO quiz (categoryId, quizName, quizDesc, totalPoints) VALUES (?,?,?,?);";
         // console.log(title);
 
         connection.query(
           query,
-          [categoryId, title, desc, fiqPoints],
+          [categoryId, title, desc, totalPoints],
           (err, result) => {
             if (err) return reject(err.message);
             resolve(result);
@@ -103,14 +103,14 @@ class DbService {
     }
   }
 
-  async updateQuizDetailsById(id, title, desc, fiqPoints, categoryId) {
+  async updateQuizDetailsById(id, title, desc, totalPoints, categoryId) {
     try {
       return new Promise((resolve, reject) => {
         const query =
-          "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, fiqPoints = ?  WHERE quizId = ?";
+          "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, totalPoints = ?  WHERE quizId = ?";
         connection.query(
           query,
-          [categoryId, title, desc, fiqPoints, this.intFormatter(id)],
+          [categoryId, title, desc, totalPoints, this.intFormatter(id)],
           (err, result) => {
             if (err) return reject(err.message);
             resolve(result.affectedRows);
