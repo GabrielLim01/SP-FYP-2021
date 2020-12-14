@@ -64,3 +64,6 @@ Content-Type: application/json
     "password": "12345678"
 }
 
+###
+
+GET http://localhost:9000/quiz/5
