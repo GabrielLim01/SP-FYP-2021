@@ -58,10 +58,17 @@ var quizObject = {
   ],
 };
 
-function isbetween(x, min, max) {
-  return x >= min && x <= max;
+function validateID(x) {
+  let regex = new RegExp("^[0-9]+$");
+  let result = regex.test(x);
+  return result;
 }
 
+function validateString(x) {
+  let regex = new RegExp("^[ A-Za-z0-9_@./#&+-^]*$");
+  let result = regex.test(x);
+  return result;
+}
 // read
 app.get("/quizDashboard", (request, response) => {
   const db = dbService.getDbServiceInstance();
@@ -202,136 +209,132 @@ app.delete("/delete/:id", (request, response) => {
 
 // POST /register
 app.post("/register", async (request, response) => {
-  try {
-    const name = request.body.name;
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hashSync(request.body.password, salt);
+  const name = request.body.name;
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hashSync(request.body.password, salt);
 
-    const db = dbService.getDbServiceInstance();
+  const db = dbService.getDbServiceInstance();
 
-    const result = db.insertNewUser(name, hashedPassword);
+  const result = db.insertNewUser(name, hashedPassword);
 
-    result.then((data) => response.json({ data: data }));
-  } catch (error) {
-    console.log(error);
-    res.status(500).send();
-  }
+  result
+    .then((data) => response.json({ data: data }))
+    .catch((err) => response.status(500).send("Server.js error: ", err));
 });
 
 // POST /authenticate
 app.post("/authenticate", (request, response) => {
-  try {
-    const username = request.body.username;
-    const password = request.body.password;
+  const username = request.body.username;
+  const password = request.body.password;
+  const db = dbService.getDbServiceInstance();
+  const result = db.authenticate(username, password);
+  result
+    .then((data) => {
+      response.json({ data: data });
+    })
 
-    const db = dbService.getDbServiceInstance();
-
-    // const result is a Promise, not raw JSON data
-    const result = db.authenticate(username, password);
-
-    // In order to access the data of the Promise, you have to do a .then((data => console.log(data))),
-    // then use res.json to send the data back to the front-end (axios.POST)
-    result
-      .then((data) => {
-        response.json({ data: data });
-      })
-
-      .catch((err) => {
-        console.log("Server.js error: " + err);
-        response.status(500).send();
-      });
-  } catch (err) {
-    response.status(500).send();
-  }
+    .catch((err) => {
+      response.status(500).send("Server.js error: ", err);
+    });
 });
 
 //create
-app.post("/createCategory", async (request, response) => {
-  try {
-    const categoryName = request.body.catName;
-    const categoryDesc = request.body.catDesc;
-
-    const db = dbService.getDbServiceInstance();
+app.post("/category", async (request, response) => {
+  const categoryName = request.body.catName;
+  const categoryDesc = request.body.catDesc;
+  let isValid = validateString(categoryName);
+  const db = dbService.getDbServiceInstance();
+  if (isValid) {
     let result = db.createCategory(categoryName, categoryDesc);
 
     result
       .then((data) => {
         response.json({ data: data });
       })
-
       .catch((err) => {
-        console.log(`Error creating category: ${categoryName}`, err);
-        response.status(500).send();
+        response
+          .status(500)
+          .send(`Error creating category: ${categoryName}`, err);
       });
-  } catch (error) {
-    console.log(error);
-    response.status(500).send();
-  }
+  } else
+    response
+      .status(400)
+      .send(
+        `${categoryName} contained illegal characters. Please check again.`
+      );
 });
 //read
-app.get("/getAllCategories", async (request, response) => {
+app.get("/category", async (request, response) => {
   const db = dbService.getDbServiceInstance();
 
   const result = db.getAllCategories();
 
   result
     .then((data) => {
-      console.log("Process was a success!");
       response.json({ data: data });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => response.status(400).send(`${err}`));
 });
 
 //update
-app.patch("/updateCategory/:id", (request, response) => {
-  let id = parseInt(request.params.id, 10);
+app.patch("/category/:id", (request, response) => {
   const categoryName = request.body.catName;
   const categoryDesc = request.body.catDesc;
-
   const db = dbService.getDbServiceInstance();
-  const result = db.updateCategoryById(id, categoryName, categoryDesc);
-
-  result
-    .then((data) => {
-      console.log(`Updating category of id: ${id} was a success!`);
-      response.json({ data: data });
-    })
-    .catch((err) => {
-      console.log(err);
-      response.status(400).send(`Update failed`);
-    });
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.updateCategoryById(
+      request.params.id,
+      categoryName,
+      categoryDesc
+    );
+    result
+      .then((data) => {
+        response
+          .status(200)
+          .send(
+            ` Updating category of id: ${request.params.id} was a success!`
+          );
+      })
+      .catch((err) =>
+        response
+          .status(400)
+          .send(`${err}, updating of ${request.params.id} failed`)
+      );
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
 });
 
 //delete
-app.delete("/deleteCategory/:id", async (request, response) => {
-  let id = parseInt(request.params.id, 10);
+app.delete("/category/:id", async (request, response) => {
   const db = dbService.getDbServiceInstance();
-  const result = db.getAllCategories();
-  result
-    .then((data) => {
-      const obj = JSON.parse(JSON.stringify(data));
-
-      if (isbetween(id, 0, Object.keys(obj).length)) {
-        const outcome = db.deleteCategoryById(id);
-        outcome
-          .then((data) => {
-            console.log(`Deletion of category of id: ${id} was a success!`);
-            response.json({ data: data });
-          })
-          .catch((err) => {
-            if (err.includes("ER_ROW_IS_REFERENCED_2"))
-              console.log(
-                `Category with id: ${id} is being referenced by quiz(zes).`
-              );
-          });
-      } else {
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.deleteCategoryById(request.params.id);
+    result
+      .then((data) => {
         response
-          .status(400)
-          .send(`The id: ${id} you provided was not valid. Please try again.`);
-      }
-    })
-    .catch((err) => {
-      console.log("Server error: " + err);
-      response.status(500).send();
-    });
+          .status(200)
+          .send(
+            ` Deletion of category of id: ${request.params.id} was a success!`
+          );
+      })
+      .catch((err) => {
+        if (err.includes("ER_ROW_IS_REFERENCED"))
+          response
+            .status(400)
+            .send(
+              `Category with id: ${request.params.id} is being referenced by quiz(zes).`
+            );
+      });
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
 });
