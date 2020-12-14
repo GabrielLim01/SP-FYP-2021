@@ -138,7 +138,6 @@ app.post("/createNew", (request, response) => {
 
       let createQuizResult = new Promise((resolve, reject) => {});
 
-
       const questionObject = quizObject.questions;
       console.log(typeof questionObject);
       questionObject.forEach((question) => {
@@ -223,13 +222,11 @@ app.post("/register", async (request, response) => {
 
   const db = dbService.getDbServiceInstance();
 
-
   const result = db.insertNewUser(name, hashedPassword);
 
   result
     .then((data) => response.json({ data: data }))
     .catch((err) => response.status(500).send("Server.js error: ", err));
-
 });
 
 // POST /authenticate
@@ -347,17 +344,4 @@ app.delete("/category/:id", async (request, response) => {
       .send(
         `${request.params.id} contained illegal characters. Please check again.`
       );
-    result
-      .then((data) => {
-        res.json({ data: data });
-      })
-      // should not be invoked normally
-      .catch((err) => {
-        console.log("Server.js error: " + err);
-        //res.json(Boom.notFound("Invalid Request"));
-      });
-  } catch (err) {
-
-  }
-
 });
