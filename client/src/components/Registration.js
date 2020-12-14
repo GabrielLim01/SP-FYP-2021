@@ -1,6 +1,11 @@
 import React from 'react';
 import axios from 'axios';
+<<<<<<< Updated upstream
 import { containerStyle, minUsernameLength, minPasswordLength, host } from '../common.js';
+=======
+import { minUsernameLength, minPasswordLength, host } from '../common.js';
+import GuruOrGoonduIcon from '../GuruOrGoonduIcon.jpg'
+>>>>>>> Stashed changes
 
 // BUGS 
 // 1. Registration will proceed even if confirmPassword field is not filled in
@@ -83,12 +88,15 @@ class Registration extends React.Component {
         return (
             <div className="container" style={containerStyle}>
                 <div className="ui middle aligned center aligned grid">
-                    <div className="column" style={{ maxWidth: '450px', paddingTop: '100px' }}>
-                        <h1 className="ui teal image header">
+                    <div className="column" style={{ maxWidth: '450px' }}>
+                        <h2 className="ui teal image header">
+                        <div className="AppIcon">
+                                 <img src={GuruOrGoonduIcon} alt="AppIcon"/>
+                                 </div>
                             <div className="content">
                                 Guru or Goondu
                         </div>
-                        </h1>
+                        </h2>
                         <form className="ui large form">
                             <div className="ui stacked segment">
                                 {inputs.map((value, index) => {
