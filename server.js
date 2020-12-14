@@ -59,6 +59,24 @@ var quizObject = {
         },
       ],
     },
+    {
+      questionTitle: "Question 3",
+      questionDesc: "",
+      fiqPoints: 50,
+      timeLimit: 30,
+      options: [
+        {
+          option: "Option 1",
+          optionDesc: "",
+          isCorrect: true,
+        },
+        {
+          option: "Option 2",
+          optionDesc: "",
+          isCorrect: false,
+        },
+      ],
+    },
   ],
 };
 

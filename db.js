@@ -104,27 +104,22 @@ class DbService {
   }
 
   async batch_createQuizQuestion(quizId, questionsObj) {
-    const obj = {},
-      array = [];
-    //console.log(questionObj);
-    // console.log(typeof storage); // value
+    const array = [];
     Object.keys(questionsObj).forEach(function (item) {
-      //console.log(questionsObj[item]); // value
-      array.push(quizId, JSON.stringify(questionsObj[item]));
+      array.push([quizId, JSON.stringify(questionsObj[item])]);
     });
-    console.log(array);
 
-    // return new Promise((resolve, reject) => {
-    //   const query =
-    //     "INSERT into quiz_question (quizId, questionObject) values (?,?);";
-    //   connection.query(query, [quizId, array], (err, result) => {
-    //     if (err) reject(err.message);
-    //     else {
-    //       console.log("Questions created. quizQuestionId:", result.insertId);
-    //       resolve(result);
-    //     }
-    //   });
-    // });
+    return new Promise((resolve, reject) => {
+      const query =
+        "INSERT into quiz_question (quizId, questionObject) values ?;";
+      connection.query(query, [array], (err, result) => {
+        if (err) reject(err.message);
+        else {
+          console.log("Question(s) created.");
+          resolve(result);
+        }
+      });
+    });
   }
 
   async updateQuizDetailsById(id, title, desc, totalPoints, categoryId) {
