@@ -1,21 +1,16 @@
-
 // Used in Login and Registration.js
+module.exports.appName = "Guru or Goondu";
 module.exports.containerStyle = {
-    container: {
-        backgroundColor: '#DADADA',
-        height: '100%'
-    }
+    maxWidth: '25%', 
+    margin: 'auto', 
+    paddingTop: '100px'
 };
-
-// Used in Registration.js
-module.exports.minUsernameLength = 8;
-module.exports.minPasswordLength = 8;
 
 // Used in components that make axios calls
 module.exports.host = 'http://localhost:9000';
 
 // Used in verifyLogin.js
-module.exports.inProduction = true;
+module.exports.inProduction = false;
 
 // Used in DashboardMenu.js
 module.exports.menuItems = [

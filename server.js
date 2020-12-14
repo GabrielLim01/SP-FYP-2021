@@ -155,7 +155,7 @@ app.post("/createNew", (request, response) => {
           totalPoints: totalPoints,
         });
         const quizId = data.insertId;
-        let createQuestionResult = new Promise((resolve, reject) => {});
+        let createQuestionResult = new Promise((resolve, reject) => { });
         const questionObject = quizObject.questions;
         questionObject.forEach((question) => {
           createQuestionResult = db.createQuizQuestion(
@@ -199,7 +199,7 @@ app.patch("/quiz/:id", (request, response) => {
       .then((data) => {
         response.json({ data: data });
 
-        var updateQuestionsResult = new Promise((resolve, reject) => {});
+        var updateQuestionsResult = new Promise((resolve, reject) => { });
         quizQuestionObject.forEach((question) => {
           updateQuestionsResult = db.updateQuestionDetailsById(
             request.params.id,
@@ -262,13 +262,14 @@ app.delete("/quiz/:id", (request, response) => {
 app.post("/register", async (request, respond) => {
   const name = request.body.name;
   const password = request.body.password;
+
   if (!isBlank(name) && !isBlank(password)) {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hashSync(password, salt);
 
-  const db = dbService.getDbServiceInstance();
+    const db = dbService.getDbServiceInstance();
 
-  const result = db.insertNewUser(name, hashedPassword);
+    const result = db.insertNewUser(name, hashedPassword);
 
     result
       .then((data) => respond.json({ data: data }))
@@ -295,7 +296,8 @@ app.post("/authenticate", (request, response) => {
 
     result
       .then((data) => {
-        response.status(200).send(`User is authenticated`);
+        response.json(data)
+        //response.status(200).send(`User is authenticated`);
       })
       .catch((err) => {
         response
