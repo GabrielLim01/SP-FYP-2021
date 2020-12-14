@@ -124,7 +124,7 @@ app.post("/createNew", (request, response) => {
       });
       console.log("Quiz Created");
       const quizId = data.insertId;
-      var createQuizResult = new Promise((resolve, reject) => {});
+      let createQuizResult = new Promise((resolve, reject) => {});
 
       const questionObject = quizObject.questions;
       console.log(typeof questionObject);
@@ -170,7 +170,7 @@ app.patch("/update/:id", (request, response) => {
       response.json({ data: data });
 
       // phase 2
-      var updateQuestionsResult = new Promise((resolve, reject) => {});
+      let updateQuestionsResult = new Promise((resolve, reject) => {});
       quizQuestionObject.forEach((question) => {
         updateQuestionsResult = db.updateQuestionDetailsById(
           id,
