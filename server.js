@@ -122,18 +122,22 @@ app.post("/createNew", (request, response) => {
         description: quizDesc,
         totalPoints: totalPoints,
       });
-      console.log("Quiz Created");
+      //console.log("Quiz Created");
       const quizId = data.insertId;
       var createQuizResult = new Promise((resolve, reject) => {});
 
-      const questionObject = quizObject.questions;
-      console.log(typeof questionObject);
-      questionObject.forEach((question) => {
-        createQuizResult = db.createQuizQuestion(
-          quizId,
-          JSON.stringify(question)
-        );
-      });
+      //const questionObject = quizObject.questions;
+      //console.log(typeof questionObject);
+      //questionObject.forEach((question) => {
+      // createQuizResult = db.batch_createQuizQuestion(
+      //   quizId,
+      //   JSON.stringify(question)
+      // );
+      //});
+      createQuizResult = db.batch_createQuizQuestion(
+        quizId,
+        quizObject.questions
+      );
       createQuizResult.catch((err) => console.log("Some Caught Error:", err));
     })
 
