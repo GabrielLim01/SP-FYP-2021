@@ -92,3 +92,7 @@ Content-Type: application/json
     "catDesc":"IP for short."
     
 }
+
+###
+
+GET http://localhost:9000/quiz/5
