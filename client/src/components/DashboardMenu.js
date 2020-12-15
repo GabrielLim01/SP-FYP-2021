@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Dropdown, Input, Menu } from 'semantic-ui-react';
-import { menuItems } from '../common.js';
+import { appName, menuItems } from '../common.js';
 
 export default class DashboardMenu extends Component {
     state = { activeItem: this.props.page }
 
-    handleItemClick = (e, { name }) => {
+    handleItemClick = (event, { name }) => {
         this.setState({ activeItem: name })
 
         if (name !== 'home') {
@@ -27,7 +27,7 @@ export default class DashboardMenu extends Component {
         return (
             <Menu inverted>
                 <Menu.Item
-                    name='Guru or Goondu'
+                    name={appName}
                 />
                 {menuItems.map((value, index) => {
                     return (

@@ -55,8 +55,8 @@ class Login extends React.Component {
             return (
                 <div className="container" style={containerStyle}>
                     <h1 className="ui teal image header">{appName}</h1>
-                    <Form>
-                        <div className="ui stacked segment">
+                    <div className="ui stacked segment">
+                        <Form>
                             <div className="field">
                                 <div className="ui left icon input">
                                     <i className="user icon"></i>
@@ -70,8 +70,8 @@ class Login extends React.Component {
                                 </div>
                             </div>
                             <div className="ui fluid large teal submit button" onClick={this.handleSubmit}>Login</div>
-                        </div>
-                    </Form>
+                        </Form>
+                    </div>
                     <div className="ui message">
                         New to us? <Link to="/register">Sign up</Link>
                     </div>

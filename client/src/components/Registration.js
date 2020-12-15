@@ -86,8 +86,8 @@ class Registration extends React.Component {
         return (
             <div className="container" style={containerStyle}>
                 <h1 className="ui teal image header">{appName}</h1>
-                <Form>
-                    <div className="ui stacked segment">
+                <div className="ui stacked segment">
+                    <Form>
                         {inputs.map((value, index) => {
                             return (
                                 <div className="field" key={index}>
@@ -100,8 +100,8 @@ class Registration extends React.Component {
                             )
                         })}
                         <div className="ui fluid large teal submit button" onClick={this.handleSubmit}>Register</div>
-                    </div>
-                </Form>
+                    </Form>
+                </div>
             </div>
         );
     }
