@@ -8,6 +8,9 @@ import verifyLogin from '../verifyLogin.js';
 
 // UNFINISHED
 // 1. Input validation
+// 2. Dynamic generation of option states
+// 3. Handling of checkbox data (disabling the other three when one is checked, 
+// setting the isCorrect property to true for each option object)
 
 class QuizCreation extends React.Component {
     constructor(props) {
@@ -15,6 +18,7 @@ class QuizCreation extends React.Component {
         this.state = {
             questions: 1,
             maxQuestions: 10,
+            options: 4
         };
     }
 
@@ -29,36 +33,41 @@ class QuizCreation extends React.Component {
     }
 
     handleChange = (event) => {
-        // Dynamically generates a new state property for each input field based on its name
-        // and also changes/saves its new value when modified in real-time
         this.setState({
             [event.target.name]: event.target.value
+        });
+    }
+
+    handleDropdownChange = (event, data) => {
+        this.setState({
+            [data.name]: data.value
         });
     }
 
     handleSubmit = (event) => {
         event.preventDefault();
 
-        let question = [];
+        let questions = [];
 
-        // Hardcoded 4 option input values for now
-        // Supposed to iterate over a loop that references the number of options state in the child component
-        // Not sure how to do loops within JSON object syntax yet
-        // Append roman numerals to the end of each option to make every option name unique
         for (let i = 1; i < (this.state.questions + 1); i++) {
-            question.push({
-                question: this.state['question' + i],
-                answers: [this.state['option' + i + 'a'], this.state['option' + i + 'b'], this.state['option' + i + 'c'], this.state['option' + i + 'd']],
-                correct: this.state['correct' + i]
+            questions.push({
+                question: {
+                    name: this.state['question' + i + 'name'],
+                    description: this.state['question' + i + 'desc'],
+                    // Hardcoded for now until I figure out how to loop inside an array.push method
+                    options: [this.state['option-' + i + '-1'], this.state['option-' + i + '-2'], this.state['option-' + i + '-3'], this.state['option-' + i + '-4'], ]
+                }
             });
         }
 
         // Construct a quiz JSON object
         let quiz = {
             name: this.state.quizName,
+            description: this.state.quizDesc,
             category: this.state.quizCategory,
-            points: this.state.points,
-            questions: question
+            points: this.state.quizPoints,
+            time: this.state.quizTime,
+            questions: questions
         };
 
         console.log(JSON.stringify(quiz))
@@ -81,8 +90,8 @@ class QuizCreation extends React.Component {
         const questions = [];
         const categoryOptions = [];
 
-        for (let i = 0; i < this.state.questions; i++) {
-            questions.push(<QuizQuestion key={i} number={i + 1} handleChange={this.handleChange} />);
+        for (let i = 1; i < (this.state.questions + 1); i++) {
+            questions.push(<QuizQuestion key={'question' + i} questionNumber={i} options={this.state.options} handleChange={this.handleChange} />);
         };
 
         for (let i = 0; i < categories.length; i++) {
@@ -99,7 +108,7 @@ class QuizCreation extends React.Component {
                 <div className="container">
                     <DashboardMenu page='quizzes'></DashboardMenu>
                     <h1 className="ui teal image header">Create your quiz!</h1>
-                    <div className="subContainer" style={{ maxWidth: '60%', margin: 'auto', textAlign: 'left', paddingTop: '20px'}}>
+                    <div className="subContainer" style={{ maxWidth: '60%', margin: 'auto', textAlign: 'left', paddingTop: '20px' }}>
                         <Segment>
                             <Form>
                                 <Grid columns='equal'>
@@ -122,15 +131,16 @@ class QuizCreation extends React.Component {
                                                 fluid
                                                 selection
                                                 options={categoryOptions}
+                                                onChange={this.handleDropdownChange}
                                             />
                                         </Grid.Column>
                                         <Grid.Column>
                                             <h3>FIQ per question</h3>
-                                            <input type="text" name="points" placeholder="Points" onChange={this.handleChange} />
+                                            <input type="text" name="quizPoints" placeholder="Points" onChange={this.handleChange} />
                                         </Grid.Column>
                                         <Grid.Column>
                                             <h3>Time per question</h3>
-                                            <input type="text" name="time" placeholder="Time" name={"questiontime"} onChange={this.handleChange} />
+                                            <input type="text" name="quizTime" placeholder="Time" onChange={this.handleChange} />
                                         </Grid.Column>
                                     </Grid.Row>
                                 </Grid>
