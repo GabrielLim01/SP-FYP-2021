@@ -285,7 +285,7 @@ app.post("/authenticate", (request, response) => {
 
     result
       .then((data) => {
-        response.json(data)
+        response.json(data);
         //response.status(200).send(`User is authenticated`);
       })
       .catch((err) => {
@@ -297,4 +297,106 @@ app.post("/authenticate", (request, response) => {
           );
       });
   } else response.status(400).send(`Username / Password is(are) empty.`);
+});
+
+//create
+app.post("/category", async (request, response) => {
+  const categoryName = request.body.catName;
+  const categoryDesc = request.body.catDesc;
+  let isValid = validateString(categoryName);
+  const db = dbService.getDbServiceInstance();
+  if (isValid) {
+    let result = db.createCategory(categoryName, categoryDesc);
+
+    result
+      .then((data) => {
+        response.json({ data: data });
+      })
+      .catch((err) => {
+        response
+          .status(500)
+          .send(`Error creating category: ${categoryName}`, err);
+      });
+  } else
+    response
+      .status(400)
+      .send(
+        `${categoryName} contained illegal characters. Please check again.`
+      );
+});
+
+//read
+app.get("/category", async (request, response) => {
+  const db = dbService.getDbServiceInstance();
+
+  const result = db.getAllCategories();
+
+  result
+    .then((data) => {
+      response.json({ data: data });
+    })
+    .catch((err) => response.status(400).send(`${err}`));
+});
+
+//update
+app.patch("/category/:id", (request, response) => {
+  const categoryName = request.body.catName;
+  const categoryDesc = request.body.catDesc;
+  const db = dbService.getDbServiceInstance();
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.updateCategoryById(
+      request.params.id,
+      categoryName,
+      categoryDesc
+    );
+    result
+      .then((data) => {
+        response
+          .status(200)
+          .send(
+            ` Updating category of id: ${request.params.id} was a success!`
+          );
+      })
+      .catch((err) =>
+        response
+          .status(400)
+          .send(`${err}, updating of ${request.params.id} failed`)
+      );
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
+});
+
+//delete
+app.delete("/category/:id", async (request, response) => {
+  const db = dbService.getDbServiceInstance();
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.deleteCategoryById(request.params.id);
+    result
+      .then((data) => {
+        response
+          .status(200)
+          .send(
+            ` Deletion of category of id: ${request.params.id} was a success!`
+          );
+      })
+      .catch((err) => {
+        if (err.includes("ER_ROW_IS_REFERENCED"))
+          response
+            .status(400)
+            .send(
+              `Category with id: ${request.params.id} is being referenced by quiz(zes).`
+            );
+      });
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
 });
