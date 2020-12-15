@@ -76,17 +76,6 @@ function isBlank(str) {
   return !str || 0 === str.length;
 }
 
-function validateID(x) {
-  let regex = new RegExp("^[0-9]+$");
-  let result = regex.test(x);
-  return result;
-}
-
-function validateString(x) {
-  let regex = new RegExp("^[ A-Za-z0-9_@./#&+-^]*$");
-  let result = regex.test(x);
-  return result;
-}
 // read
 app.get("/quizDashboard", (request, response) => {
   const db = dbService.getDbServiceInstance();
