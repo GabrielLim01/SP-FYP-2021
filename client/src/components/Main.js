@@ -5,8 +5,7 @@ import Login from './Login.js';
 import Registration from './Registration.js';
 import Dashboard from './Dashboard.js';
 import NotFound from './NotFound.js';
-import QuizCategorySelection from './quiz/QuizCategorySelection.js';
-import QuizSelection from './quiz/QuizSelection.js';
+import Selection from './quiz/Selection.js';
 import QuizCreation from './quiz/QuizCreation.js';
 
 // TO-DO - Establish a more dynamic component/page routing structure
@@ -15,12 +14,13 @@ const Main = () => {
   return (
     <Switch> 
       <Route exact path='/' component={Login}></Route>
-      <Route exact path='/register' component={Registration}></Route>
-      <Route exact path='/dashboard' component={Dashboard}></Route>
+      <Route path='/register' component={Registration}></Route>
+      <Route path='/dashboard' component={Dashboard}></Route>
       
-      <Route exact path='/quizzes' component={QuizCategorySelection}></Route>
-      <Route exact path='/quizzes/technology' component={QuizSelection}></Route>
-      <Route exact path='/quizzes/creation' component={QuizCreation}></Route>
+      <Route exact path='/quizzes' component={Selection}></Route>
+      <Route exact path='/quizzes/technology' component={Selection}></Route>
+      <Route exact path='/quizzes/quizcreation' component={QuizCreation}></Route>
+
       <Route component={NotFound} /> 
     </Switch>
   );

@@ -1,10 +1,14 @@
 import React from 'react';
-import { TextArea } from 'semantic-ui-react'
+import { Segment, Form, Grid, Divider, TextArea, Checkbox } from 'semantic-ui-react'
 
 // UNFINISHED
-// Correct Answer input field should be a dropdown containing all of the quest options, not an open text input
-// Also need to write logic to set a default correct answer option (e.g. 1) in the event of mismatching data with the database
-// or other unforeseen circumstances
+// Modify options format from this
+// 1 | 3
+// 2 | 4
+//
+// into this
+// 1 | 2
+// 3 | 4
 
 class QuizQuestion extends React.Component {
     constructor(props) {
@@ -15,35 +19,40 @@ class QuizQuestion extends React.Component {
     }
 
     render() {
-        const options = ['i', 'ii', 'iii', 'iv']
+        const options = ['a', 'b', 'c', 'd']
 
         const number = this.props.number;
 
         return (
-            <div className="container">
-                <div className="ui middle aligned grid">
-                    <div className="column" style={{ maxWidth: '30%', margin: 'auto' }}>
-                        <form className="ui large form">
-                            <div className="ui stacked segment">
-                                <h2>Question {number}</h2>
-                                <TextArea placeholder='Input your question here' name={"question" + number} onChange={this.props.handleChange}/>
-                                <h2>Options</h2>
-                                {options.map((value, index) => {
-                                    return (
-                                        <div className="field" key={index}>
-                                            <input type="text" name={"option" + number + value} placeholder={"Option " + (index + 1)} onChange={this.props.handleChange}/>
-                                        </div>
-                                    )
-                                })}
-                                <h2>Correct Answer</h2>
-                                <div className="field">
-                                    <input type="text" name={"correct" + number} placeholder="Correct Answer" onChange={this.props.handleChange}/>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div >
+            <div className="container" style={{ padding: '25px 0px' }}>
+                <Segment>
+                    <Form>
+                        <h2>Question {number}</h2>
+                        <Divider></Divider>
+                        <Grid columns='equal'>
+                            <Grid.Column>
+                                <h3>Title</h3>
+                                <input type="text" name={"question" + number + "name"} placeholder="Title" onChange={this.handleChange} />
+                            </Grid.Column>
+                            <Grid.Column>
+                                <h3>Description</h3>
+                                <TextArea placeholder='Description' name={"question" + number + "desc"} onChange={this.props.handleChange} />
+                            </Grid.Column>
+                        </Grid>
+                        <h3>Options</h3>
+                        <div style={{ columns: '2 auto'}}>
+                            {options.map((value, index) => {
+                                return (
+                                    <div className="field" key={index}>
+                                        <input type="text" name={"option" + number + value} placeholder={"Option " + (index + 1)} onChange={this.props.handleChange} />
+                                        <Checkbox label='Correct Answer?' name={"isCorrect" + number + value} style={{ padding: '20px 0px' }} />
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </Form>
+                </Segment>
+            </div>
         )
     }
 }

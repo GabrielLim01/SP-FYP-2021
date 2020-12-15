@@ -1,18 +1,13 @@
 import React from 'react';
 import axios from 'axios';
+import { Segment, Form, Grid, TextArea, Dropdown, Button, Icon } from 'semantic-ui-react';
+import { host, categories } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import QuizQuestion from './QuizQuestion.js';
 import verifyLogin from '../verifyLogin.js';
-import { host } from '../../common.js';
-import { Form, Grid, Accordion, TextArea, Icon, Dropdown } from 'semantic-ui-react';
 
 // UNFINISHED
-// 1. Overall quiz creation layout is not very good, needs a revamp
-// 2. Category input field should be a dropdown consisting of categories pulled from the database, displayed in string format
-// When selected, the categoryId (a number) will be saved in the quiz JSON object to be sent to the back-end instead of the string itself
-// New category creation CANNOT be done in here presently, it has to be done outside in another component
-// 3. Timer per question
-// 4. Input validation
+// 1. Input validation
 
 class QuizCreation extends React.Component {
     constructor(props) {
@@ -34,7 +29,7 @@ class QuizCreation extends React.Component {
     }
 
     handleChange = (event) => {
-        // Dynamically generates a new state property for each input value based on its name
+        // Dynamically generates a new state property for each input field based on its name
         // and also changes/saves its new value when modified in real-time
         this.setState({
             [event.target.name]: event.target.value
@@ -53,7 +48,7 @@ class QuizCreation extends React.Component {
         for (let i = 1; i < (this.state.questions + 1); i++) {
             question.push({
                 question: this.state['question' + i],
-                answers: [this.state['option' + i + 'i'], this.state['option' + i + 'ii'], this.state['option' + i + 'iii'], this.state['option' + i + 'iv']],
+                answers: [this.state['option' + i + 'a'], this.state['option' + i + 'b'], this.state['option' + i + 'c'], this.state['option' + i + 'd']],
                 correct: this.state['correct' + i]
             });
         }
@@ -84,9 +79,15 @@ class QuizCreation extends React.Component {
 
     render() {
         const questions = [];
+        const categoryOptions = [];
 
         for (let i = 0; i < this.state.questions; i++) {
             questions.push(<QuizQuestion key={i} number={i + 1} handleChange={this.handleChange} />);
+        };
+
+        for (let i = 0; i < categories.length; i++) {
+            let value = categories[i];
+            categoryOptions.push({ key: value, text: value, value: value });
         };
 
         if (!verifyLogin()) {
@@ -97,32 +98,52 @@ class QuizCreation extends React.Component {
             return (
                 <div className="container">
                     <DashboardMenu page='quizzes'></DashboardMenu>
-                    <h1 className="ui teal image header">
-                        Create your quiz!
-                    </h1>
-                    <Form>
-                        <Grid columns='equal' verticalAlign='middle' style={{ maxWidth: '80%', margin: 'auto' }}>
-                            <Grid.Column>
-                                <h3>Quiz Title</h3>
-                                <input type="text" name="quizName" placeholder="Title" onChange={this.handleChange} />
-                                <h3>Quiz Description</h3>
-                                <TextArea name='quizDesc' placeholder='Description' onChange={this.handleChange} />
-                            </Grid.Column>
-                            <Grid.Column>
-                                <h3>Quiz Category</h3>
-                                <input type="text" name="quizCategory" placeholder="Category" onChange={this.handleChange} />
-                                <h3>FIQ per question</h3>
-                                <input type="text" name="points" placeholder="Points" onChange={this.handleChange} />
-                            </Grid.Column>
-                            <Grid.Column>
-                                <div className="ui fluid large teal button" onClick={this.onAddQuestion}>Add Question</div>
-                                <br />
-                                <div className="ui fluid large blue button" onClick={this.handleSubmit}>Save</div>
-                            </Grid.Column>
-
-                        </Grid>
-                    </Form >
-                    {questions}
+                    <h1 className="ui teal image header">Create your quiz!</h1>
+                    <div className="subContainer" style={{ maxWidth: '60%', margin: 'auto', textAlign: 'left', paddingTop: '20px'}}>
+                        <Segment>
+                            <Form>
+                                <Grid columns='equal'>
+                                    <Grid.Row columns={2}>
+                                        <Grid.Column>
+                                            <h3>Quiz Title</h3>
+                                            <input type="text" name="quizName" placeholder="Title" onChange={this.handleChange} />
+                                        </Grid.Column>
+                                        <Grid.Column>
+                                            <h3>Quiz Description</h3>
+                                            <TextArea name='quizDesc' placeholder='Description' onChange={this.handleChange} />
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                    <Grid.Row columns={3}>
+                                        <Grid.Column>
+                                            <h3>Category</h3>
+                                            <Dropdown
+                                                name='quizCategory'
+                                                placeholder='Select a Category'
+                                                fluid
+                                                selection
+                                                options={categoryOptions}
+                                            />
+                                        </Grid.Column>
+                                        <Grid.Column>
+                                            <h3>FIQ per question</h3>
+                                            <input type="text" name="points" placeholder="Points" onChange={this.handleChange} />
+                                        </Grid.Column>
+                                        <Grid.Column>
+                                            <h3>Time per question</h3>
+                                            <input type="text" name="time" placeholder="Time" name={"questiontime"} onChange={this.handleChange} />
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                </Grid>
+                            </Form >
+                        </Segment>
+                        {questions}
+                        <div className="subContainer" style={{ padding: '25px 0px', textAlign: 'right' }}>
+                            <Button icon labelPosition='left' className='teal' name='addQuestion' onClick={this.onAddQuestion}>
+                                <Icon name='add' size='large' />Add Question
+                        </Button>
+                            <Button className='blue' name='createQuiz' onClick={this.handleSubmit}>Create Quiz</Button>
+                        </div>
+                    </div >
                 </div >
             )
         }

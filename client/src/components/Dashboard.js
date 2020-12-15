@@ -27,7 +27,7 @@ class Dashboard extends React.Component {
                 <div className="container">
                     <DashboardMenu page='dashboard'></DashboardMenu>
                     <div className="subContainer" style={containerStyle}>
-                        <h1 className="ui header">Welcome, {this.state.username}!</h1>
+                        <h1>Welcome, {this.state.username}!</h1>
                         <h2>What would you like to play today?</h2>
 
                         <div className="ui stacked segment">
