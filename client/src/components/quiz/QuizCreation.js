@@ -7,10 +7,8 @@ import QuizQuestion from './QuizQuestion.js';
 import verifyLogin from '../verifyLogin.js';
 
 // UNFINISHED
-// 1. Input validation
+// 1. Input validation (especially for checkboxes)
 // 2. Dynamic generation of option states
-// 3. Handling of checkbox data (disabling the other three when one is checked, 
-// setting the isCorrect property to true for each option object)
 
 class QuizCreation extends React.Component {
     constructor(props) {
@@ -44,6 +42,12 @@ class QuizCreation extends React.Component {
         });
     }
 
+    handleCheckboxChange = (checkbox) => {
+        this.setState({
+            [checkbox.name]: !checkbox.checked
+        });
+    }
+
     handleSubmit = (event) => {
         event.preventDefault();
 
@@ -55,7 +59,12 @@ class QuizCreation extends React.Component {
                     name: this.state['question' + i + 'name'],
                     description: this.state['question' + i + 'desc'],
                     // Hardcoded for now until I figure out how to loop inside an array.push method
-                    options: [this.state['option-' + i + '-1'], this.state['option-' + i + '-2'], this.state['option-' + i + '-3'], this.state['option-' + i + '-4'], ]
+                    options: [
+                        { name: this.state['option-' + i + '-1'], isCorrect: this.state['isCorrect-' + i + '-1'] || false },
+                        { name: this.state['option-' + i + '-2'], isCorrect: this.state['isCorrect-' + i + '-2'] || false },
+                        { name: this.state['option-' + i + '-3'], isCorrect: this.state['isCorrect-' + i + '-3'] || false },
+                        { name: this.state['option-' + i + '-4'], isCorrect: this.state['isCorrect-' + i + '-4'] || false }
+                    ]
                 }
             });
         }
@@ -70,6 +79,7 @@ class QuizCreation extends React.Component {
             questions: questions
         };
 
+        alert(this.state['isCorrect-1-1'])
         console.log(JSON.stringify(quiz))
 
         // Send quiz object to the back-end via axios (Incomplete API)
@@ -91,7 +101,14 @@ class QuizCreation extends React.Component {
         const categoryOptions = [];
 
         for (let i = 1; i < (this.state.questions + 1); i++) {
-            questions.push(<QuizQuestion key={'question' + i} questionNumber={i} options={this.state.options} handleChange={this.handleChange} />);
+            questions.push(
+                <QuizQuestion
+                    key={'question' + i}
+                    questionNumber={i}
+                    options={this.state.options}
+                    handleChange={this.handleChange}
+                    handleCheckboxChange={this.handleCheckboxChange}
+                />);
         };
 
         for (let i = 0; i < categories.length; i++) {

@@ -10,7 +10,7 @@ import QuizCreation from './quiz/QuizCreation.js';
 
 // TO-DO - Establish a more dynamic component/page routing structure
 
-const Main = () => {
+const Routes = () => {
   return (
     <Switch> 
       <Route exact path='/' component={Login}></Route>
@@ -29,4 +29,4 @@ const Main = () => {
   // and remember to import Redirect from react-router-dom
 }
 
-export default Main;
+export default Routes;

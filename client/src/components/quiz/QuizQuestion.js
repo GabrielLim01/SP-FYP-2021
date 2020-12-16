@@ -2,6 +2,28 @@ import React from 'react';
 import { Segment, Form, Grid, Divider, TextArea, Checkbox } from 'semantic-ui-react'
 
 class QuizQuestion extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            checked: {}
+        };
+    }
+
+    onSelectedChange = (event, index) => {
+        this.setState(previousState => ({
+            checked: {
+                ...previousState.checked,
+                [index]: !previousState.checked[index]
+            }
+        }));
+
+        // event.target retrieves the label element instead of the checkbox element
+        // the checkbox element is directly before the label element in the DOM hierarchy, 
+        // so attach .previousElementSibling to access it
+        let checkbox = event.target.previousElementSibling;
+        this.props.handleCheckboxChange(checkbox)
+    };
+
     render() {
         const number = this.props.questionNumber;
         const noOfOptions = this.props.options;
@@ -10,6 +32,11 @@ class QuizQuestion extends React.Component {
         for (let i = 1; i < (noOfOptions + 1); i++) {
             options.push(i)
         }
+
+        // Checkbox handling logic
+        const { checked } = this.state;
+        const checkedCount = Object.keys(checked).filter(key => checked[key]).length;
+        const disabled = checkedCount > 0;
 
         return (
             <div className="container" style={{ padding: '25px 0px' }}>
@@ -35,7 +62,14 @@ class QuizQuestion extends React.Component {
                                         <Grid.Column key={"options-" + number + "-" + value}>
                                             <div className="field">
                                                 <input type="text" name={"option-" + number + "-" + value} placeholder={"Option " + value} onChange={this.props.handleChange} />
-                                                <Checkbox label='Correct Answer?' name={"isCorrect-" + number + "-" + value} style={{ padding: '20px 0px' }} onChange={this.props.handleChange} />
+                                                <Checkbox
+                                                    label='Correct Answer?'
+                                                    name={"isCorrect-" + number + "-" + value}
+                                                    style={{ padding: '20px 0px' }}
+                                                    onChange={(event) => this.onSelectedChange(event, index)}
+                                                    checked={checked[index] || false}
+                                                    disabled={!checked[index] && disabled}
+                                                />
                                             </div>
                                         </Grid.Column>
                                     )
