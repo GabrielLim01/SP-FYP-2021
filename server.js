@@ -144,7 +144,7 @@ app.post("/createNew", (request, response) => {
           totalPoints: totalPoints,
         });
         const quizId = data.insertId;
-        let createQuestionResult = new Promise((resolve, reject) => { });
+        let createQuestionResult = new Promise((resolve, reject) => {});
         const questionObject = quizObject.questions;
         questionObject.forEach((question) => {
           createQuestionResult = db.createQuizQuestion(
@@ -188,7 +188,7 @@ app.patch("/quiz/:id", (request, response) => {
       .then((data) => {
         response.json({ data: data });
 
-        var updateQuestionsResult = new Promise((resolve, reject) => { });
+        var updateQuestionsResult = new Promise((resolve, reject) => {});
         quizQuestionObject.forEach((question) => {
           updateQuestionsResult = db.updateQuestionDetailsById(
             request.params.id,
@@ -392,6 +392,42 @@ app.delete("/category/:id", async (request, response) => {
               `Category with id: ${request.params.id} is being referenced by quiz(zes).`
             );
       });
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
+});
+
+//update profile
+app.patch("/profile/:id", (request, response) => {
+  const username = request.body.username;
+  const hobbyId = request.body.hobbyId;
+  //const hobbies = [];
+  //hobbyId.forEach((id) => hobbies.push(id));
+  const ageGroupId = request.body.ageGroupId;
+  const db = dbService.getDbServiceInstance();
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.updateProfileById(
+      request.params.id,
+      username,
+      hobbyId,
+      // hobbies,
+      ageGroupId
+    );
+    result
+      .then((data) => {
+        response
+          .status(200)
+          .send(` Updating profile of id: ${request.params.id} was a success!`);
+      })
+      .catch((err) =>
+        response
+          .status(400)
+          .send(`${err}, updating of ${request.params.id} failed`)
+      );
   } else
     response
       .status(400)
