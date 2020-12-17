@@ -29,6 +29,7 @@ var quizObject = {
       questionDesc: "",
       fiqPoints: 50,
       timeLimit: 30,
+      explanation: "",
       options: [
         {
           option: "Option 1",
@@ -47,6 +48,7 @@ var quizObject = {
       questionDesc: "",
       fiqPoints: 50,
       timeLimit: 30,
+      explanation: "",
       options: [
         {
           option: "Option 1",
@@ -119,7 +121,7 @@ app.get("/quiz/:id", (request, response) => {
 });
 
 // create
-app.post("/createNew", (request, response) => {
+app.post("/quiz/createNew", (request, response) => {
   const title = quizObject.quizTitle; // to be changed
   const categoryId = quizObject.quizCategoryId; // to be changed
   const quizDesc = quizObject.quizDesc; // to be changed
@@ -407,3 +409,27 @@ app.delete("/category/:id", async (request, response) => {
 4. Update
 5. Delete
 */
+
+//create
+app.post("/quest/createNew", async (request, response) => {
+  const title = request.body.title;
+  const desc = request.body.desc;
+  const objective = request.body.objective;
+  const categoryId = request.body.categoryId;
+  const fiqPoints = request.body.fiqPoints;
+  let isValid = validateString(title);
+  const db = dbService.getDbServiceInstance();
+  if (isValid) {
+    let result = db.createQuest(title, desc, objective, categoryId, fiqPoints);
+    result
+      .then((data) => {
+        response.json({ data: data });
+      })
+      .catch((err) => {
+        response.status(500).send(`Error creating quest: ${title}, ${err}`);
+      });
+  } else
+    response
+      .status(400)
+      .send(`${title} contained illegal characters. Please check again.`);
+});

@@ -289,6 +289,24 @@ class DbService {
       throw e.message;
     }
   }
+  //Create quest
+  async createQuest(title, description, objective, categoryId, fiqPoints) {
+    return new Promise((resolve, reject) => {
+      const query =
+        "INSERT INTO quest (title, description, objective, categoryId, fiqPoint) VALUES (?, ?, ?, ?, ?);";
+      connection.query(
+        query,
+        [title, description, objective, categoryId, fiqPoints],
+        (err, result) => {
+          if (err) {
+            console.log(err.message);
+            reject(err.message);
+          }
+          resolve(result);
+        }
+      );
+    });
+  }
 }
 
 module.exports = DbService;
