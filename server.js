@@ -144,7 +144,7 @@ app.post("/createNew", (request, response) => {
           totalPoints: totalPoints,
         });
         const quizId = data.insertId;
-        let createQuestionResult = new Promise((resolve, reject) => { });
+        let createQuestionResult = new Promise((resolve, reject) => {});
         const questionObject = quizObject.questions;
         questionObject.forEach((question) => {
           createQuestionResult = db.createQuizQuestion(
@@ -188,7 +188,7 @@ app.patch("/quiz/:id", (request, response) => {
       .then((data) => {
         response.json({ data: data });
 
-        var updateQuestionsResult = new Promise((resolve, reject) => { });
+        var updateQuestionsResult = new Promise((resolve, reject) => {});
         quizQuestionObject.forEach((question) => {
           updateQuestionsResult = db.updateQuestionDetailsById(
             request.params.id,
@@ -399,3 +399,11 @@ app.delete("/category/:id", async (request, response) => {
         `${request.params.id} contained illegal characters. Please check again.`
       );
 });
+/////////////////////////////////////////
+/*
+1. Declare mock object
+2. Create
+3. Read
+4. Update
+5. Delete
+*/
