@@ -64,16 +64,14 @@ class DbService {
     }
   }
 
-  async createQuiz(title, desc, totalPoints, categoryId) {
+  async createQuiz(name, desc, category, points, time) {
     try {
       return new Promise((resolve, reject) => {
         const query =
-          "INSERT INTO quiz (categoryId, quizName, quizDesc, totalPoints) VALUES (?,?,?,?);";
-        // console.log(title);
-
+          "INSERT INTO quiz (categoryId, quizName, quizDesc, totalPoints, timePerQuestion) VALUES (?,?,?,?,?);";
         connection.query(
           query,
-          [categoryId, title, desc, totalPoints],
+          [category, name, desc, points, time],
           (err, result) => {
             if (err) return reject(err.message);
             resolve(result);

@@ -29,7 +29,6 @@ class Dashboard extends React.Component {
                     <div className="subContainer" style={containerStyle}>
                         <h1>Welcome, {this.state.username}!</h1>
                         <h2>What would you like to play today?</h2>
-
                         <div className="ui stacked segment">
                             <Form>
                                 <div className="field">
@@ -44,7 +43,6 @@ class Dashboard extends React.Component {
                                 </div>
                             </Form>
                         </div>
-
                     </div>
                 </div>
             );

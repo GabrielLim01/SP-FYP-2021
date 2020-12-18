@@ -18,50 +18,51 @@ const port = 9000;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
 
-var quizObject = {
-  quizTitle: "Hello",
-  quizCategoryId: 1,
-  quizDesc: "",
-  totalPoints: 100,
-  questions: [
-    {
-      questionTitle: "Question 1",
-      questionDesc: "",
-      fiqPoints: 50,
-      timeLimit: 30,
-      options: [
-        {
-          option: "Option 1",
-          optionDesc: "",
-          isCorrect: true,
-        },
-        {
-          option: "Option 2",
-          optionDesc: "",
-          isCorrect: false,
-        },
-      ],
-    },
-    {
-      questionTitle: "Question 2",
-      questionDesc: "",
-      fiqPoints: 50,
-      timeLimit: 30,
-      options: [
-        {
-          option: "Option 1",
-          optionDesc: "",
-          isCorrect: true,
-        },
-        {
-          option: "Option 2",
-          optionDesc: "",
-          isCorrect: false,
-        },
-      ],
-    },
-  ],
-};
+// var quizObject = {
+//   quizTitle: "Hello",
+//   quizCategoryId: 1,
+//   quizDesc: "",
+//   totalPoints: 100,
+//   questions: [
+//     {
+//       questionTitle: "Question 1",
+//       questionDesc: "",
+//       fiqPoints: 50,
+//       timeLimit: 30,
+//       options: [
+//         {
+//           option: "Option 1",
+//           optionDesc: "",
+//           isCorrect: true,
+//         },
+//         {
+//           option: "Option 2",
+//           optionDesc: "",
+//           isCorrect: false,
+//         },
+//       ],
+//     },
+//     {
+//       questionTitle: "Question 2",
+//       questionDesc: "",
+//       fiqPoints: 50,
+//       timeLimit: 30,
+//       options: [
+//         {
+//           option: "Option 1",
+//           optionDesc: "",
+//           isCorrect: true,
+//         },
+//         {
+//           option: "Option 2",
+//           optionDesc: "",
+//           isCorrect: false,
+//         },
+//       ],
+//     },
+//   ],
+// };
+
 function validateID(x) {
   let regex = new RegExp("^[0-9]+$");
   let result = regex.test(x);
@@ -118,34 +119,41 @@ app.get("/quiz/:id", (request, response) => {
       );
 });
 
-// create
-app.post("/createNew", (request, response) => {
-  const title = quizObject.quizTitle; // to be changed
-  const categoryId = quizObject.quizCategoryId; // to be changed
-  const quizDesc = quizObject.quizDesc; // to be changed
-  const totalPoints = quizObject.totalPoints; // to be changed
+// POST /quiz
+app.post("/quiz", (request, response) => {
+  const quiz = request.body.quiz
+  const name = quiz.name;
+  const desc = quiz.description;
+  const category = quiz.category;
+  const points = quiz.points;
+  const time = quiz.time;
 
-  if (!isBlank(title) && !isBlank(categoryId) && !isBlank(totalPoints)) {
+  if (!isBlank(name) && !isBlank(category) && !isBlank(points)) {
     const db = dbService.getDbServiceInstance();
     const createQuizResult = db.createQuiz(
-      title,
-      quizDesc,
-      totalPoints,
-      categoryId
+      name,
+      desc,
+      category,
+      points,
+      time
     );
 
     createQuizResult
       .then((data) => {
         response.json({
           insertId: data.insertId,
-          categoryid: categoryId,
-          name: title,
-          description: quizDesc,
-          totalPoints: totalPoints,
+          categoryid: category,
+          name: name,
+          description: desc,
+          points: points,
+          time: time
         });
+
         const quizId = data.insertId;
+
         let createQuestionResult = new Promise((resolve, reject) => { });
-        const questionObject = quizObject.questions;
+
+        const questionObject = quiz.questions;
         questionObject.forEach((question) => {
           createQuestionResult = db.createQuizQuestion(
             quizId,
@@ -156,13 +164,12 @@ app.post("/createNew", (request, response) => {
           response.status(400).send(`Creation of questions failed.`, err)
         );
       })
-
       .catch((err) => {
         // Please addon to this list if you encountered something new
         response.status(400).send(`Creation of quiz failed.`, err);
       });
   } else
-    response.status(400).send(`Title / categoryId / totalPoints is(are) empty`);
+    response.status(400).send(`Name / Category / Points cannot be empty!`);
 });
 
 // update

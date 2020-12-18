@@ -30,6 +30,31 @@ class QuizCreation extends React.Component {
         }
     }
 
+    parseCategory(category) {
+        // Get list of categories from database (incomplete)
+        // const categories = []
+        // axios.get(host + '/categories')
+        //     .then((response) => {
+        //        for (let i=0; i < response.data.length; i++){
+        //         categories.push({name: response.data[i].name, id: response.data[i].id})
+        //        }
+        //     })
+        //     .catch((error) => {
+        //         alert(error);
+        //     });
+
+        let categoryId = 1;
+
+        // Hardcoded for now
+        if (category === "Lifestyle") {
+            categoryId = 2;
+        } else if (category === "Finance") {
+            categoryId = 3;
+        }
+
+        return categoryId;
+    }
+
     handleChange = (event) => {
         this.setState({
             [event.target.name]: event.target.value
@@ -69,31 +94,31 @@ class QuizCreation extends React.Component {
             });
         }
 
+        // Parse category name into category ID
+        let categoryId = this.parseCategory(this.state.quizCategory)
+
         // Construct a quiz JSON object
         let quiz = {
             name: this.state.quizName,
             description: this.state.quizDesc,
-            category: this.state.quizCategory,
+            category: categoryId,
             points: this.state.quizPoints,
             time: this.state.quizTime,
             questions: questions
         };
 
-        alert(this.state['isCorrect-1-1'])
-        console.log(JSON.stringify(quiz))
+        //console.log(JSON.stringify(quiz))
 
-        // Send quiz object to the back-end via axios (Incomplete API)
-        // axios.post(host + '/quiz', {
-        //     quiz: quiz
-        // })
-        //     .then((response) => {
-
-        //         // unfinished logic
-
-        //     })
-        //     .catch((error) => {
-        //         alert(error);
-        //     });
+        // Send quiz object to the back-end via axios 
+        axios.post(host + '/quiz', {
+            quiz: quiz
+        })
+            .then((response) => {
+                console.log(response.data)
+            })
+            .catch((error) => {
+                alert(error);
+            });
     }
 
     render() {
