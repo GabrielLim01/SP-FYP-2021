@@ -409,7 +409,16 @@ app.delete("/category/:id", async (request, response) => {
 4. Update
 5. Delete
 */
-
+const obj = {
+  title:"", desc:"", objective:"", categoryId:"", fiqPoints:"",
+  options: [
+    {optionTitle:"", optionDesc:"", pros:"", cons:"", options: [
+      {optionTitle:"", optionDesc:"", pros:"", cons:"", options: [
+    {optionTitle:"", optionDesc:"", pros:"", cons:""}
+  ],}
+    ]}
+  ],
+}
 //create
 app.post("/quest/createNew", async (request, response) => {
   const title = request.body.title;
