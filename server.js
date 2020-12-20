@@ -410,15 +410,50 @@ app.delete("/category/:id", async (request, response) => {
 5. Delete
 */
 const obj = {
-  title:"", desc:"", objective:"", categoryId:"", fiqPoints:"",
-  options: [
-    {optionTitle:"", optionDesc:"", pros:"", cons:"", options: [
-      {optionTitle:"", optionDesc:"", pros:"", cons:"", options: [
-    {optionTitle:"", optionDesc:"", pros:"", cons:""}
-  ],}
-    ]}
+  questTitle: "Hello",
+  questCategoryId: 1,
+  questDesc: "",
+  questObjective: "",
+  fiqPoints: 100,
+  questions: [
+    {
+      sub_questTitle: "Scenario 1",
+      sub_questDesc: "",
+      options: [
+        {
+          option: "Option 1",
+          optionDesc: "",
+          pros: "",
+          cons: "",
+        },
+        {
+          option: "Option 2",
+          optionDesc: "",
+          pros: "",
+          cons: "",
+        },
+      ],
+    },
+    {
+      sub_questTitle: "Scenario 2",
+      sub_questDesc: "",
+      options: [
+        {
+          option: "Option 1",
+          optionDesc: "",
+          pros: "",
+          cons: "",
+        },
+        {
+          option: "Option 2",
+          optionDesc: "",
+          pros: "",
+          cons: "",
+        },
+      ],
+    },
   ],
-}
+};
 //create
 app.post("/quest/createNew", async (request, response) => {
   const title = request.body.title;
@@ -442,3 +477,49 @@ app.post("/quest/createNew", async (request, response) => {
       .status(400)
       .send(`${title} contained illegal characters. Please check again.`);
 });
+// // create
+// app.post("/quiz/createNew", (request, response) => {
+//   const title = quizObject.quizTitle; // to be changed
+//   const categoryId = quizObject.quizCategoryId; // to be changed
+//   const quizDesc = quizObject.quizDesc; // to be changed
+//   const totalPoints = quizObject.totalPoints; // to be changed
+
+//   if (!isBlank(title) && !isBlank(categoryId) && !isBlank(totalPoints)) {
+//     const db = dbService.getDbServiceInstance();
+//     const createQuizResult = db.createQuiz(
+//       title,
+//       quizDesc,
+//       totalPoints,
+//       categoryId
+//     );
+
+//     createQuizResult
+//       .then((data) => {
+//         response.json({
+//           insertId: data.insertId,
+//           categoryid: categoryId,
+//           name: title,
+//           description: quizDesc,
+//           totalPoints: totalPoints,
+//         });
+//         const quizId = data.insertId;
+//         let createQuestionResult = new Promise((resolve, reject) => {});
+//         const questionObject = quizObject.questions;
+//         questionObject.forEach((question) => {
+//           createQuestionResult = db.createQuizQuestion(
+//             quizId,
+//             JSON.stringify(question)
+//           );
+//         });
+//         createQuestionResult.catch((err) =>
+//           response.status(400).send(`Creation of questions failed.`, err)
+//         );
+//       })
+
+//       .catch((err) => {
+//         // Please addon to this list if you encountered something new
+//         response.status(400).send(`Creation of quiz failed.`, err);
+//       });
+//   } else
+//     response.status(400).send(`Title / categoryId / totalPoints is(are) empty`);
+// });

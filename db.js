@@ -308,30 +308,32 @@ class DbService {
     });
   }
   //Create quest scenarios
-  async createScenario(parentId, description){
-    return new Promise ((resolve, reject) => {
-      const query = "INSERT INTO quest_scenario (parentId, description) VALUES (?, ?);";
+  async createScenario(parentId, description) {
+    return new Promise((resolve, reject) => {
+      const query =
+        "INSERT INTO quest_scenario (parentId, description) VALUES (?, ?);";
       connection.query(query, [parentId, description], (err, result) => {
-          if (err) {
-            console.log(err.message);
-            reject(err.message);
-          }
-          resolve(result);
+        if (err) {
+          console.log(err.message);
+          reject(err.message);
+        }
+        resolve(result);
       });
-    })
+    });
   }
-    //Create scenario options
-  async createOptions(parentId, description){
-    return new Promise ((resolve, reject) => {
-      const query = "INSERT INTO scenario_option (parentId, description) VALUES (?, ?);";
+  //Create scenario options
+  async createOptions(parentId, description) {
+    return new Promise((resolve, reject) => {
+      const query =
+        "INSERT INTO scenario_option (parentId, description) VALUES (?, ?);";
       connection.query(query, [parentId, description], (err, result) => {
-          if (err) {
-            console.log(err.message);
-            reject(err.message);
-          }
-          resolve(result);
+        if (err) {
+          console.log(err.message);
+          reject(err.message);
+        }
+        resolve(result);
       });
-    })
+    });
   }
 }
 
