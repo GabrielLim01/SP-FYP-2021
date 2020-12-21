@@ -41,11 +41,11 @@ class Registration extends React.Component {
             case 'username':
                 // Add more validation rules below by chaining if...elses as necessary
                 errors.username = '';
-                if (value.length < minUsernameLength) errors.username = `Username must be ${minUsernameLength} characters long!`;
+                if (value.length < minUsernameLength) errors.username = `Username must be at least ${minUsernameLength} characters long!`;
                 break;
             case 'password':
                 errors.password = '';
-                if (value.length < minPasswordLength) errors.password = `Password must be ${minPasswordLength} characters long!`;
+                if (value.length < minPasswordLength) errors.password = `Password must be at least ${minPasswordLength} characters long!`;
                 break;
             case 'confirmPassword':
                 errors.confirmPassword = '';
