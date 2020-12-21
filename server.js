@@ -70,6 +70,12 @@ function validateID(x) {
   return result;
 }
 
+function validateString(x) {
+  let regex = new RegExp("^[ A-Za-z0-9_@./#&+-^]*$");
+  let result = regex.test(x);
+  return result;
+}
+
 function isEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
@@ -456,18 +462,28 @@ const obj = {
 };
 //create
 app.post("/quest/createNew", async (request, response) => {
-  const title = request.body.title;
-  const desc = request.body.desc;
-  const objective = request.body.objective;
-  const categoryId = request.body.categoryId;
-  const fiqPoints = request.body.fiqPoints;
+  //syntaxes to change during integration
+  const title = obj.questTitle;
+  const desc = obj.questDesc;
+  const objective = obj.questObjective;
+  const categoryId = obj.questCategoryId;
+  const fiqPoints = obj.fiqPoints;
+  const scenarioObj = obj.questions;
   let isValid = validateString(title);
   const db = dbService.getDbServiceInstance();
   if (isValid) {
     let result = db.createQuest(title, desc, objective, categoryId, fiqPoints);
     result
       .then((data) => {
-        response.json({ data: data });
+        response.json({ data: data.insertId });
+
+        let createQuestScenarioResult = db.createQuestScenario(
+          data.insertId,
+          scenarioObj
+        );
+        createQuestScenarioResult.catch((err) =>
+          console.log(`Creation of scenario(s) failed. ${err}`)
+        );
       })
       .catch((err) => {
         response.status(500).send(`Error creating quest: ${title}, ${err}`);
@@ -523,3 +539,9 @@ app.post("/quest/createNew", async (request, response) => {
 //   } else
 //     response.status(400).send(`Title / categoryId / totalPoints is(are) empty`);
 // });
+app.post("/", async (request, response) => {
+  const db = dbService.getDbServiceInstance();
+
+  const result = db.createQuestScenario(1, obj.questions);
+  result.then((data) => {});
+});

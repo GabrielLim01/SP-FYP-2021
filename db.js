@@ -308,31 +308,25 @@ class DbService {
     });
   }
   //Create quest scenarios
-  async createScenario(parentId, description) {
-    return new Promise((resolve, reject) => {
-      const query =
-        "INSERT INTO quest_scenario (parentId, description) VALUES (?, ?);";
-      connection.query(query, [parentId, description], (err, result) => {
-        if (err) {
-          console.log(err.message);
-          reject(err.message);
-        }
-        resolve(result);
-      });
+  async createQuestScenario(questId, obj) {
+    const array = [];
+    Object.keys(obj).forEach(function (item) {
+      array.push([
+        questId,
+        obj[item].sub_questTitle,
+        obj[item].sub_questDesc,
+        JSON.stringify(obj[item].options),
+      ]);
     });
-  }
-  //Create scenario options
-  async createOptions(parentId, description) {
-    return new Promise((resolve, reject) => {
-      const query =
-        "INSERT INTO scenario_option (parentId, description) VALUES (?, ?);";
-      connection.query(query, [parentId, description], (err, result) => {
-        if (err) {
-          console.log(err.message);
-          reject(err.message);
-        }
-        resolve(result);
-      });
+
+    const query =
+      "INSERT into quest_scenario (questId, sub_questTitle, sub_questDesc, options) values ?;";
+    connection.query(query, [array], (err, result) => {
+      if (err) return err.message;
+      else {
+        console.log("Scenario(s) created.");
+        return result;
+      }
     });
   }
 }
