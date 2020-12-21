@@ -416,7 +416,7 @@ app.delete("/category/:id", async (request, response) => {
 5. Delete
 */
 const obj = {
-  questTitle: "Hello",
+  questTitle: "dvzdvc",
   questCategoryId: 1,
   questDesc: "",
   questObjective: "",
@@ -516,6 +516,88 @@ app.get("/quest/:id", (request, response) => {
             `Unable to retrieve specified quest of id: ${request.params.id}.`,
             err
           );
+      });
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
+});
+
+app.patch("/quest/:id", (request, response) => {
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const title = obj.questTitle;
+    const desc = obj.questDesc;
+    const objective = obj.questObjective;
+    const categoryId = obj.questCategoryId;
+    const fiqPoint = obj.fiqPoints;
+
+    const db = dbService.getDbServiceInstance();
+    const result = db.updateQuestDetailsById(
+      request.params.id,
+      title,
+      desc,
+      objective,
+      categoryId,
+      fiqPoint
+    );
+
+    result
+      .then((data) => {
+        response.json({ data: data });
+
+        // var updateQuestionsResult = new Promise((resolve, reject) => {});
+        // quizQuestionObject.forEach((question) => {
+        //   updateQuestionsResult = db.updateQuestionDetailsById(
+        //     request.params.id,
+        //     JSON.stringify(question)
+        //   );
+        // });
+        // updateQuestionsResult.catch((err) =>
+        //   response
+        //     .status(400)
+        //     .send(
+        //       `Updating of questions where questId equals to ${request.params.id} has failed. ${err}`
+        //     )
+        // );
+      })
+      .catch((err) =>
+        response
+          //.status(400)
+          .send(
+            `Updating of quiz where id equals to ${request.params.id} has failed. ${err}`
+          )
+      );
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
+});
+
+app.delete("/quest/:id", async (request, response) => {
+  const db = dbService.getDbServiceInstance();
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.deleteQuestById(request.params.id);
+    result
+      .then((data) => {
+        response
+          .status(200)
+          .send(
+            ` Deletion of quest of id: ${request.params.id} was a success!`
+          );
+      })
+      .catch((err) => {
+        if (err.includes("ER_ROW_IS_REFERENCED"))
+          response
+            .status(400)
+            .send(
+              `Category with id: ${request.params.id} is being referenced by quiz(zes).`
+            );
       });
   } else
     response

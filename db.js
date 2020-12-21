@@ -347,6 +347,61 @@ class DbService {
       throw e.message;
     }
   }
+
+  async updateQuestDetailsById(
+    id,
+    title,
+    desc,
+    objective,
+    categoryId,
+    fiqPoint
+  ) {
+    return new Promise((resolve, reject) => {
+      const query =
+        "UPDATE quest SET title = ?, description = ?, objective = ?, categoryId = ?, fiqPoint = ?  WHERE insertId = ?;";
+      connection.query(
+        query,
+        [title, desc, objective, categoryId, fiqPoint, id],
+        (err, result) => {
+          if (err) return reject(err.message);
+          resolve(result.affectedRows);
+        }
+      );
+    });
+  }
+
+  // async updateScenarioDetailsById(id, questionObject) {
+  //   return new Promise((resolve, reject) => {
+  //     const query =
+  //       "UPDATE quiz_question SET questionObject = ? WHERE quizId = ?";
+
+  //     connection.query(
+  //       query,
+  //       [questionObject, this.intFormatter(id)],
+  //       (err, result) => {
+  //         if (err) reject(err.message);
+  //         else {
+  //           console.log("Updated questions", result);
+  //           resolve(result.affectedRows);
+  //         }
+  //       }
+  //     );
+  //   });
+  // }
+  async deleteQuestById(id) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query = "DELETE FROM quest WHERE insertId = ?";
+
+        connection.query(query, [id], (err, result) => {
+          if (err) return reject(err.message);
+          resolve(result.affectedRows);
+        });
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
 }
 
 module.exports = DbService;

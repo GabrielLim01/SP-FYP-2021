@@ -84,14 +84,9 @@ DELETE  http://localhost:9000/category/4
 
 
 ###
-PATCH http://localhost:9000/category/15
+PATCH http://localhost:9000/quest/10
 Content-Type: application/json
 
-{
-    "catName":"Intellectual Property",
-    "catDesc":"IP for short."
-    
-}
 
 ###
 
