@@ -78,12 +78,12 @@ function isBlank(str) {
 }
 
 // read
-app.get("/quizDashboard", (request, response) => {
+app.get("/quiz", (request, response) => {
   const db = dbService.getDbServiceInstance();
   const result = db.getAllQuizzes();
   result
     .then((data) => {
-      response.json({ data: data });
+      response.json(data);
     })
     .catch((err) => response.status(400).send(`Fetching of data failed.`, err));
 });
@@ -97,7 +97,7 @@ app.get("/quiz/:id", (request, response) => {
       .then((data) => {
         if (!isEmpty(data)) {
           const quizObject = JSON.parse(JSON.stringify(data));
-          response.json({ data: quizObject });
+          response.json(quizObject);
         } else
           response
             .status(400)
@@ -108,6 +108,39 @@ app.get("/quiz/:id", (request, response) => {
           .status(400)
           .send(
             `Unable to retrieve specified quiz of id: ${request.params.id}.`,
+            err
+          );
+      });
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
+});
+
+// get quiz by category
+app.get("/quiz/category/:id", (request, response) => {
+  // URL to change to however you want it to be
+  const db = dbService.getDbServiceInstance();
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.getQuizByCategoryId(request.params.id);
+    result
+      .then((data) => {
+        if (!isEmpty(data)) {
+          const quizObject = JSON.parse(JSON.stringify(data));
+          response.json(quizObject);
+        } else
+          response
+            .status(400)
+            .send(`Category of id: ${request.params.id} is not present.`);
+      })
+      .catch((err) => {
+        response
+          .status(400)
+          .send(
+            `Unable to retrieve specified category of id: ${request.params.id}.`,
             err
           );
       });
@@ -340,7 +373,19 @@ app.get("/category", async (request, response) => {
 
   result
     .then((data) => {
-      response.json({ data: data });
+      response.json(data);
+    })
+    .catch((err) => response.status(400).send(`${err}`));
+});
+
+app.get("/category/:name", async (request, response) => {
+  const db = dbService.getDbServiceInstance();
+
+  const result = db.getCategoryByName(request.params.name);
+
+  result
+    .then((data) => {
+      response.json(data);
     })
     .catch((err) => response.status(400).send(`${err}`));
 });

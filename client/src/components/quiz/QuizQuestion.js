@@ -26,14 +26,15 @@ class QuizQuestion extends React.Component {
 
     render() {
         const number = this.props.questionNumber;
-        const noOfOptions = this.props.options;
+
+        // Dynamically generate an array of option indices
         const options = [];
 
-        for (let i = 1; i < (noOfOptions + 1); i++) {
+        for (let i = 1; i < (this.props.options + 1); i++) {
             options.push(i)
         }
 
-        // Checkbox handling logic
+        // Prevents more than 1 checkbox from being checked at any point in time (customisable)
         const { checked } = this.state;
         const checkedCount = Object.keys(checked).filter(key => checked[key]).length;
         const disabled = checkedCount > 0;

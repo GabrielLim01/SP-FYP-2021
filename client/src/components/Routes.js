@@ -5,21 +5,26 @@ import Login from './Login.js';
 import Registration from './Registration.js';
 import Dashboard from './Dashboard.js';
 import NotFound from './NotFound.js';
-import Selection from './quiz/Selection.js';
 import QuizCreation from './quiz/QuizCreation.js';
+import QuizPlay from './quiz/QuizPlay.js';
+import CategorySelection from './quiz/CategorySelection.js';
+import QuizSelection from './quiz/QuizSelection.js';
 
-// TO-DO - Establish a more dynamic component/page routing structure
+// Routes are more dynamic, but the component routing for 
+// '/quizzes/:categoryName' conflicts with '/quizzes/creation'
+// Should think of a workaround for that
 
 const Routes = () => {
   return (
     <Switch> 
       <Route exact path='/' component={Login}></Route>
-      <Route path='/register' component={Registration}></Route>
-      <Route path='/dashboard' component={Dashboard}></Route>
+      <Route exact path='/register' component={Registration}></Route>
+      <Route exact path='/dashboard' component={Dashboard}></Route>
       
-      <Route exact path='/quizzes' component={Selection}></Route>
-      <Route exact path='/quizzes/technology' component={Selection}></Route>
-      <Route exact path='/quizzes/quizcreation' component={QuizCreation}></Route>
+      <Route exact path='/quizzes' component={CategorySelection}></Route>
+      <Route exact path="/quizzes/:categoryName" component={QuizSelection}></Route>
+      <Route exact path="/quizzes/:categoryName/:id" component={QuizPlay}></Route>
+      <Route exact path='/quizzes/creation' component={QuizCreation}></Route>
 
       <Route component={NotFound} /> 
     </Switch>

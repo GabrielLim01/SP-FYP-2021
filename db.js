@@ -23,6 +23,9 @@ connection.connect((err) => {
 const joinQuizTableQuery =
   "SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId";
 
+const retrieveQuizByCategoryIdQuery =
+  "SELECT DISTINCT(quiz.quizId), quiz.quizName, quiz_question.questionObject FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId";
+
 class DbService {
   static getDbServiceInstance() {
     if (!instance) instance = new DbService();
@@ -40,8 +43,8 @@ class DbService {
         const query = "SELECT * FROM quiz;";
 
         connection.query(query, (err, result) => {
-          if (err) return reject(result);
-          resolve(err.message);
+          if (err) return reject(err.message);
+          resolve(result);
         });
       });
     } catch (e) {
@@ -53,6 +56,21 @@ class DbService {
     try {
       return new Promise((resolve, reject) => {
         const query = `${joinQuizTableQuery} WHERE quiz.quizId = ?;`;
+
+        connection.query(query, this.intFormatter(id), (err, result) => {
+          if (err) return reject(err.message);
+          resolve(result);
+        });
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
+
+  async getQuizByCategoryId(id) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query = `${retrieveQuizByCategoryIdQuery} WHERE quiz.categoryId = ?;`;
 
         connection.query(query, this.intFormatter(id), (err, result) => {
           if (err) return reject(err.message);
@@ -249,6 +267,25 @@ class DbService {
       throw e.message;
     }
   }
+
+  // Retrieve a category by its name
+  async getCategoryByName(name) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query = "SELECT * from category WHERE categoryName = ?;";
+
+        connection.query(query, name, (err, result) => {
+          if (err) reject(err.message);
+          resolve(result);
+        });
+
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
+
+
   //Update category
   async updateCategoryById(id, catName, catDesc) {
     try {

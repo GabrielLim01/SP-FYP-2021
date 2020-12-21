@@ -3,12 +3,12 @@ import axios from 'axios';
 import { Segment, Form, Grid, TextArea, Dropdown, Button, Icon } from 'semantic-ui-react';
 import { host, categories } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import QuizQuestion from './QuizQuestion.js';
 import verifyLogin from '../verifyLogin.js';
+import QuizQuestion from './QuizQuestion.js';
 
 // UNFINISHED
 // 1. Input validation (especially for checkboxes)
-// 2. Dynamic generation of option states
+// 2. Dynamic population of categories, dynamic category names to IDs parser
 
 class QuizCreation extends React.Component {
     constructor(props) {
@@ -79,17 +79,18 @@ class QuizCreation extends React.Component {
         let questions = [];
 
         for (let i = 1; i < (this.state.questions + 1); i++) {
+
+            const options = [];
+
+            for (let j = 1; j < (this.state.options + 1); j++) {
+                options.push({ name: this.state['option-' + i + '-' + j], isCorrect: this.state['isCorrect-' + i + '-' + j] || false })
+            }
+
             questions.push({
                 question: {
                     name: this.state['question' + i + 'name'],
                     description: this.state['question' + i + 'desc'],
-                    // Hardcoded for now until I figure out how to loop inside an array.push method
-                    options: [
-                        { name: this.state['option-' + i + '-1'], isCorrect: this.state['isCorrect-' + i + '-1'] || false },
-                        { name: this.state['option-' + i + '-2'], isCorrect: this.state['isCorrect-' + i + '-2'] || false },
-                        { name: this.state['option-' + i + '-3'], isCorrect: this.state['isCorrect-' + i + '-3'] || false },
-                        { name: this.state['option-' + i + '-4'], isCorrect: this.state['isCorrect-' + i + '-4'] || false }
-                    ]
+                    options,
                 }
             });
         }

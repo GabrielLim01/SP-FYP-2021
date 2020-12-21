@@ -23,3 +23,4 @@ module.exports.menuItems = [
 
 // Used in Selection.js, QuizCreation.js and Routes.js
 module.exports.categories = ['Technology', 'Lifestyle', 'Finance'];
+
