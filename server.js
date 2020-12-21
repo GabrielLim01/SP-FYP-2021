@@ -493,55 +493,34 @@ app.post("/quest/createNew", async (request, response) => {
       .status(400)
       .send(`${title} contained illegal characters. Please check again.`);
 });
-// // create
-// app.post("/quiz/createNew", (request, response) => {
-//   const title = quizObject.quizTitle; // to be changed
-//   const categoryId = quizObject.quizCategoryId; // to be changed
-//   const quizDesc = quizObject.quizDesc; // to be changed
-//   const totalPoints = quizObject.totalPoints; // to be changed
 
-//   if (!isBlank(title) && !isBlank(categoryId) && !isBlank(totalPoints)) {
-//     const db = dbService.getDbServiceInstance();
-//     const createQuizResult = db.createQuiz(
-//       title,
-//       quizDesc,
-//       totalPoints,
-//       categoryId
-//     );
-
-//     createQuizResult
-//       .then((data) => {
-//         response.json({
-//           insertId: data.insertId,
-//           categoryid: categoryId,
-//           name: title,
-//           description: quizDesc,
-//           totalPoints: totalPoints,
-//         });
-//         const quizId = data.insertId;
-//         let createQuestionResult = new Promise((resolve, reject) => {});
-//         const questionObject = quizObject.questions;
-//         questionObject.forEach((question) => {
-//           createQuestionResult = db.createQuizQuestion(
-//             quizId,
-//             JSON.stringify(question)
-//           );
-//         });
-//         createQuestionResult.catch((err) =>
-//           response.status(400).send(`Creation of questions failed.`, err)
-//         );
-//       })
-
-//       .catch((err) => {
-//         // Please addon to this list if you encountered something new
-//         response.status(400).send(`Creation of quiz failed.`, err);
-//       });
-//   } else
-//     response.status(400).send(`Title / categoryId / totalPoints is(are) empty`);
-// });
-app.post("/", async (request, response) => {
+app.get("/quest/:id", (request, response) => {
   const db = dbService.getDbServiceInstance();
-
-  const result = db.createQuestScenario(1, obj.questions);
-  result.then((data) => {});
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.getQuestById(request.params.id);
+    result
+      .then((data) => {
+        if (!isEmpty(data)) {
+          const questObject = JSON.parse(JSON.stringify(data));
+          response.json({ data: questObject });
+        } else
+          response
+            .status(400)
+            .send(`Quest of id: ${request.params.id} is not present.`);
+      })
+      .catch((err) => {
+        response
+          .status(400)
+          .send(
+            `Unable to retrieve specified quest of id: ${request.params.id}.`,
+            err
+          );
+      });
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
 });

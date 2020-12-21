@@ -23,6 +23,9 @@ connection.connect((err) => {
 const joinQuizTableQuery =
   "SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId";
 
+const joinQuestTableQuery =
+  "SELECT * FROM quest INNER JOIN quest_scenario ON quest.insertId = quest_scenario.questId";
+
 class DbService {
   static getDbServiceInstance() {
     if (!instance) instance = new DbService();
@@ -328,6 +331,21 @@ class DbService {
         return result;
       }
     });
+  }
+
+  async getQuestById(id) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query = `${joinQuestTableQuery} WHERE quest.insertId = ?;`;
+
+        connection.query(query, id, (err, result) => {
+          if (err) return reject(err.message);
+          resolve(result);
+        });
+      });
+    } catch (e) {
+      throw e.message;
+    }
   }
 }
 
