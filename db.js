@@ -370,24 +370,34 @@ class DbService {
     });
   }
 
-  // async updateScenarioDetailsById(id, questionObject) {
-  //   return new Promise((resolve, reject) => {
-  //     const query =
-  //       "UPDATE quiz_question SET questionObject = ? WHERE quizId = ?";
+  async updateScenarioDetailsById(
+    id,
+    scenarioId,
+    sub_questTitle,
+    sub_questDesc,
+    options
+  ) {
+    console.log(sub_questTitle);
+    console.log(sub_questDesc);
+    console.log(options);
+    return new Promise((resolve, reject) => {
+      const query =
+        "UPDATE quest_scenario SET sub_questTitle = ?, sub_questDesc= ?, options = ? WHERE questId = ? and ";
 
-  //     connection.query(
-  //       query,
-  //       [questionObject, this.intFormatter(id)],
-  //       (err, result) => {
-  //         if (err) reject(err.message);
-  //         else {
-  //           console.log("Updated questions", result);
-  //           resolve(result.affectedRows);
-  //         }
-  //       }
-  //     );
-  //   });
-  // }
+      connection.query(
+        query,
+        [sub_questTitle, sub_questDesc, options, id],
+        (err, result) => {
+          if (err) reject(err.message);
+          else {
+            console.log("Updated scenario(s)", result);
+            resolve(result.affectedRows);
+          }
+        }
+      );
+    });
+  }
+
   async deleteQuestById(id) {
     try {
       return new Promise((resolve, reject) => {

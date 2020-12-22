@@ -16,7 +16,7 @@ Content-Type: application/json
 DELETE  http://localhost:9000/delete/4
 
 ###
-PATCH  http://localhost:9000/update/18
+PATCH  http://localhost:9000/quiz/18
 Content-Type: application/json
 
 {
@@ -80,11 +80,11 @@ Content-Type: application/json
 }
 
 ###
-DELETE  http://localhost:9000/category/4
+DELETE  http://localhost:9000/quest/4
 
 
 ###
-PATCH http://localhost:9000/quest/10
+PATCH http://localhost:9000/quest/13
 Content-Type: application/json
 
 

@@ -525,14 +525,16 @@ app.get("/quest/:id", (request, response) => {
       );
 });
 
-app.patch("/quest/:id", (request, response) => {
+app.patch("/quest/:id/:scenarioId", (request, response) => {
   let isValid = validateID(request.params.id);
-  if (isValid) {
+  let isValid2 = validateID(request.params.scenarioId);
+  if (isValid && isValid2) {
     const title = obj.questTitle;
     const desc = obj.questDesc;
     const objective = obj.questObjective;
     const categoryId = obj.questCategoryId;
     const fiqPoint = obj.fiqPoints;
+    const scenearioObj = obj.questions;
 
     const db = dbService.getDbServiceInstance();
     const result = db.updateQuestDetailsById(
@@ -548,20 +550,23 @@ app.patch("/quest/:id", (request, response) => {
       .then((data) => {
         response.json({ data: data });
 
-        // var updateQuestionsResult = new Promise((resolve, reject) => {});
-        // quizQuestionObject.forEach((question) => {
-        //   updateQuestionsResult = db.updateQuestionDetailsById(
-        //     request.params.id,
-        //     JSON.stringify(question)
-        //   );
-        // });
-        // updateQuestionsResult.catch((err) =>
-        //   response
-        //     .status(400)
-        //     .send(
-        //       `Updating of questions where questId equals to ${request.params.id} has failed. ${err}`
-        //     )
-        // );
+        let updateScenarioResult = new Promise((resolve, reject) => {});
+        scenearioObj.forEach((scenario) => {
+          updateScenarioResult = db.updateScenarioDetailsById(
+            request.params.id,
+            request.params.scenarioId,
+            scenario.sub_questTitle,
+            scenario.sub_questDesc,
+            JSON.stringify(scenario.options)
+          );
+        });
+        updateScenarioResult.catch((err) =>
+          response
+            .status(400)
+            .send(
+              `Updating of questions where questId equals to ${request.params.id} has failed. ${err}`
+            )
+        );
       })
       .catch((err) =>
         response
