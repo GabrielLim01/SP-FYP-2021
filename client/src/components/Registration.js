@@ -1,15 +1,17 @@
 import React from 'react';
 import axios from 'axios';
-import { Form } from 'semantic-ui-react';
+import { Redirect } from 'react-router-dom';
+import { Form, Button } from 'semantic-ui-react';
 import { host, appName, containerStyle } from '../common.js';
+import verifyLogin from './verifyLogin.js';
 
 // BUGS 
 // 1. Registration may be successful even if the confirmPassword field is not filled in
 // 2. Database may not have a record inserted successfully even if registration is successful
 
-// MISSING FEATURES
+// TO-DO
 // 1. Additional input fields (Role, Age Group) and appropriate validation
-// 2. Possible validation rules as follows
+// Possible validation rules as follows
 // Role/Age Group - Dropdown (so no client-side validation)
 // Password - Alphanumeric, can consider using a regex 
 
@@ -65,9 +67,9 @@ class Registration extends React.Component {
             name: this.state.username,
             password: this.state.password
         })
-            .then((result) => {
+            .then(() => {
                 alert("Success!");
-                window.location.href = "/"
+                this.setState({ redirect: "/" });
             })
             .catch((error) => {
                 alert(error)
@@ -83,7 +85,13 @@ class Registration extends React.Component {
             { type: 'password', icon: 'lock', name: 'confirmPassword', placeholder: 'Confirm Password' }
         ];
 
-        return (
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirect} />
+        } else if (verifyLogin()) {
+            return (
+                <Redirect to='/dashboard' />
+            )
+        } return (
             <div className="container" style={containerStyle}>
                 <h1 className="ui teal image header">{appName}</h1>
                 <div className="ui stacked segment">
@@ -99,7 +107,7 @@ class Registration extends React.Component {
                                 </div>
                             )
                         })}
-                        <div className="ui fluid large teal submit button" onClick={this.handleSubmit}>Register</div>
+                        <Button className="fluid large teal" onClick={this.handleSubmit}>Register</Button>
                     </Form>
                 </div>
             </div>

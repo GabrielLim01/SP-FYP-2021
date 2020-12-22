@@ -1,14 +1,15 @@
 import React from 'react';
 import axios from 'axios';
 import { Segment, Form, Grid, TextArea, Dropdown, Button, Icon } from 'semantic-ui-react';
-import { host, categories } from '../../common.js';
+import { host } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
-import QuizQuestion from './QuizQuestion.js';
+import QuizQuestionCreation from './QuizQuestionCreation.js';
+import retrieveItems from './retrieveItems.js';
 
-// UNFINISHED
+// TO-DO
 // 1. Input validation (especially for checkboxes)
-// 2. Dynamic population of categories, dynamic category names to IDs parser
+// 2. Unify change handlers if possible
 
 class QuizCreation extends React.Component {
     constructor(props) {
@@ -16,7 +17,8 @@ class QuizCreation extends React.Component {
         this.state = {
             questions: 1,
             maxQuestions: 10,
-            options: 4
+            options: 4,
+            categories: []
         };
     }
 
@@ -28,31 +30,6 @@ class QuizCreation extends React.Component {
         } else {
             alert("Maximum number of questions reached!")
         }
-    }
-
-    parseCategory(category) {
-        // Get list of categories from database (incomplete)
-        // const categories = []
-        // axios.get(host + '/categories')
-        //     .then((response) => {
-        //        for (let i=0; i < response.data.length; i++){
-        //         categories.push({name: response.data[i].name, id: response.data[i].id})
-        //        }
-        //     })
-        //     .catch((error) => {
-        //         alert(error);
-        //     });
-
-        let categoryId = 1;
-
-        // Hardcoded for now
-        if (category === "Lifestyle") {
-            categoryId = 2;
-        } else if (category === "Finance") {
-            categoryId = 3;
-        }
-
-        return categoryId;
     }
 
     handleChange = (event) => {
@@ -95,14 +72,11 @@ class QuizCreation extends React.Component {
             });
         }
 
-        // Parse category name into category ID
-        let categoryId = this.parseCategory(this.state.quizCategory)
-
         // Construct a quiz JSON object
         let quiz = {
             name: this.state.quizName,
             description: this.state.quizDesc,
-            category: categoryId,
+            category: this.state.quizCategory,
             points: this.state.quizPoints,
             time: this.state.quizTime,
             questions: questions
@@ -122,13 +96,29 @@ class QuizCreation extends React.Component {
             });
     }
 
+    componentDidMount() {
+        retrieveItems('category')
+            .then(data => {
+                let categories = [];
+
+                data.forEach(element => {
+                    categories.push(element)
+                });
+
+                this.setState({ categories: categories });
+            })
+            .catch((error) => {
+                alert(error);
+            })
+    }
+
     render() {
         const questions = [];
-        const categoryOptions = [];
+        const categories = [];
 
         for (let i = 1; i < (this.state.questions + 1); i++) {
             questions.push(
-                <QuizQuestion
+                <QuizQuestionCreation
                     key={'question' + i}
                     questionNumber={i}
                     options={this.state.options}
@@ -137,9 +127,10 @@ class QuizCreation extends React.Component {
                 />);
         };
 
-        for (let i = 0; i < categories.length; i++) {
-            let value = categories[i];
-            categoryOptions.push({ key: value, text: value, value: value });
+        for (let i = 0; i < this.state.categories.length; i++) {
+            let id = this.state.categories[i].categoryId;
+            let name = this.state.categories[i].categoryName;
+            categories.push({ text: name, value: id });
         };
 
         if (!verifyLogin()) {
@@ -173,7 +164,7 @@ class QuizCreation extends React.Component {
                                                 placeholder='Select a Category'
                                                 fluid
                                                 selection
-                                                options={categoryOptions}
+                                                options={categories}
                                                 onChange={this.handleDropdownChange}
                                             />
                                         </Grid.Column>

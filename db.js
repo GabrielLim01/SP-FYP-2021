@@ -24,7 +24,7 @@ const joinQuizTableQuery =
   "SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId";
 
 const retrieveQuizByCategoryIdQuery =
-  "SELECT DISTINCT(quiz.quizId), quiz.quizName, quiz_question.questionObject FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId";
+  "SELECT DISTINCT(quiz.quizId), quiz.quizName FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId";
 
 class DbService {
   static getDbServiceInstance() {

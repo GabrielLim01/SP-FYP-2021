@@ -1,7 +1,7 @@
 import React from 'react';
 import { Segment, Form, Grid, Divider, TextArea, Checkbox } from 'semantic-ui-react'
 
-class QuizQuestion extends React.Component {
+class QuizQuestionCreation extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -26,10 +26,9 @@ class QuizQuestion extends React.Component {
 
     render() {
         const number = this.props.questionNumber;
-
-        // Dynamically generate an array of option indices
         const options = [];
 
+        // Dynamically generate an array of option indices
         for (let i = 1; i < (this.props.options + 1); i++) {
             options.push(i)
         }
@@ -84,4 +83,4 @@ class QuizQuestion extends React.Component {
     }
 }
 
-export default QuizQuestion;
+export default QuizQuestionCreation;

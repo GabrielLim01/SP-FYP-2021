@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import { Form, Button, Icon } from 'semantic-ui-react';
 import { containerStyle } from '../common.js'
 import DashboardMenu from './DashboardMenu.js';
@@ -9,17 +9,26 @@ class Dashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: 'John'
+            username: 'John',
+            redirect: null
         };
     }
 
-    handleClick = (event, { name }) => {
+    handleClick = (event, {name}) => {
         event.preventDefault();
-        window.location.href = `/${name}`;
+        this.setState({ redirect: `/${name}` });
+    }
+
+    componentDidMount(){
+         if (sessionStorage.getItem("user") !== null) {
+            this.setState({ username: JSON.parse(sessionStorage.getItem("user")).username });
+        }
     }
 
     render() {
-        if (!verifyLogin()) {
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirect} />
+        } else if (!verifyLogin()) {
             return (
                 <h1>403 Forbidden</h1>
             )

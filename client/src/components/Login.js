@@ -1,13 +1,13 @@
 import React from 'react';
 import axios from 'axios';
-import { Link } from "react-router-dom";
-import { Form } from 'semantic-ui-react';
+import { Link, Redirect } from 'react-router-dom';
+import { Form, Button } from 'semantic-ui-react';
 import { host, appName, containerStyle } from '../common.js';
 import verifyLogin from './verifyLogin.js';
 
-// MISSING FEATURES
+// TO-DO
 // 1. Input validation
-// 2. RBAC logic not implemented
+// 2. Implement RBAC logic
 
 class Login extends React.Component {
     constructor(props) {
@@ -15,7 +15,8 @@ class Login extends React.Component {
         this.state = {
             username: null,
             password: null,
-            isLoggedIn: false
+            isLoggedIn: false,
+            redirect: null
         };
     }
 
@@ -36,9 +37,7 @@ class Login extends React.Component {
                 if (response.data === 'Congrats') {
                     let user = { username: this.state.username, isLoggedIn: true }
                     sessionStorage.setItem("user", JSON.stringify(user));
-                    window.location.href = '/dashboard';
-                } else {
-                    alert("Error: " + response.data);
+                    this.setState({ redirect: "/dashboard" });
                 }
             })
             .catch((error) => {
@@ -47,9 +46,11 @@ class Login extends React.Component {
     }
 
     render() {
-        if (verifyLogin()) {
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirect} />
+        } else if (verifyLogin()) {
             return (
-                window.location.href = '/dashboard'
+                <Redirect to='/dashboard' />
             )
         } else {
             return (
@@ -69,7 +70,7 @@ class Login extends React.Component {
                                     <input type="password" name="password" placeholder="Password" onChange={this.handleChange} />
                                 </div>
                             </div>
-                            <div className="ui fluid large teal submit button" onClick={this.handleSubmit}>Login</div>
+                            <Button className="fluid large teal" onClick={this.handleSubmit}>Login</Button>
                         </Form>
                     </div>
                     <div className="ui message">

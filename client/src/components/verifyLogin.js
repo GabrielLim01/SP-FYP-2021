@@ -1,7 +1,5 @@
 import { inProduction } from '../common.js';
 
-// Function to check if user is already logged in or not
-
 export default function verifyLogin() {
     let loginStatus = false;
 
