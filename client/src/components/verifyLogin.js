@@ -10,7 +10,7 @@ export default function verifyLogin() {
     }
     else if (sessionStorage.getItem("user") !== null) {
         loginStatus = JSON.parse(sessionStorage.getItem("user")).user.isLoggedIn;
-    }
+    }           
 
     return loginStatus;
 }
