@@ -38,6 +38,8 @@ class Login extends React.Component {
                     let user = { username: this.state.username, isLoggedIn: true }
                     sessionStorage.setItem("user", JSON.stringify(user));
                     this.setState({ redirect: "/dashboard" });
+                } else {
+                    alert("Error: " + response.data);
                 }
             })
             .catch((error) => {
