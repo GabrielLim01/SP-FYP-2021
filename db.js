@@ -283,6 +283,20 @@ class DbService {
       throw e.message;
     }
   }
-}
 
+  async updateProfileById(id, name, hobbyId, ageGroupId) {
+    return new Promise((resolve, reject) => {
+      const query =
+        "UPDATE users SET name = ?, hobbyId = ?, ageGroupId = ? WHERE insertId = ?";
+      connection.query(
+        query,
+        [name, hobbyId, ageGroupId, id],
+        (err, result) => {
+          if (err) return reject(err.message);
+          resolve(result.affectedRows);
+        }
+      );
+    });
+  }
+}
 module.exports = DbService;
