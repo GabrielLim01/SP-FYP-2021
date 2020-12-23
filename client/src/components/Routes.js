@@ -32,7 +32,7 @@ const Routes = () => {
 
       <Route
         exact
-        path="/category/available"
+        path="/categoryDashboard"
         component={CategoryDashboard}
       ></Route>
 
