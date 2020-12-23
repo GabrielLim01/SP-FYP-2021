@@ -71,34 +71,12 @@ class DbService {
     try {
       return new Promise((resolve, reject) => {
         const query =
-          "INSERT INTO quiz (categoryId, quizName, quizDesc, totalPoints) VALUES (?,?,?,?);";
+          "INSERT INTO quiz (categoryId, quizName, quizDesc) VALUES (?,?,?);";
         // console.log(title);
 
-        connection.query(
-          query,
-          [categoryId, title, desc, totalPoints],
-          (err, result) => {
-            if (err) return reject(err.message);
-            resolve(result);
-          }
-        );
-      });
-    } catch (e) {
-      throw e.message;
-    }
-  }
-
-  async createQuizQuestion(quizId, question) {
-    try {
-      return new Promise((resolve, reject) => {
-        const query =
-          "INSERT into quiz_question (quizId, questionObject) values (?,?);";
-        connection.query(query, [quizId, question], (err, result) => {
-          if (err) reject(err.message);
-          else {
-            console.log("Questions created. quizQuestionId:", result.insertId);
-            resolve(result);
-          }
+        connection.query(query, [categoryId, title, desc], (err, result) => {
+          if (err) return reject(err.message);
+          resolve(result);
         });
       });
     } catch (e) {
@@ -106,14 +84,40 @@ class DbService {
     }
   }
 
-  async updateQuizDetailsById(id, title, desc, totalPoints, categoryId) {
+  async createQuizQuestion(quizId, questionsObj) {
+    const array = [];
+    Object.keys(questionsObj).forEach(function (item) {
+      console.log(JSON.stringify(questionsObj[item].options));
+      array.push([
+        quizId,
+        questionsObj[item].questionTitle,
+        questionsObj[item].questionDesc,
+        questionsObj[item].fiqPoints,
+        questionsObj[item].timeLimit,
+        questionsObj[item].explanation,
+        JSON.stringify(questionsObj[item].options),
+      ]);
+    });
+
+    const query =
+      "INSERT into quiz_question (quizId, questionTitle, questionDesc, fiqPoint, timeLimit, explanation, optionObject) values ?;";
+    connection.query(query, [array], (err, result) => {
+      if (err) return err.message;
+      else {
+        console.log("Question(s) created.");
+        return result;
+      }
+    });
+  }
+
+  async updateQuizDetailsById(id, title, desc, categoryId) {
     try {
       return new Promise((resolve, reject) => {
         const query =
-          "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, totalPoints = ?  WHERE quizId = ?";
+          "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ? WHERE quizId = ?";
         connection.query(
           query,
-          [categoryId, title, desc, totalPoints, this.intFormatter(id)],
+          [categoryId, title, desc, id],
           (err, result) => {
             if (err) return reject(err.message);
             resolve(result.affectedRows);
@@ -126,26 +130,27 @@ class DbService {
   }
 
   async updateQuestionDetailsById(id, questionObject) {
-    try {
-      return new Promise((resolve, reject) => {
-        const query =
-          "UPDATE quiz_question SET questionObject = ? WHERE quizId = ?";
+    let quizQuestionId = questionObject.quizQuestionId;
+    let questionTitle = questionObject.questionTitle;
+    let questionDesc = questionObject.questionDesc;
+    let options = JSON.stringify(questionObject.options);
 
-        connection.query(
-          query,
-          [questionObject, this.intFormatter(id)],
-          (err, result) => {
-            if (err) reject(err.message);
-            else {
-              console.log("Updated questions", result);
-              resolve(result.affectedRows);
-            }
+    return new Promise((resolve, reject) => {
+      const query =
+        "UPDATE quiz_question SET questionTitle = ?, questionDesc = ?, optionObject = ? WHERE quizId = ? and quizQuestionId = ?;";
+
+      connection.query(
+        query,
+        [questionTitle, questionDesc, options, id, quizQuestionId],
+        (err, result) => {
+          if (err) reject(err.message);
+          else {
+            console.log(`Updated questions ${quizQuestionId}. ${result}`);
+            resolve(result.affectedRows);
           }
-        );
-      });
-    } catch (e) {
-      throw e.message;
-    }
+        }
+      );
+    });
   }
 
   async deleteQuizById(id) {
@@ -377,16 +382,13 @@ class DbService {
     sub_questDesc,
     options
   ) {
-    console.log(sub_questTitle);
-    console.log(sub_questDesc);
-    console.log(options);
     return new Promise((resolve, reject) => {
       const query =
-        "UPDATE quest_scenario SET sub_questTitle = ?, sub_questDesc= ?, options = ? WHERE questId = ? and ";
-
+        "UPDATE quest_scenario SET sub_questTitle = ?, sub_questDesc= ?, options = ? WHERE questId = ? and scenarioId = ?;";
+      console.log(query);
       connection.query(
         query,
-        [sub_questTitle, sub_questDesc, options, id],
+        [sub_questTitle, sub_questDesc, options, id, scenarioId],
         (err, result) => {
           if (err) reject(err.message);
           else {

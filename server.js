@@ -22,7 +22,6 @@ var quizObject = {
   quizTitle: "Hello",
   quizCategoryId: 1,
   quizDesc: "",
-  totalPoints: 100,
   questions: [
     {
       questionTitle: "Question 1",
@@ -131,16 +130,10 @@ app.post("/quiz/createNew", (request, response) => {
   const title = quizObject.quizTitle; // to be changed
   const categoryId = quizObject.quizCategoryId; // to be changed
   const quizDesc = quizObject.quizDesc; // to be changed
-  const totalPoints = quizObject.totalPoints; // to be changed
 
-  if (!isBlank(title) && !isBlank(categoryId) && !isBlank(totalPoints)) {
+  if (!isBlank(title) && !isBlank(categoryId)) {
     const db = dbService.getDbServiceInstance();
-    const createQuizResult = db.createQuiz(
-      title,
-      quizDesc,
-      totalPoints,
-      categoryId
-    );
+    const createQuizResult = db.createQuiz(title, quizDesc, categoryId);
 
     createQuizResult
       .then((data) => {
@@ -149,46 +142,39 @@ app.post("/quiz/createNew", (request, response) => {
           categoryid: categoryId,
           name: title,
           description: quizDesc,
-          totalPoints: totalPoints,
         });
         const quizId = data.insertId;
         let createQuestionResult = new Promise((resolve, reject) => {});
-        const questionObject = quizObject.questions;
-        questionObject.forEach((question) => {
-          createQuestionResult = db.createQuizQuestion(
-            quizId,
-            JSON.stringify(question)
-          );
-        });
+        createQuestionResult = db.createQuizQuestion(
+          quizId,
+          quizObject.questions
+        );
         createQuestionResult.catch((err) =>
-          response.status(400).send(`Creation of questions failed.`, err)
+          response.status(400).send(`Creation of questions failed. ${err}`)
         );
       })
 
       .catch((err) => {
         // Please addon to this list if you encountered something new
-        response.status(400).send(`Creation of quiz failed.`, err);
+        response.status(400).send(`Creation of quiz failed. ${err}`);
       });
-  } else
-    response.status(400).send(`Title / categoryId / totalPoints is(are) empty`);
+  } else response.status(400).send(`Title / categoryId are empty`);
 });
 
 // update
 app.patch("/quiz/:id", (request, response) => {
   let isValid = validateID(request.params.id);
   if (isValid) {
-    const title = request.body.title;
-    const desc = request.body.desc;
-    const totalPoints = request.body.totalPoints;
-    const categoryId = request.body.categoryId;
-    const quizQuestionObject = request.body.quizQuestion;
+    const title = request.body.quizTitle;
+    const desc = request.body.quizDesc;
+    const categoryId = request.body.quizCategoryId;
+    const quizQuestionObject = request.body.questions;
 
     const db = dbService.getDbServiceInstance();
     const result = db.updateQuizDetailsById(
       request.params.id,
       title,
       desc,
-      totalPoints,
       categoryId
     );
 
@@ -200,7 +186,7 @@ app.patch("/quiz/:id", (request, response) => {
         quizQuestionObject.forEach((question) => {
           updateQuestionsResult = db.updateQuestionDetailsById(
             request.params.id,
-            JSON.stringify(question)
+            question
           );
         });
         updateQuestionsResult.catch((err) =>
@@ -216,8 +202,7 @@ app.patch("/quiz/:id", (request, response) => {
         response
           .status(400)
           .send(
-            `Updating of quiz where id equals to ${request.params.id} has failed.`,
-            err
+            `Updating of quiz where id equals to ${request.params.id} has failed. ${err}`
           )
       );
   } else
@@ -423,6 +408,7 @@ const obj = {
   fiqPoints: 100,
   questions: [
     {
+      scenarioId: 1,
       sub_questTitle: "Scenario 1",
       sub_questDesc: "",
       options: [
@@ -441,6 +427,7 @@ const obj = {
       ],
     },
     {
+      scenarioId: 2,
       sub_questTitle: "Scenario 2",
       sub_questDesc: "",
       options: [
@@ -525,10 +512,9 @@ app.get("/quest/:id", (request, response) => {
       );
 });
 
-app.patch("/quest/:id/:scenarioId", (request, response) => {
+app.patch("/quest/:id", (request, response) => {
   let isValid = validateID(request.params.id);
-  let isValid2 = validateID(request.params.scenarioId);
-  if (isValid && isValid2) {
+  if (isValid) {
     const title = obj.questTitle;
     const desc = obj.questDesc;
     const objective = obj.questObjective;
@@ -554,7 +540,7 @@ app.patch("/quest/:id/:scenarioId", (request, response) => {
         scenearioObj.forEach((scenario) => {
           updateScenarioResult = db.updateScenarioDetailsById(
             request.params.id,
-            request.params.scenarioId,
+            scenario.scenarioId,
             scenario.sub_questTitle,
             scenario.sub_questDesc,
             JSON.stringify(scenario.options)
