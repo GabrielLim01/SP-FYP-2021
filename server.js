@@ -18,7 +18,7 @@ const port = 9000;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
 
-var quizObject = {
+let quizObject = {
   quizTitle: "Hello",
   quizCategoryId: 1,
   quizDesc: "",
@@ -48,24 +48,6 @@ var quizObject = {
       fiqPoints: 50,
       timeLimit: 30,
       explanation: "",
-      options: [
-        {
-          option: "Option 1",
-          optionDesc: "",
-          isCorrect: true,
-        },
-        {
-          option: "Option 2",
-          optionDesc: "",
-          isCorrect: false,
-        },
-      ],
-    },
-    {
-      questionTitle: "Question 3",
-      questionDesc: "",
-      fiqPoints: 50,
-      timeLimit: 30,
       options: [
         {
           option: "Option 1",
@@ -177,7 +159,7 @@ app.post("/quiz/createNew", (request, response) => {
           description: quizDesc,
         });
         const quizId = data.insertId;
-        let createQuestionResult = new Promise((resolve, reject) => { });
+        let createQuestionResult = new Promise((resolve, reject) => {});
         createQuestionResult = db.createQuizQuestion(
           quizId,
           quizObject.questions
@@ -215,7 +197,7 @@ app.patch("/quiz/:id", (request, response) => {
       .then((data) => {
         response.json({ data: data });
 
-        var updateQuestionsResult = new Promise((resolve, reject) => { });
+        var updateQuestionsResult = new Promise((resolve, reject) => {});
         quizQuestionObject.forEach((question) => {
           updateQuestionsResult = db.updateQuestionDetailsById(
             request.params.id,
@@ -475,8 +457,8 @@ const obj = {
   fiqPoints: 100,
   questions: [
     {
-      scenarioId: 1,
-      sub_questTitle: "Scenario 1",
+      scenarioId: 5,
+      sub_questTitle: "Scenario A",
       sub_questDesc: "",
       options: [
         {
@@ -494,8 +476,8 @@ const obj = {
       ],
     },
     {
-      scenarioId: 2,
-      sub_questTitle: "Scenario 2",
+      scenarioId: 6,
+      sub_questTitle: "Scenario B",
       sub_questDesc: "",
       options: [
         {
@@ -603,7 +585,7 @@ app.patch("/quest/:id", (request, response) => {
       .then((data) => {
         response.json({ data: data });
 
-        let updateScenarioResult = new Promise((resolve, reject) => { });
+        let updateScenarioResult = new Promise((resolve, reject) => {});
         scenearioObj.forEach((scenario) => {
           updateScenarioResult = db.updateScenarioDetailsById(
             request.params.id,
@@ -626,10 +608,10 @@ app.patch("/quest/:id", (request, response) => {
           //.status(400)
           .send(
             `Updating of quiz where id equals to ${request.params.id} has failed. ${err}`
-          )
-      })
+          );
+      });
   }
-})
+});
 
 app.delete("/quest/:id", async (request, response) => {
   const db = dbService.getDbServiceInstance();

@@ -13,7 +13,7 @@ PATCH  http://localhost:9000/quiz/7
 
 ### 
 
-PATCH  http://localhost:9000/quiz/84
+PATCH  http://localhost:9000/quiz/86
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
     "quizTitle": "peepeepoopoo",
     "quizDesc": "sadsadasd",
     "questions": [{
-        "quizQuestionId": 1,
+        "quizQuestionId": 6,
         "questionTitle": "Question 1",
         "questionDesc": "",
         "options": [{
@@ -30,7 +30,7 @@ Content-Type: application/json
             "isCorrect": true
         }]
     },{
-        "quizQuestionId": 2,
+        "quizQuestionId": 7,
         "questionTitle": "Question 2",
         "questionDesc": "",
         "options": [{
@@ -82,7 +82,7 @@ DELETE  http://localhost:9000/quest/4
 
 
 ###
-PATCH http://localhost:9000/quest/12
+PATCH http://localhost:9000/quest/14
 Content-Type: application/json
 
 
