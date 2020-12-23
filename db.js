@@ -56,7 +56,7 @@ class DbService {
       return new Promise((resolve, reject) => {
         const query = `${joinQuizTableQuery} WHERE quiz.quizId = ?;`;
 
-        connection.query(query, this.intFormatter(id), (err, result) => {
+        connection.query(query, id, (err, result) => {
           if (err) return reject(err.message);
           resolve(result);
         });
@@ -71,7 +71,7 @@ class DbService {
       return new Promise((resolve, reject) => {
         const query = `${retrieveQuizByCategoryIdQuery} WHERE quiz.categoryId = ?;`;
 
-        connection.query(query, this.intFormatter(id), (err, result) => {
+        connection.query(query, id, (err, result) => {
           if (err) return reject(err.message);
           resolve(result);
         });
@@ -308,7 +308,7 @@ class DbService {
 
         connection.query(
           query,
-          [catName, catDesc, this.intFormatter(id)],
+          [catName, catDesc, id],
           (err, result) => {
             if (err) reject(err.message);
             else {
@@ -328,7 +328,7 @@ class DbService {
       return new Promise((resolve, reject) => {
         const query = "DELETE FROM category WHERE categoryId = ?";
 
-        connection.query(query, [this.intFormatter(id)], (err, result) => {
+        connection.query(query, id, (err, result) => {
           if (err) return reject(err.message);
           resolve(result.affectedRows);
         });
