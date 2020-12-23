@@ -47,7 +47,7 @@ class CategorySelection extends React.Component {
                                     return (
                                         <div className="field" key={index}>
                                             <Link to={{
-                                                // window.location.href.split("/").pop() gets the last part of the URL after the forward slash (e.g. 'quizzes')
+                                                // Gets the last part of the URL after the forward slash (e.g. 'quizzes')
                                                 // The first letter of value.categoryName is capitalized, so format the entire string into lowercase 
                                                 pathname: `${window.location.href.split("/").pop()}/${value.categoryName.toLowerCase()}`,
                                                 category: value

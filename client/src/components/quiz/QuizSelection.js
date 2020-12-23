@@ -83,13 +83,13 @@ class QuizSelection extends React.Component {
                                 {this.state.items.map((value, index) => {
                                     return (
                                         <div className="field" key={index}>
-                                            {/* <Link to={{
-                                                // window.location.href.split("/").pop() gets the last part of the URL after the forward slash (e.g. 'quizzes')
+                                            <Link to={{
+                                                // Gets the last part of the URL after the forward slash (e.g. 'quizzes')
                                                 pathname: `${window.location.href.split("/").pop()}/${value.quizId}`,
                                                 quiz: value
-                                            }}> */}
+                                            }}>
                                             <Button icon className='fluid large teal'>{value.quizName}</Button>
-                                            {/* </Link> */}
+                                            </Link>
                                         </div>
                                     )
                                 })}
