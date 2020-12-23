@@ -69,6 +69,26 @@ function validateID(x) {
   return result;
 }
 
+function validateString(x) {
+  let regex = new RegExp("^[ A-Za-z0-9_@./#&+-^]*$");
+  let result = regex.test(x);
+  return result;
+}
+
+function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}
+
+function isBlank(str) {
+  return !str || 0 === str.length;
+}
+
+function validateID(x) {
+  let regex = new RegExp("^[0-9]+$");
+  let result = regex.test(x);
+  return result;
+}
+
 function isEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
@@ -85,7 +105,9 @@ app.get("/quiz", (request, response) => {
     .then((data) => {
       response.json(data);
     })
-    .catch((err) => response.status(400).send(`Fetching of data failed.`, err));
+    .catch((err) =>
+      response.status(400).send(`Fetching of data failed. ${err}`)
+    );
 });
 
 app.get("/quiz/:id", (request, response) => {
@@ -107,8 +129,7 @@ app.get("/quiz/:id", (request, response) => {
         response
           .status(400)
           .send(
-            `Unable to retrieve specified quiz of id: ${request.params.id}.`,
-            err
+            `Unable to retrieve specified quiz of id: ${request.params.id}. ${err}`
           );
       });
   } else
@@ -183,44 +204,37 @@ app.post("/quiz", (request, response) => {
         });
 
         const quizId = data.insertId;
-
         let createQuestionResult = new Promise((resolve, reject) => { });
-
-        const questionObject = quiz.questions;
-        questionObject.forEach((question) => {
-          createQuestionResult = db.createQuizQuestion(
-            quizId,
-            JSON.stringify(question)
-          );
-        });
+        createQuestionResult = db.createQuizQuestion(
+          quizId,
+          quiz.questions
+        );
         createQuestionResult.catch((err) =>
-          response.status(400).send(`Creation of questions failed.`, err)
+          response.status(400).send(`Creation of questions failed. ${err}`)
         );
       })
       .catch((err) => {
         // Please addon to this list if you encountered something new
-        response.status(400).send(`Creation of quiz failed.`, err);
+        response.status(400).send(`Creation of quiz failed. ${err}`);
       });
   } else
-    response.status(400).send(`Name / Category / Points cannot be empty!`);
+    response.status(400).send(`Category / Name / Description / Points/Time Per Question cannot be empty!`);
 });
 
 // update
 app.patch("/quiz/:id", (request, response) => {
   let isValid = validateID(request.params.id);
   if (isValid) {
-    const title = request.body.title;
-    const desc = request.body.desc;
-    const totalPoints = request.body.totalPoints;
-    const categoryId = request.body.categoryId;
-    const quizQuestionObject = request.body.quizQuestion;
+    const title = request.body.quizTitle;
+    const desc = request.body.quizDesc;
+    const categoryId = request.body.quizCategoryId;
+    const quizQuestionObject = request.body.questions;
 
     const db = dbService.getDbServiceInstance();
     const result = db.updateQuizDetailsById(
       request.params.id,
       title,
       desc,
-      totalPoints,
       categoryId
     );
 
@@ -232,15 +246,14 @@ app.patch("/quiz/:id", (request, response) => {
         quizQuestionObject.forEach((question) => {
           updateQuestionsResult = db.updateQuestionDetailsById(
             request.params.id,
-            JSON.stringify(question)
+            question
           );
         });
         updateQuestionsResult.catch((err) =>
           response
             .status(400)
             .send(
-              `Updating of questions where quiz id equals to ${request.params.id} has failed.`,
-              err
+              `Updating of questions where quiz id equals to ${request.params.id} has failed. ${err}`
             )
         );
       })
@@ -248,8 +261,7 @@ app.patch("/quiz/:id", (request, response) => {
         response
           .status(400)
           .send(
-            `Updating of quiz where id equals to ${request.params.id} has failed.`,
-            err
+            `Updating of quiz where id equals to ${request.params.id} has failed. ${err}`
           )
       );
   } else
@@ -266,7 +278,7 @@ app.delete("/quiz/:id", (request, response) => {
   if (isValid) {
     const db = dbService.getDbServiceInstance();
 
-    const result = db.deleteQuizById(id);
+    const result = db.deleteQuizById(request.params.id);
 
     result
       .then((data) => {
@@ -332,8 +344,7 @@ app.post("/authenticate", (request, response) => {
         response
           .status(400)
           .send(
-            `Authentication of user where username equals to ${username} has failed.`,
-            err
+            `Authentication of user where username equals to ${username} has failed. ${err}`
           );
       });
   } else response.status(400).send(`Username / Password is(are) empty.`);
@@ -435,6 +446,242 @@ app.delete("/category/:id", async (request, response) => {
           .status(200)
           .send(
             ` Deletion of category of id: ${request.params.id} was a success!`
+          );
+      })
+      .catch((err) => {
+        if (err.includes("ER_ROW_IS_REFERENCED"))
+          response
+            .status(400)
+            .send(
+              `Category with id: ${request.params.id} is being referenced by quiz(zes).`
+            );
+      });
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
+});
+
+//update profile
+app.patch("/profile/:id", (request, response) => {
+  const username = request.body.username;
+  const hobbyId = request.body.hobbyId;
+  //const hobbies = [];
+  //hobbyId.forEach((id) => hobbies.push(id));
+  const ageGroupId = request.body.ageGroupId;
+  const db = dbService.getDbServiceInstance();
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.updateProfileById(
+      request.params.id,
+      username,
+      hobbyId,
+      // hobbies,
+      ageGroupId
+    );
+    result
+      .then((data) => {
+        response
+          .status(200)
+          .send(` Updating profile of id: ${request.params.id} was a success!`);
+      })
+      .catch((err) =>
+        response
+          .status(400)
+          .send(`${err}, updating of ${request.params.id} failed`)
+      );
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
+});
+/////////////////////////////////////////
+/*
+1. Declare mock object
+2. Create
+3. Read
+4. Update
+5. Delete
+*/
+const obj = {
+  questTitle: "dvzdvc",
+  questCategoryId: 1,
+  questDesc: "",
+  questObjective: "",
+  fiqPoints: 100,
+  questions: [
+    {
+      scenarioId: 5,
+      sub_questTitle: "Scenario A",
+      sub_questDesc: "",
+      options: [
+        {
+          option: "Option 1",
+          optionDesc: "",
+          pros: "",
+          cons: "",
+        },
+        {
+          option: "Option 2",
+          optionDesc: "",
+          pros: "",
+          cons: "",
+        },
+      ],
+    },
+    {
+      scenarioId: 6,
+      sub_questTitle: "Scenario B",
+      sub_questDesc: "",
+      options: [
+        {
+          option: "Option 1",
+          optionDesc: "",
+          pros: "",
+          cons: "",
+        },
+        {
+          option: "Option 2",
+          optionDesc: "",
+          pros: "",
+          cons: "",
+        },
+      ],
+    },
+  ],
+};
+//create
+app.post("/quest/createNew", async (request, response) => {
+  //syntaxes to change during integration
+  const title = obj.questTitle;
+  const desc = obj.questDesc;
+  const objective = obj.questObjective;
+  const categoryId = obj.questCategoryId;
+  const fiqPoints = obj.fiqPoints;
+  const scenarioObj = obj.questions;
+  let isValid = validateString(title);
+  const db = dbService.getDbServiceInstance();
+  if (isValid) {
+    let result = db.createQuest(title, desc, objective, categoryId, fiqPoints);
+    result
+      .then((data) => {
+        response.json({ data: data.insertId });
+
+        let createQuestScenarioResult = db.createQuestScenario(
+          data.insertId,
+          scenarioObj
+        );
+        createQuestScenarioResult.catch((err) =>
+          console.log(`Creation of scenario(s) failed. ${err}`)
+        );
+      })
+      .catch((err) => {
+        response.status(500).send(`Error creating quest: ${title}, ${err}`);
+      });
+  } else
+    response
+      .status(400)
+      .send(`${title} contained illegal characters. Please check again.`);
+});
+
+app.get("/quest/:id", (request, response) => {
+  const db = dbService.getDbServiceInstance();
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.getQuestById(request.params.id);
+    result
+      .then((data) => {
+        if (!isEmpty(data)) {
+          const questObject = JSON.parse(JSON.stringify(data));
+          response.json({ data: questObject });
+        } else
+          response
+            .status(400)
+            .send(`Quest of id: ${request.params.id} is not present.`);
+      })
+      .catch((err) => {
+        response
+          .status(400)
+          .send(
+            `Unable to retrieve specified quest of id: ${request.params.id}.`,
+            err
+          );
+      });
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
+});
+
+app.patch("/quest/:id", (request, response) => {
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const title = obj.questTitle;
+    const desc = obj.questDesc;
+    const objective = obj.questObjective;
+    const categoryId = obj.questCategoryId;
+    const fiqPoint = obj.fiqPoints;
+    const scenearioObj = obj.questions;
+
+    const db = dbService.getDbServiceInstance();
+    const result = db.updateQuestDetailsById(
+      request.params.id,
+      title,
+      desc,
+      objective,
+      categoryId,
+      fiqPoint
+    );
+
+    result
+      .then((data) => {
+        response.json({ data: data });
+
+        let updateScenarioResult = new Promise((resolve, reject) => { });
+        scenearioObj.forEach((scenario) => {
+          updateScenarioResult = db.updateScenarioDetailsById(
+            request.params.id,
+            scenario.scenarioId,
+            scenario.sub_questTitle,
+            scenario.sub_questDesc,
+            JSON.stringify(scenario.options)
+          );
+        });
+        updateScenarioResult.catch((err) =>
+          response
+            .status(400)
+            .send(
+              `Updating of questions where questId equals to ${request.params.id} has failed. ${err}`
+            )
+        );
+      })
+      .catch((err) => {
+        response
+          //.status(400)
+          .send(
+            `Updating of quiz where id equals to ${request.params.id} has failed. ${err}`
+          );
+      });
+  }
+});
+
+app.delete("/quest/:id", async (request, response) => {
+  const db = dbService.getDbServiceInstance();
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.deleteQuestById(request.params.id);
+    result
+      .then((data) => {
+        response
+          .status(200)
+          .send(
+            ` Deletion of quest of id: ${request.params.id} was a success!`
           );
       })
       .catch((err) => {
