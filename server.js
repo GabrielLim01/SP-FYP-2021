@@ -60,8 +60,40 @@ var quizObject = {
         },
       ],
     },
+    {
+      questionTitle: "Question 3",
+      questionDesc: "",
+      fiqPoints: 50,
+      timeLimit: 30,
+      options: [
+        {
+          option: "Option 1",
+          optionDesc: "",
+          isCorrect: true,
+        },
+        {
+          option: "Option 2",
+          optionDesc: "",
+          isCorrect: false,
+        },
+      ],
+    },
   ],
 };
+function validateID(x) {
+  let regex = new RegExp("^[0-9]+$");
+  let result = regex.test(x);
+  return result;
+}
+
+function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}
+
+function isBlank(str) {
+  return !str || 0 === str.length;
+}
+
 function validateID(x) {
   let regex = new RegExp("^[0-9]+$");
   let result = regex.test(x);
@@ -84,7 +116,9 @@ app.get("/quizDashboard", (request, response) => {
     .then((data) => {
       response.json({ data: data });
     })
-    .catch((err) => response.status(400).send(`Fetching of data failed.`, err));
+    .catch((err) =>
+      response.status(400).send(`Fetching of data failed. ${err}`)
+    );
 });
 
 app.get("/quiz/:id", (request, response) => {
@@ -106,8 +140,7 @@ app.get("/quiz/:id", (request, response) => {
         response
           .status(400)
           .send(
-            `Unable to retrieve specified quiz of id: ${request.params.id}.`,
-            err
+            `Unable to retrieve specified quiz of id: ${request.params.id}. ${err}`
           );
       });
   } else
@@ -118,7 +151,6 @@ app.get("/quiz/:id", (request, response) => {
       );
 });
 
-// create
 app.post("/createNew", (request, response) => {
   const title = quizObject.quizTitle; // to be changed
   const categoryId = quizObject.quizCategoryId; // to be changed
@@ -145,21 +177,18 @@ app.post("/createNew", (request, response) => {
         });
         const quizId = data.insertId;
         let createQuestionResult = new Promise((resolve, reject) => { });
-        const questionObject = quizObject.questions;
-        questionObject.forEach((question) => {
-          createQuestionResult = db.createQuizQuestion(
-            quizId,
-            JSON.stringify(question)
-          );
-        });
+        createQuestionResult = db.createQuizQuestion(
+          quizId,
+          quizObject.questions
+        );
         createQuestionResult.catch((err) =>
-          response.status(400).send(`Creation of questions failed.`, err)
+          response.status(400).send(`Creation of questions failed. ${err}`)
         );
       })
 
       .catch((err) => {
         // Please addon to this list if you encountered something new
-        response.status(400).send(`Creation of quiz failed.`, err);
+        response.status(400).send(`Creation of quiz failed. ${err}`);
       });
   } else
     response.status(400).send(`Title / categoryId / totalPoints is(are) empty`);
@@ -188,7 +217,7 @@ app.patch("/quiz/:id", (request, response) => {
       .then((data) => {
         response.json({ data: data });
 
-        var updateQuestionsResult = new Promise((resolve, reject) => { });
+        let updateQuestionsResult = new Promise((resolve, reject) => { });
         quizQuestionObject.forEach((question) => {
           updateQuestionsResult = db.updateQuestionDetailsById(
             request.params.id,
@@ -199,8 +228,7 @@ app.patch("/quiz/:id", (request, response) => {
           response
             .status(400)
             .send(
-              `Updating of questions where quiz id equals to ${request.params.id} has failed.`,
-              err
+              `Updating of questions where quiz id equals to ${request.params.id} has failed. ${err}`
             )
         );
       })
@@ -208,8 +236,7 @@ app.patch("/quiz/:id", (request, response) => {
         response
           .status(400)
           .send(
-            `Updating of quiz where id equals to ${request.params.id} has failed.`,
-            err
+            `Updating of quiz where id equals to ${request.params.id} has failed. ${err}`
           )
       );
   } else
@@ -226,7 +253,7 @@ app.delete("/quiz/:id", (request, response) => {
   if (isValid) {
     const db = dbService.getDbServiceInstance();
 
-    const result = db.deleteQuizById(id);
+    const result = db.deleteQuizById(request.params.id);
 
     result
       .then((data) => {
@@ -291,8 +318,7 @@ app.post("/authenticate", (request, response) => {
         response
           .status(400)
           .send(
-            `Authentication of user where username equals to ${username} has failed.`,
-            err
+            `Authentication of user where username equals to ${username} has failed. ${err}`
           );
       });
   } else response.status(400).send(`Username / Password is(are) empty.`);

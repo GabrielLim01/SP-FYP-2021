@@ -1,6 +1,7 @@
 const mysql = require("mysql");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
+const { response } = require("express");
 let instance = null;
 dotenv.config();
 
@@ -27,11 +28,6 @@ class DbService {
   static getDbServiceInstance() {
     if (!instance) instance = new DbService();
     return instance;
-  }
-
-  intFormatter(id) {
-    const int = parseInt(id, 10);
-    return int;
   }
 
   async getAllQuizzes() {
@@ -85,22 +81,21 @@ class DbService {
     }
   }
 
-  async createQuizQuestion(quizId, question) {
-    try {
-      return new Promise((resolve, reject) => {
-        const query =
-          "INSERT into quiz_question (quizId, questionObject) values (?,?);";
-        connection.query(query, [quizId, question], (err, result) => {
-          if (err) reject(err.message);
-          else {
-            console.log("Questions created. quizQuestionId:", result.insertId);
-            resolve(result);
-          }
-        });
-      });
-    } catch (e) {
-      throw e.message;
-    }
+  async createQuizQuestion(quizId, questionsObj) {
+    const array = [];
+    Object.keys(questionsObj).forEach(function (item) {
+      array.push([quizId, JSON.stringify(questionsObj[item])]);
+    });
+
+    const query =
+      "INSERT into quiz_question (quizId, questionObject) values ?;";
+    connection.query(query, [array], (err, result) => {
+      if (err) return err.message;
+      else {
+        console.log("Question(s) created.");
+        return result;
+      }
+    });
   }
 
   async updateQuizDetailsById(id, title, desc, totalPoints, categoryId) {
@@ -110,7 +105,7 @@ class DbService {
           "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, totalPoints = ?  WHERE quizId = ?";
         connection.query(
           query,
-          [categoryId, title, desc, totalPoints, this.intFormatter(id)],
+          [categoryId, title, desc, totalPoints, id],
           (err, result) => {
             if (err) return reject(err.message);
             resolve(result.affectedRows);
@@ -122,27 +117,21 @@ class DbService {
     }
   }
 
-  async updateQuestionDetailsById(id, questionObject) {
-    try {
-      return new Promise((resolve, reject) => {
-        const query =
-          "UPDATE quiz_question SET questionObject = ? WHERE quizId = ?";
+  async updateQuestionDetailsById(id, questionsObject) {
+    return new Promise((resolve, reject) => {
+      const query =
+        "UPDATE quiz_question SET questionObject = ? WHERE quizId = ?";
 
-        connection.query(
-          query,
-          [questionObject, this.intFormatter(id)],
-          (err, result) => {
-            if (err) reject(err.message);
-            else {
-              console.log("Updated questions", result);
-              resolve(result.affectedRows);
-            }
+      connection.query(query, [questionsObject, id], (err, result) => {
+        if (err) reject(err.message);
+        else {
+          if (result.affectedRows === 0) {
+            console.log(`Updated 0 rows.`);
           }
-        );
+          resolve(result.affectedRows);
+        }
       });
-    } catch (e) {
-      throw e.message;
-    }
+    });
   }
 
   async deleteQuizById(id) {
@@ -150,9 +139,14 @@ class DbService {
       return new Promise((resolve, reject) => {
         const query = "DELETE FROM quiz WHERE quizId = ?";
 
-        connection.query(query, [this.intFormatter(id)], (err, result) => {
+        connection.query(query, id, (err, result) => {
           if (err) reject(err.message);
-          resolve(result.affectedRows);
+          else {
+            if (result.affectedRows === 0) {
+              console.log(`Deleted 0 rows.`);
+            }
+            resolve(result.affectedRows);
+          }
         });
       });
     } catch (e) {
