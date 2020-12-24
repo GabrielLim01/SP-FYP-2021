@@ -64,7 +64,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:9000/category
+GET http://localhost:9000/category/1
 
 ###
 

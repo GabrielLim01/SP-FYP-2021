@@ -1,25 +1,19 @@
 import React from 'react';
-// import { Link } from "react-router-dom";
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 // import { Form, Button } from "semantic-ui-react";
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
+import retrieveItems from '../quiz/retrieveItems';
 
 class CategoryDashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            categoryArray: [
-                {
-                    id: 1,
-                    label: 'Technology',
-                    desc: '',
-                },
-                { id: 2, label: 'Lifestyle', desc: '' },
-                { id: 3, label: 'Finance', desc: '' },
-            ],
             redirect: false,
+            items: [],
+            hasItems: true,
         };
     }
 
@@ -33,6 +27,30 @@ class CategoryDashboard extends React.Component {
         }
     };
 
+    generateItems() {
+        retrieveItems(`category`)
+            .then((data) => {
+                if (data !== undefined) {
+                    let category = [];
+
+                    data.forEach((element) => {
+                        category.push(element);
+                    });
+
+                    this.setState({ items: category });
+                } else {
+                    this.setState({ hasItems: false });
+                }
+            })
+            .catch((error) => {
+                alert(error);
+            });
+    }
+
+    componentDidMount() {
+        this.generateItems();
+    }
+
     render() {
         if (!verifyLogin()) {
             return <h1>403 Forbidden</h1>;
@@ -43,27 +61,29 @@ class CategoryDashboard extends React.Component {
                     <div className="subContainer" style={containerStyle}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <h1>Available Categories</h1>
-                            <button class="ui primary button" onClick={this.redirectHandler}>
-                                Create New<i class="right wrench icon"></i>
+                            <button className="ui primary button" onClick={this.redirectHandler}>
+                                Create New<i className="right wrench icon"></i>
                             </button>
                             {this.renderRedirect()}
                         </div>
-                        <div className="ui stacked segment">
-                            {this.state.categoryArray.map((category) => (
-                                <div class="ui label">
-                                    <a class="ui huge label">
-                                        <Link
-                                            to={{
-                                                pathname: `update/${category.id}`,
-                                                category: category,
-                                            }}
-                                        >
-                                            {category.label}
-                                        </Link>
-                                        <i class="delete icon"></i>
-                                    </a>
-                                </div>
-                            ))}
+                        <div className="ui stacked segment" style={{ overflow: 'hidden' }}>
+                            {this.state.items.map((value, index) => {
+                                return (
+                                    <div className="field" key={index} style={{ float: 'left', margin: '5px 5px' }}>
+                                        <div className="ui huge label" style={{ marginLeft: '8px' }}>
+                                            <Link
+                                                to={{
+                                                    pathname: `update/${JSON.stringify(value.categoryId)}`,
+                                                    category: value,
+                                                }}
+                                            >
+                                                {JSON.stringify(value.categoryName)}
+                                            </Link>
+                                            <i className="delete icon"></i>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

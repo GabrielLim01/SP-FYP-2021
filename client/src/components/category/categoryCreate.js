@@ -47,7 +47,7 @@ class CategoryCreate extends React.Component {
                                     <button type="submit" className="ui primary button">
                                         Create<i aria-hidden="true" className="right pencil icon"></i>
                                     </button>
-                                    <button type="submit" className="ui button" onClick={this.redirectHandler}>
+                                    <button type="button" className="ui button" onClick={this.redirectHandler}>
                                         Back
                                     </button>
                                     {this.renderRedirect()}
