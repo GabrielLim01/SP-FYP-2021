@@ -14,6 +14,8 @@ import QuizCreation from "./quiz/QuizCreation.js";
 
 // Category
 import CategoryDashboard from "./category/categoryDashboard";
+import CategoryCreate from "./category/categoryCreate";
+import CategoryUpdate from "./category/categoryUpdate";
 
 const Routes = () => {
   return (
@@ -30,10 +32,12 @@ const Routes = () => {
         component={QuizSelection}
       ></Route>
 
+      <Route exact path="/category/all" component={CategoryDashboard}></Route>
+      <Route exact path="/category/create" component={CategoryCreate}></Route>
       <Route
         exact
-        path="/categoryDashboard"
-        component={CategoryDashboard}
+        path="/category/update/:id"
+        component={CategoryUpdate}
       ></Route>
 
       <Route component={NotFound} />
