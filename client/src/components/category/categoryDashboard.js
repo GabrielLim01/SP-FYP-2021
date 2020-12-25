@@ -6,6 +6,7 @@ import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
 import retrieveItems from '../quiz/retrieveItems';
+import Modal from './deleteModal.js';
 
 class CategoryDashboard extends React.Component {
     constructor(props) {
@@ -14,6 +15,8 @@ class CategoryDashboard extends React.Component {
             redirect: false,
             items: [],
             hasItems: true,
+            isOpen: false,
+            setIsOpen: false,
         };
     }
 
@@ -79,7 +82,7 @@ class CategoryDashboard extends React.Component {
                                             >
                                                 {JSON.stringify(value.categoryName)}
                                             </Link>
-                                            <i className="delete icon"></i>
+                                            <Modal category={value}></Modal>
                                         </div>
                                     </div>
                                 );
