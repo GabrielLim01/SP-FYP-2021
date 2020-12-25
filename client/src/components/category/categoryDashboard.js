@@ -15,8 +15,6 @@ class CategoryDashboard extends React.Component {
             redirect: false,
             items: [],
             hasItems: true,
-            isOpen: false,
-            setIsOpen: false,
         };
     }
 
