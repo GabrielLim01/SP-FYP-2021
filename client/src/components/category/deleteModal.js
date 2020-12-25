@@ -1,8 +1,15 @@
 import React from 'react';
 import { Button, Header, Icon, Modal } from 'semantic-ui-react';
+// import axios from 'axios';
+// import { host } from '../../common.js';
+// import { response } from 'express';
 
 function ModalExampleCloseIcon(value) {
     const [open, setOpen] = React.useState(false);
+
+    // function handleClick() {
+    //     axios.delete(host + `/category/${value.category.categoryId}`).then(console.log(response));
+    // }
 
     return (
         <Modal
@@ -20,7 +27,12 @@ function ModalExampleCloseIcon(value) {
                 <Button color="red" onClick={() => setOpen(false)}>
                     <Icon name="remove" /> No
                 </Button>
-                <Button color="green" onClick={() => setOpen(false)}>
+                <Button
+                    color="green"
+                    onClick={() => {
+                        setOpen(false);
+                    }}
+                >
                     <Icon name="checkmark" /> Yes
                 </Button>
             </Modal.Actions>

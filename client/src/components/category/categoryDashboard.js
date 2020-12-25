@@ -78,7 +78,7 @@ class CategoryDashboard extends React.Component {
                                                     category: value,
                                                 }}
                                             >
-                                                {JSON.stringify(value.categoryName)}
+                                                {value.categoryName}
                                             </Link>
                                             <Modal category={value}></Modal>
                                         </div>
