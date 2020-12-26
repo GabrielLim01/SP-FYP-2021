@@ -1,15 +1,41 @@
+import axios from 'axios';
 import React from 'react';
 import { Button, Header, Icon, Modal } from 'semantic-ui-react';
-// import axios from 'axios';
-// import { host } from '../../common.js';
-// import { response } from 'express';
+import { host } from '../../common.js';
+import Noty from 'noty';
+import '../../../node_modules/noty/lib/noty.css';
+import '../../../node_modules/noty/lib/themes/semanticui.css';
 
 function ModalExampleCloseIcon(value) {
     const [open, setOpen] = React.useState(false);
 
-    // function handleClick() {
-    //     axios.delete(host + `/category/${value.category.categoryId}`).then(console.log(response));
-    // }
+    function handleSubmit() {
+        const result = axios.delete(host + `/category/${value.category.categoryId}`);
+        result
+            .then((response) => {
+                if (response.status === 200) {
+                    new Noty({
+                        text: 'Category deleted!',
+                        type: 'success',
+                        theme: 'semanticui',
+                    }).show();
+                    window.location.reload();
+                } else {
+                    new Noty({
+                        text: 'Something went wrong',
+                        type: 'error',
+                        theme: 'semanticui',
+                    }).show();
+                }
+            })
+            .catch((err) => {
+                new Noty({
+                    text: 'Something went wrong',
+                    type: 'error',
+                    theme: 'semanticui',
+                }).show();
+            });
+    }
 
     return (
         <Modal
@@ -31,6 +57,7 @@ function ModalExampleCloseIcon(value) {
                     color="green"
                     onClick={() => {
                         setOpen(false);
+                        handleSubmit();
                     }}
                 >
                     <Icon name="checkmark" /> Yes
