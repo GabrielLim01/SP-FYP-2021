@@ -22,7 +22,7 @@ function ModalExampleCloseIcon(value) {
                     window.location.reload();
                 } else {
                     new Noty({
-                        text: 'Something went wrong',
+                        text: 'Something went wrong.',
                         type: 'error',
                         theme: 'semanticui',
                     }).show();
@@ -30,7 +30,7 @@ function ModalExampleCloseIcon(value) {
             })
             .catch((err) => {
                 new Noty({
-                    text: 'Something went wrong',
+                    text: 'Something went wrong.',
                     type: 'error',
                     theme: 'semanticui',
                 }).show();
