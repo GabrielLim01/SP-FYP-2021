@@ -285,7 +285,7 @@ app.post('/category', async (request, response) => {
     const categoryDesc = category.description;
     let isValid = validateString(categoryName);
     const db = dbService.getDbServiceInstance();
-    if (isValid) {
+    if (isValid && !isBlank(categoryName)) {
         let result = db.createCategory(categoryName, categoryDesc);
 
         result
@@ -295,7 +295,7 @@ app.post('/category', async (request, response) => {
             .catch((err) => {
                 response.status(500).send(`Error creating category: ${categoryName}`, err);
             });
-    } else response.status(400).send(`${categoryName} contained illegal characters. Please check again.`);
+    } else response.status(400).send(`${categoryName} contained illegal characters or is empty. Please check again.`);
 });
 
 //read
