@@ -280,8 +280,9 @@ app.post('/authenticate', (request, response) => {
 
 //create
 app.post('/category', async (request, response) => {
-    const categoryName = request.body.catName;
-    const categoryDesc = request.body.catDesc;
+    const category = request.body.category;
+    const categoryName = category.name;
+    const categoryDesc = category.description;
     let isValid = validateString(categoryName);
     const db = dbService.getDbServiceInstance();
     if (isValid) {

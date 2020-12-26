@@ -6,7 +6,7 @@ Content-Type: application/json
 
 
 ###
-DELETE  http://localhost:9000/category/3
+DELETE  http://localhost:9000/category/52
 
 ###
 PATCH  http://localhost:9000/quiz/7

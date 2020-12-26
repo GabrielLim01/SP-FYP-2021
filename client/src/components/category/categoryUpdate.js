@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React from 'react';
 // import { Link } from "react-router-dom";
 import { Redirect } from 'react-router';
@@ -5,6 +6,10 @@ import { Redirect } from 'react-router';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
+import { host } from '../../common.js';
+import Noty from 'noty';
+import '../../../node_modules/noty/lib/noty.css';
+import '../../../node_modules/noty/lib/themes/semanticui.css';
 
 class CategoryUpdate extends React.Component {
     constructor(props) {
@@ -12,6 +17,8 @@ class CategoryUpdate extends React.Component {
         this.state = {
             category: {},
             redirect: false,
+            categoryName: '',
+            categoryDesc: '',
         };
     }
     redirectHandler = () => {
@@ -22,6 +29,51 @@ class CategoryUpdate extends React.Component {
         if (this.state.redirect) {
             return <Redirect to="/category/all" />;
         }
+    };
+
+    handleChange = (event) => {
+        this.setState({
+            [event.target.name]: event.target.value,
+        });
+    };
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+
+        let category = {
+            name: this.state.categoryName,
+            description: this.state.categoryDesc,
+        };
+
+        const result = axios.post(`${host}/category`, {
+            category: category,
+        });
+
+        result
+            .then((response) => {
+                if (response.status === 200) {
+                    new Noty({
+                        text: `Category Updated: ${category.name}`,
+                        type: 'success',
+                        theme: 'semanticui',
+                    }).show();
+
+                    this.redirectHandler();
+                } else {
+                    new Noty({
+                        text: 'Something went wrong.',
+                        type: 'error',
+                        theme: 'semanticui',
+                    }).show();
+                }
+            })
+            .catch((err) => {
+                new Noty({
+                    text: 'Something went wrong.',
+                    type: 'error',
+                    theme: 'semanticui',
+                }).show();
+            });
     };
 
     componentDidMount() {
@@ -47,7 +99,12 @@ class CategoryUpdate extends React.Component {
                                 <div className="field">
                                     <div className="required field">
                                         <label>Category Name</label>
-                                        <input placeholder="Category Name" value={this.state.category.categoryName} />
+                                        <input
+                                            placeholder="Category Name"
+                                            value={this.state.category.categoryName}
+                                            name="categoryName"
+                                            onChange={this.handleChange}
+                                        />
                                     </div>
                                 </div>
                                 <div className="field">
@@ -56,10 +113,12 @@ class CategoryUpdate extends React.Component {
                                         placeholder="Category Description.."
                                         rows="3"
                                         value={this.state.category.categoryDesc}
+                                        name="categoryDesc"
+                                        onChange={this.handleChange}
                                     ></textarea>
                                 </div>
                                 <div className="field" style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                                    <button type="submit" className="ui primary button">
+                                    <button type="submit" className="ui primary button" onClick={this.handleSubmit}>
                                         Update<i aria-hidden="true" className="right edit icon"></i>
                                     </button>
                                     <button type="button" className="ui button" onClick={this.redirectHandler}>
