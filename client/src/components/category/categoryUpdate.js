@@ -27,7 +27,7 @@ class CategoryUpdate extends React.Component {
     };
     renderRedirect = () => {
         if (this.state.redirect) {
-            return <Redirect to="/category/all" />;
+            return <Redirect to="/category" />;
         }
     };
 
@@ -81,7 +81,7 @@ class CategoryUpdate extends React.Component {
             let category = this.props.location.category;
             this.setState({ category: category });
         } else {
-            this.setState({ redirect: '/category/all' });
+            this.setState({ redirect: '/category' });
             console.log(`${this.state.redirect}`);
             //window.location.href(`${this.state.redirect}`);
             //<Redirect to={this.state.redirect} />;

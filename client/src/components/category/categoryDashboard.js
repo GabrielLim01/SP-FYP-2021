@@ -58,7 +58,7 @@ class CategoryDashboard extends React.Component {
         } else {
             return (
                 <div className="container" style={{ textAlign: 'left' }}>
-                    <DashboardMenu page="quizzes"></DashboardMenu>
+                    <DashboardMenu page="category"></DashboardMenu>
                     <div className="subContainer" style={containerStyle}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <h1>Available Categories</h1>

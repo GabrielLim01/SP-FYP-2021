@@ -1,14 +1,15 @@
 import axios from 'axios';
-import React from 'react';
-import { Button, Header, Icon, Modal, Message } from 'semantic-ui-react';
+import React, { useState } from 'react';
+import { Button, Header, Icon, Modal } from 'semantic-ui-react';
 import { host } from '../../common.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
 
-function ModalExampleCloseIcon(value) {
-    const [open, setOpen] = React.useState(false);
-    const quizzes = React.useState(null);
+function DeleteModal(value) {
+    const [open, setOpen] = useState(false);
+    const [quizArray, setQuizArray] = useState([]);
+    const [isPopulated, setIsPopulated] = useState(false);
 
     function handleSubmit() {
         const result = axios.delete(host + `/category/${value.category.categoryId}`);
@@ -42,9 +43,17 @@ function ModalExampleCloseIcon(value) {
         const result = axios.get(host + `/quiz/category/${value.category.categoryId}`);
         result
             .then((data) => {
-                Object.keys(data).forEach(function (item) {
-                    console.log(data[item]);
-                });
+                if (typeof data.data === 'object') {
+                    let tempArray = [];
+
+                    Object.values(data.data).forEach((quiz) => {
+                        tempArray.push(quiz.quizId);
+                    });
+
+                    setQuizArray(tempArray);
+                } else {
+                    console.log('Array has something already');
+                }
             })
             .catch();
     }
@@ -57,12 +66,26 @@ function ModalExampleCloseIcon(value) {
             onClose={() => setOpen(false)}
             onOpen={() => {
                 setOpen(true);
-                check();
+
+                if (!isPopulated) {
+                    check();
+                    setIsPopulated(true);
+                }
             }}
         >
             <Header icon="trash" content={`Delete Category: ${value.category.categoryName}?`} />
             <Modal.Content>
-                <div></div>
+                <div>
+                    {quizArray.length !== 0 ? (
+                        <div className="ui warning message">
+                            <div className="header">
+                                This category is being referenced by {quizArray.length} quiz(zes)!
+                            </div>
+                            <p>Please delete the following quiz(zes) with id: {quizArray.join(', ')}.</p>
+                        </div>
+                    ) : null}
+                </div>
+                <br></br>
                 <p>Are you sure you want to delete {`${value.category.categoryName.toLowerCase()}`}?</p>
             </Modal.Content>
             <Modal.Actions>
@@ -83,4 +106,4 @@ function ModalExampleCloseIcon(value) {
     );
 }
 
-export default ModalExampleCloseIcon;
+export default DeleteModal;
