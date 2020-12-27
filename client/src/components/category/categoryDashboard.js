@@ -74,7 +74,7 @@ class CategoryDashboard extends React.Component {
                                         <div className="ui huge label" style={{ marginLeft: '8px' }}>
                                             <Link
                                                 to={{
-                                                    pathname: `update/${JSON.stringify(value.categoryId)}`,
+                                                    pathname: `category/update/${JSON.stringify(value.categoryId)}`,
                                                     category: value,
                                                 }}
                                             >

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React from 'react';
-import { Button, Header, Icon, Modal } from 'semantic-ui-react';
+import { Button, Header, Icon, Modal, Message } from 'semantic-ui-react';
 import { host } from '../../common.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
@@ -8,6 +8,7 @@ import '../../../node_modules/noty/lib/themes/semanticui.css';
 
 function ModalExampleCloseIcon(value) {
     const [open, setOpen] = React.useState(false);
+    const quizzes = React.useState(null);
 
     function handleSubmit() {
         const result = axios.delete(host + `/category/${value.category.categoryId}`);
@@ -37,16 +38,31 @@ function ModalExampleCloseIcon(value) {
             });
     }
 
+    function check() {
+        const result = axios.get(host + `/quiz/category/${value.category.categoryId}`);
+        result
+            .then((data) => {
+                Object.keys(data).forEach(function (item) {
+                    console.log(data[item]);
+                });
+            })
+            .catch();
+    }
+
     return (
         <Modal
             closeIcon
             open={open}
             trigger={<i className="delete icon"></i>}
             onClose={() => setOpen(false)}
-            onOpen={() => setOpen(true)}
+            onOpen={() => {
+                setOpen(true);
+                check();
+            }}
         >
             <Header icon="trash" content={`Delete Category: ${value.category.categoryName}?`} />
             <Modal.Content>
+                <div></div>
                 <p>Are you sure you want to delete {`${value.category.categoryName.toLowerCase()}`}?</p>
             </Modal.Content>
             <Modal.Actions>

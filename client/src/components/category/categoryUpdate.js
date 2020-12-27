@@ -45,7 +45,7 @@ class CategoryUpdate extends React.Component {
             description: this.state.categoryDesc,
         };
 
-        const result = axios.post(`${host}/category`, {
+        const result = axios.patch(`${host}/category/${this.state.category.categoryId}`, {
             category: category,
         });
 
@@ -82,6 +82,9 @@ class CategoryUpdate extends React.Component {
             this.setState({ category: category });
         } else {
             this.setState({ redirect: '/category/all' });
+            console.log(`${this.state.redirect}`);
+            //window.location.href(`${this.state.redirect}`);
+            //<Redirect to={this.state.redirect} />;
         }
     }
 
@@ -100,8 +103,7 @@ class CategoryUpdate extends React.Component {
                                     <div className="required field">
                                         <label>Category Name</label>
                                         <input
-                                            placeholder="Category Name"
-                                            value={this.state.category.categoryName}
+                                            placeholder={this.state.category.categoryName}
                                             name="categoryName"
                                             onChange={this.handleChange}
                                         />
@@ -110,9 +112,8 @@ class CategoryUpdate extends React.Component {
                                 <div className="field">
                                     <label>Category Description</label>
                                     <textarea
-                                        placeholder="Category Description.."
+                                        placeholder={this.state.category.categoryDesc}
                                         rows="3"
-                                        value={this.state.category.categoryDesc}
                                         name="categoryDesc"
                                         onChange={this.handleChange}
                                     ></textarea>

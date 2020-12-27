@@ -23,8 +23,7 @@ connection.connect((err) => {
 
 const joinQuizTableQuery = 'SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId';
 
-const retrieveQuizByCategoryIdQuery =
-    'SELECT DISTINCT(quiz.quizId), quiz.quizName FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId';
+const retrieveQuizByCategoryIdQuery = 'SELECT DISTINCT(quiz.quizId), quiz.quizName FROM quiz';
 
 const joinQuestTableQuery = 'SELECT * FROM quest INNER JOIN quest_scenario ON quest.insertId = quest_scenario.questId';
 

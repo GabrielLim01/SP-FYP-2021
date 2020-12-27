@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
 import { Dropdown, Input, Menu } from 'semantic-ui-react';
 import { appName } from '../common.js';
 
@@ -9,10 +9,11 @@ export default class DashboardMenu extends React.Component {
         menuItems: [
             { name: 'home', path: 'dashboard' },
             { name: 'quizzes', path: 'quizzes' },
-            { name: 'quests', path: 'quests' }
+            { name: 'quests', path: 'quests' },
+            { name: 'category', path: 'category' },
         ],
-        redirect: null
-    }
+        redirect: null,
+    };
 
     handleItemClick = (event, { name }) => {
         // Prevents menu from disappearing when double-clicked on
@@ -23,19 +24,19 @@ export default class DashboardMenu extends React.Component {
                 this.setState({ redirect: '/dashboard' });
             }
         }
-    }
+    };
 
     handleLogout = (event) => {
         event.preventDefault();
         sessionStorage.removeItem('user');
         this.setState({ redirect: '/' });
-    }
+    };
 
     render() {
-        const { activeItem } = this.state
+        const { activeItem } = this.state;
 
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirect} />
+            return <Redirect to={this.state.redirect} />;
         } else {
             return (
                 <Menu inverted>
@@ -48,23 +49,33 @@ export default class DashboardMenu extends React.Component {
                                 active={activeItem === value.path}
                                 onClick={this.handleItemClick}
                             />
-                        )
+                        );
                     })}
-                    <Menu.Menu position='right'>
+                    <Menu.Menu position="right">
                         <Menu.Item>
-                            <Input icon='search' placeholder='Search...' />
+                            <Input icon="search" placeholder="Search..." />
                         </Menu.Item>
 
-                        <Dropdown item text='Profile' className='icon'>
+                        <Dropdown item text="Profile" className="icon">
                             <Dropdown.Menu>
-                                <Dropdown.Item icon='user' text='Account' name='account' onClick={this.handleItemClick}></Dropdown.Item>
-                                <Dropdown.Item icon='info' text='About' name='about' onClick={this.handleItemClick}></Dropdown.Item>
-                                <Dropdown.Item icon='log out' text='Logout' onClick={this.handleLogout}></Dropdown.Item>
+                                <Dropdown.Item
+                                    icon="user"
+                                    text="Account"
+                                    name="account"
+                                    onClick={this.handleItemClick}
+                                ></Dropdown.Item>
+                                <Dropdown.Item
+                                    icon="info"
+                                    text="About"
+                                    name="about"
+                                    onClick={this.handleItemClick}
+                                ></Dropdown.Item>
+                                <Dropdown.Item icon="log out" text="Logout" onClick={this.handleLogout}></Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                     </Menu.Menu>
                 </Menu>
-            )
+            );
         }
     }
 }

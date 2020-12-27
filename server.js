@@ -339,8 +339,9 @@ app.get('/category/:id', (request, response) => {
 
 //update
 app.patch('/category/:id', (request, response) => {
-    const categoryName = request.body.catName;
-    const categoryDesc = request.body.catDesc;
+    const category = request.body.category;
+    const categoryName = category.name;
+    const categoryDesc = category.description;
     const db = dbService.getDbServiceInstance();
     let isValid = validateID(request.params.id);
     if (isValid) {
