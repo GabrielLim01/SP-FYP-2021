@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom'
 import { Segment, Button } from 'semantic-ui-react';
-import { appName, containerStyle } from '../../common.js';
+import { appName } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
 import QuizQuestionPlay from './QuizQuestionPlay.js';
@@ -13,17 +13,31 @@ class QuizPlay extends React.Component {
         this.state = {
             quiz: {},
             questions: [],
-            isPlaying: false,
-            currentQuestion: 1,
             maxQuestions: 0,
+            currentQuestion: 1,
+            score: 0,
+            isPlaying: false,
+            isFinished: false,
             redirect: null
         };
     }
 
-    handleClick = (event) => {
+    handleStart = (event) => {
         event.preventDefault();
 
         this.setState({ isPlaying: true })
+    }
+
+    onQuestionAnswered = (answer) => {
+        if (answer) {
+            this.setState({ score: this.state.score + 1 });
+        }
+
+        if (this.state.currentQuestion < (this.state.maxQuestions)) {
+            this.setState({ currentQuestion: this.state.currentQuestion + 1 });
+        } else {
+            this.setState({ isPlaying: false, isFinished: true })
+        }
     }
 
     componentDidMount() {
@@ -55,7 +69,7 @@ class QuizPlay extends React.Component {
             return (
                 <h1>403 Forbidden</h1>
             )
-        } else if (!this.state.isPlaying) {
+        } else if (!this.state.isPlaying && !this.state.isFinished) {
             return (
                 <div className="container">
                     <DashboardMenu page='quizzes'></DashboardMenu>
@@ -63,8 +77,22 @@ class QuizPlay extends React.Component {
                     <Segment raised inverted color='blue' style={{ height: '500px', maxWidth: '60%', margin: 'auto' }}>
                         <div className="subContainer" style={{ paddingTop: '150px' }}>
                             <h1>Welcome to {this.state.quiz.quizName}!</h1>
-                            <Button color='teal' size='big' onClick={this.handleClick}>Start Quiz</Button>
+                            <Button color='teal' size='big' onClick={this.handleStart}>Start Quiz</Button>
                         </div>
+                    </Segment>
+                </div >
+            )
+        } else if (this.state.isPlaying) {
+            return (
+                <div className="container">
+                    <DashboardMenu page='quizzes'></DashboardMenu>
+                    <h1 className="ui purple image header">{appName}</h1>
+                    <Segment raised inverted color='blue' style={{ height: '500px', maxWidth: '60%', margin: 'auto' }}>
+                        <QuizQuestionPlay
+                            questionNumber={this.state.currentQuestion}
+                            question={this.state.questions[this.state.currentQuestion - 1]}
+                            onQuestionAnswered={this.onQuestionAnswered}>
+                        </QuizQuestionPlay>
                     </Segment>
                 </div >
             )
@@ -74,8 +102,9 @@ class QuizPlay extends React.Component {
                     <DashboardMenu page='quizzes'></DashboardMenu>
                     <h1 className="ui purple image header">{appName}</h1>
                     <Segment raised inverted color='blue' style={{ height: '500px', maxWidth: '60%', margin: 'auto' }}>
-                        <div className="subContainer">
-                           <QuizQuestionPlay ></QuizQuestionPlay>
+                        <div className="subContainer" style={{ paddingTop: '150px' }}>
+                            <h1>Game has ended!</h1>
+                            <h2>You scored {this.state.score} / {this.state.maxQuestions} points.</h2>
                         </div>
                     </Segment>
                 </div >

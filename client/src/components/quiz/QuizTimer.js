@@ -12,7 +12,7 @@ class QuizTimer extends React.Component {
 
     render() {
         return (
-            <Segment raised inverted color='red'></Segment>
+            <Segment raised inverted color='red' style={{ width: '100%', margin: '0px 20px' }}></Segment>
         )
     }
 }

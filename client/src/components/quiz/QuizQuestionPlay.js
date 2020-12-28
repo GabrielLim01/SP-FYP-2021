@@ -6,53 +6,69 @@ class QuizQuestionPlay extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            questionNumber: 0,
             question: {},
-            options: 4,
-            isRendered: false
+            options: [],
+            disabled: false
         };
     }
 
-    // onOptionSelected(){
-    //     // do a few things....
-
-    //     this.props.onAnswerQuestion({});
-    // }
-
-    render() {
-        const number = 1;
-        const options = [];
-
-        // Dynamically generate an array of option indices
-        for (let i = 1; i < (this.state.options + 1); i++) {
-            options.push(i)
+    handleClick(answer){
+        
+        if (this.state.disabled) {
+            return;
         }
 
+        this.setState({disabled: true});
+        this.props.onQuestionAnswered(answer);
+    }
+
+    // componentDidUpdate(prevState) {
+    //     let question = JSON.parse(this.props.question).question;
+
+    //     if (question !== prevState.question) {
+    //         console.log("test!")
+    //         // 
+    //         // this.setState({ question: question, options: question.options, questionNumber: this.props.questionNumber })
+    //       }
+    // }
+
+    componentDidMount() {
+        let question = JSON.parse(this.props.question).question;
+        this.setState({ question: question, options: question.options, questionNumber: this.props.questionNumber })
+    }
+
+    render() {
+        const question = this.state.question;
+        const number = this.state.questionNumber;
+
         return (
-            <div className="container">
-                <QuizTimer></QuizTimer>
-                <Segment raised inverted color='teal' style={{ height: '200px' }}>
-                    <div className="subContainer">
-                        Test
-                        </div>
-                </Segment>
-                <Segment raised inverted color='teal' style={{ height: '200px' }}>
-                    <Grid>
-                        <Grid.Row columns={2}>
-                            {options.map((value) => {
-                                return (
-                                    <Grid.Column stretched key={"options-" + number + "-" + value}>
 
-                                            <Button color="blue" name={"option-" + number + "-" + value} placeholder={"Option " + value} onChange={this.props.handleChange}>
-                                                Test
-                                                </Button>
+            <Grid key={this.props.question}>
+                <Grid.Row>
+                    <QuizTimer></QuizTimer>
+                </Grid.Row>
+                <Grid.Row style={{ height: '300px' }}>
+                    <Segment raised inverted color='teal' style={{ width: '100%', margin: '0px 20px' }}>
+                        <h1>Question {number}</h1>
+                        <h2 style={{ maxWidth: '500px', margin: 'auto', overflowWrap: 'break-word' }}>{question.name}</h2>
+                    </Segment>
+                </Grid.Row>
+                <Grid.Row columns={2} style={{ height: '150px', margin: '0px 5px' }}>
+                    {this.state.options.map((element, index) => {
+                        return (
+                            <Grid.Column stretched key={index}>
+                                <Button color="teal" name={`options-${index}`} style={{ margin: '5px 0px' }} 
+                                onClick={() => this.handleClick(element.isCorrect) }
+                                disabled={this.state.disabled}>
+                                    <h3>{element.name}</h3>
+                                </Button>
+                            </Grid.Column>
+                        )
+                    })}
+                </Grid.Row>
+            </Grid>
 
-                                    </Grid.Column>
-                                )
-                            })}
-                        </Grid.Row>
-                    </Grid>
-                </Segment>
-            </div>
         )
     }
 }
