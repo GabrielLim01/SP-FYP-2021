@@ -22,7 +22,7 @@ const Routes = () => {
             <Route exact path="/register" component={Registration}></Route>
             <Route exact path="/dashboard" component={Dashboard}></Route>
 
-            <Route exact path="/profile/:id" component={Profile}></Route>
+            <Route exact path="/profile" component={Profile}></Route>
 
             <Route exact path="/quizzes" component={CategorySelection}></Route>
             <Route exact path="/quizzes/creation" component={QuizCreation}></Route>
