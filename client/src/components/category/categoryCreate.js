@@ -10,11 +10,24 @@ import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
 
+function validate(categoryName, categoryDesc) {
+  // we are going to store errors for all fields
+  // in a signle array
+  const errors = [];
+
+  if (categoryName.length === 0) {
+    errors.push("Category Name can't be empty");
+  }
+
+  return errors;
+}
+
 class CategoryCreate extends React.Component {
     state = {
         redirect: false,
         categoryName: '',
         categoryDesc: '',
+        errors: []
     };
     redirectHandler = () => {
         this.setState({ redirect: true });
@@ -39,6 +52,12 @@ class CategoryCreate extends React.Component {
             name: this.state.categoryName,
             description: this.state.categoryDesc,
         };
+
+        const errors = validate(category.name, category.description);
+            if (errors.length > 0) {
+            this.setState({ errors });
+            return;
+        }
 
         const result = axios.post(`${host}/category`, {
             category: category,
@@ -78,6 +97,7 @@ class CategoryCreate extends React.Component {
         if (!verifyLogin()) {
             return <h1>403 Forbidden</h1>;
         } else {
+            const {errors} = this.state;
             return (
                 <div className="container" style={{ textAlign: 'left' }}>
                     <DashboardMenu page="quizzes"></DashboardMenu>
@@ -85,6 +105,9 @@ class CategoryCreate extends React.Component {
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <h1>Create New Category</h1>
                         </div>
+                        {errors.map(error => (
+                        <p style={{ color: 'red' }} key={error}>Error: {error}</p>
+                        ))}
                         <div className="ui stacked segment">
                             <form className="ui form">
                                 <div className="field">

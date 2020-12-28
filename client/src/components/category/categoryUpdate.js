@@ -11,6 +11,18 @@ import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
 
+function validate(categoryName, categoryDesc) {
+  // we are going to store errors for all fields
+  // in a signle array
+  const errors = [];
+
+  if (categoryName.length === 0) {
+    errors.push("Category Name can't be empty");
+  }
+
+  return errors;
+}
+
 class CategoryUpdate extends React.Component {
     constructor(props) {
         super(props);
@@ -19,6 +31,7 @@ class CategoryUpdate extends React.Component {
             redirect: false,
             categoryName: '',
             categoryDesc: '',
+            errors: []
         };
     }
     redirectHandler = () => {
@@ -44,6 +57,12 @@ class CategoryUpdate extends React.Component {
             name: this.state.categoryName,
             description: this.state.categoryDesc,
         };
+
+        const errors = validate(category.name, category.description);
+            if (errors.length > 0) {
+            this.setState({ errors });
+            return;
+        }
 
         const result = axios.patch(`${host}/category/${this.state.category.categoryId}`, {
             category: category,
@@ -92,11 +111,15 @@ class CategoryUpdate extends React.Component {
         if (!verifyLogin()) {
             return <h1>403 Forbidden</h1>;
         } else {
+            const {errors} = this.state;
             return (
                 <div className="container">
                     <DashboardMenu page="quizzes"></DashboardMenu>
                     <div className="subContainer" style={containerStyle}>
                         <h1>Category: {this.state.category.categoryName}</h1>
+                        {errors.map(error => (
+                        <p style={{ color: 'red'}} key={error}>Error: {error}</p>
+                        ))}
                         <div className="ui stacked segment" style={{ textAlign: 'left' }}>
                             <form className="ui form">
                                 <div className="field">
