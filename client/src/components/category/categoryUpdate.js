@@ -6,22 +6,11 @@ import { Redirect } from 'react-router';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
+import validateCat from './validation.js';
 import { host } from '../../common.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
-
-function validate(categoryName, categoryDesc) {
-  // we are going to store errors for all fields
-  // in a signle array
-  const errors = [];
-
-  if (categoryName.length === 0) {
-    errors.push("Category Name can't be empty");
-  }
-
-  return errors;
-}
 
 class CategoryUpdate extends React.Component {
     constructor(props) {
@@ -58,7 +47,7 @@ class CategoryUpdate extends React.Component {
             description: this.state.categoryDesc,
         };
 
-        const errors = validate(category.name, category.description);
+        const errors = validateCat(category.name);
             if (errors.length > 0) {
             this.setState({ errors });
             return;
