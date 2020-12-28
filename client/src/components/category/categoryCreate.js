@@ -22,7 +22,7 @@ class CategoryCreate extends React.Component {
     };
     renderRedirect = () => {
         if (this.state.redirect) {
-            return <Redirect to="/category/all" />;
+            return <Redirect to="/category" />;
         }
     };
 
@@ -56,7 +56,7 @@ class CategoryCreate extends React.Component {
                     // set timeout to 2 seconds
                     setTimeout(() => {
                         window.location.reload();
-                    }, 2000);
+                    }, 1000);
                 } else {
                     new Noty({
                         text: 'Something went wrong.',
