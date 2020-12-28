@@ -11,7 +11,6 @@ import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
 
-
 /*function validate(categoryName) {
 
   const errors = [];
@@ -28,7 +27,7 @@ class CategoryCreate extends React.Component {
         redirect: false,
         categoryName: '',
         categoryDesc: '',
-        errors: []
+        errors: [],
     };
     redirectHandler = () => {
         this.setState({ redirect: true });
@@ -55,7 +54,7 @@ class CategoryCreate extends React.Component {
         };
 
         const errors = validateCat(category.name);
-            if (errors.length > 0) {
+        if (errors.length > 0) {
             this.setState({ errors });
             return;
         }
@@ -98,16 +97,18 @@ class CategoryCreate extends React.Component {
         if (!verifyLogin()) {
             return <h1>403 Forbidden</h1>;
         } else {
-            const {errors} = this.state;
+            const { errors } = this.state;
             return (
-                <div className="container" style={{ textAlign: 'left' }}>
-                    <DashboardMenu page="quizzes"></DashboardMenu>
+                <div className="container">
+                    <DashboardMenu page="category"></DashboardMenu>
                     <div className="subContainer" style={containerStyle}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <h1>Create New Category</h1>
                         </div>
-                        {errors.map(error => (
-                        <p style={{ color: 'red' }} key={error}>Error: {error}</p>
+                        {errors.map((error) => (
+                            <p style={{ color: 'red' }} key={error}>
+                                Error: {error}
+                            </p>
                         ))}
                         <div className="ui stacked segment">
                             <form className="ui form">
