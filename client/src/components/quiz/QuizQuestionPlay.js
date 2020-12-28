@@ -8,30 +8,19 @@ class QuizQuestionPlay extends React.Component {
         this.state = {
             questionNumber: 0,
             question: {},
-            options: [],
-            disabled: false
+            options: []
         };
     }
 
-    handleClick(answer){
-        
-        if (this.state.disabled) {
-            return;
+    componentDidUpdate(prevState) {
+        let questionString = this.props.question;
+
+        if (questionString !== prevState.question) {
+            
+            let question = JSON.parse(this.props.question).question;
+            this.setState({ question: question, options: question.options, questionNumber: this.props.questionNumber })
         }
-
-        this.setState({disabled: true});
-        this.props.onQuestionAnswered(answer);
     }
-
-    // componentDidUpdate(prevState) {
-    //     let question = JSON.parse(this.props.question).question;
-
-    //     if (question !== prevState.question) {
-    //         console.log("test!")
-    //         // 
-    //         // this.setState({ question: question, options: question.options, questionNumber: this.props.questionNumber })
-    //       }
-    // }
 
     componentDidMount() {
         let question = JSON.parse(this.props.question).question;
@@ -58,9 +47,9 @@ class QuizQuestionPlay extends React.Component {
                     {this.state.options.map((element, index) => {
                         return (
                             <Grid.Column stretched key={index}>
-                                <Button color="teal" name={`options-${index}`} style={{ margin: '5px 0px' }} 
-                                onClick={() => this.handleClick(element.isCorrect) }
-                                disabled={this.state.disabled}>
+                                <Button color="teal" name={`options-${index}`} style={{ margin: '5px 0px' }}
+                                    onClick={() => this.props.onQuestionAnswered(element.isCorrect)}
+                                    disabled={this.state.disabled}>
                                     <h3>{element.name}</h3>
                                 </Button>
                             </Grid.Column>
