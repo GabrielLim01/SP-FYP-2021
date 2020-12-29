@@ -6,19 +6,25 @@ class QuizQuestionPlay extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            questionNumber: 0,
             question: {},
-            options: []
+            options: [],
+            questionNumber: 1,
+            isSelected: false
         };
     }
 
-    componentDidUpdate(prevState) {
-        let questionString = this.props.question;
+    handleAnswer(answer) {
+        this.setState({ isSelected: true })
+        this.props.onQuestionAnswered(answer)
+    }
 
-        if (questionString !== prevState.question) {
-            
+    componentDidUpdate(prevState) {
+        let currentQuestion = this.props.question;
+
+        // Both of the following are strings
+        if (currentQuestion !== prevState.question) {
             let question = JSON.parse(this.props.question).question;
-            this.setState({ question: question, options: question.options, questionNumber: this.props.questionNumber })
+            this.setState({ isSelected: false, question: question, options: question.options, questionNumber: this.props.questionNumber })
         }
     }
 
@@ -32,8 +38,7 @@ class QuizQuestionPlay extends React.Component {
         const number = this.state.questionNumber;
 
         return (
-
-            <Grid key={this.props.question}>
+            <Grid key={number}>
                 <Grid.Row>
                     <QuizTimer></QuizTimer>
                 </Grid.Row>
@@ -46,10 +51,12 @@ class QuizQuestionPlay extends React.Component {
                 <Grid.Row columns={2} style={{ height: '150px', margin: '0px 5px' }}>
                     {this.state.options.map((element, index) => {
                         return (
-                            <Grid.Column stretched key={index}>
-                                <Button color="teal" name={`options-${index}`} style={{ margin: '5px 0px' }}
-                                    onClick={() => this.props.onQuestionAnswered(element.isCorrect)}
-                                    disabled={this.state.disabled}>
+                            <Grid.Column stretched key={index + 1}>
+                                <Button color={this.state.isSelected ? element.isCorrect ? 'green' : 'red' : 'teal'}
+                                    name={`options-${index}`}
+                                    style={{ margin: '5px 0px' }}
+                                    onClick={() => this.handleAnswer(element.isCorrect)}
+                                    disabled={this.state.isSelected}>
                                     <h3>{element.name}</h3>
                                 </Button>
                             </Grid.Column>

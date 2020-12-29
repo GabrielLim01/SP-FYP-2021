@@ -1,18 +1,31 @@
 import React from 'react';
 import { Segment } from 'semantic-ui-react';
+import Countdown from 'react-countdown';
+
+// WIP
 
 class QuizTimer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            question: {},
-            isRendered: false
+            question: {}
         };
     }
 
+    // Renderer callback with condition
+    renderer = ({ seconds, completed }) => {
+        if (completed) {
+            // Render a completed state
+            return <h1>Test</h1>;
+        } else {
+            // Render a countdown
+            return <h1>{seconds}</h1>;
+        }
+    };
+
     render() {
         return (
-            <Segment raised inverted color='red' style={{ width: '100%', margin: '0px 20px' }}></Segment>
+            <Countdown date={Date.now() + 10000} renderer={this.renderer} />
         )
     }
 }

@@ -3,9 +3,9 @@ import { Redirect } from 'react-router-dom'
 import { Segment, Button } from 'semantic-ui-react';
 import { appName } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import verifyLogin from '../verifyLogin.js';
 import QuizQuestionPlay from './QuizQuestionPlay.js';
 import retrieveItems from './retrieveItems.js';
+import verifyLogin from '../verifyLogin.js';
 
 class QuizPlay extends React.Component {
     constructor(props) {
@@ -28,15 +28,24 @@ class QuizPlay extends React.Component {
         this.setState({ isPlaying: true })
     }
 
+    handleRestart = (event) => {
+        event.preventDefault();
+
+        this.setState({ isPlaying: false, isFinished: false, currentQuestion: 1, score: 0 })
+    }
+
+
     onQuestionAnswered = (answer) => {
         if (answer) {
             this.setState({ score: this.state.score + 1 });
         }
 
         if (this.state.currentQuestion < (this.state.maxQuestions)) {
-            this.setState({ currentQuestion: this.state.currentQuestion + 1 });
+            // Wait a short while before loading the next question
+           setTimeout(() =>  this.setState({ currentQuestion: this.state.currentQuestion + 1 }), 2000);
         } else {
-            this.setState({ isPlaying: false, isFinished: true })
+            // Wait a short while before loading the results screen
+           setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000)
         }
     }
 
@@ -51,6 +60,9 @@ class QuizPlay extends React.Component {
                         questions.push(element.questionObject)
                     });
 
+                    // Since data returned by the back-end has quiz-specific data appended to the front of every questionObject
+                    // and we only need to reference that data once, simply remove the questionObject from the 
+                    // first element of the data array and store the quiz-specific data in another variable
                     delete data[0].questionObject;
                     let quiz = data[0];
 
@@ -105,6 +117,7 @@ class QuizPlay extends React.Component {
                         <div className="subContainer" style={{ paddingTop: '150px' }}>
                             <h1>Game has ended!</h1>
                             <h2>You scored {this.state.score} / {this.state.maxQuestions} points.</h2>
+                            <Button color='teal' size='big' onClick={this.handleRestart}>Play Again?</Button>
                         </div>
                     </Segment>
                 </div >
