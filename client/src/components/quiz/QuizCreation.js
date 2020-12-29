@@ -1,11 +1,15 @@
 import React from 'react';
 import axios from 'axios';
-import { Segment, Form, Grid, TextArea, Dropdown, Button, Icon } from 'semantic-ui-react';
+import { Segment, Form, Grid, TextArea, Dropdown, Button, Popup, Icon } from 'semantic-ui-react';
 import { host } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
 import QuizQuestionCreation from './QuizQuestionCreation.js';
 import retrieveItems from './retrieveItems.js';
+import Noty from 'noty';
+import '../../../node_modules/noty/lib/noty.css';
+import '../../../node_modules/noty/lib/themes/semanticui.css';
+
 
 // TO-DO
 // 1. Input validation (especially for checkboxes)
@@ -18,7 +22,9 @@ class QuizCreation extends React.Component {
             questions: 1,
             maxQuestions: 10,
             options: 4,
-            categories: []
+            categories: [],
+            fiqOptionsRange: 5,
+            timeOptionsRange: 7
         };
     }
 
@@ -105,16 +111,27 @@ class QuizCreation extends React.Component {
                     categories.push(element)
                 });
 
+
+                new Noty({
+                    text: "Some notification text",
+                    layout: 'topRight'
+                }).show();
+
+
                 this.setState({ categories: categories });
             })
             .catch((error) => {
                 alert(error);
             })
+
+
     }
 
     render() {
         const questions = [];
         const categories = [];
+        const FIQoptions = [];
+        const timeOptions = [];
 
         for (let i = 1; i < (this.state.questions + 1); i++) {
             questions.push(
@@ -122,7 +139,10 @@ class QuizCreation extends React.Component {
                     key={'question' + i}
                     questionNumber={i}
                     options={this.state.options}
+                    fiqOptionsRange={this.state.fiqOptionsRange}
+                    timeOptionsRange={this.state.timeOptionsRange}
                     handleChange={this.handleChange}
+                    handleDropdownChange={this.handleDropdownChange}
                     handleCheckboxChange={this.handleCheckboxChange}
                 />);
         };
@@ -131,6 +151,16 @@ class QuizCreation extends React.Component {
             let id = this.state.categories[i].categoryId;
             let name = this.state.categories[i].categoryName;
             categories.push({ text: name, value: id });
+        };
+
+        for (let i = 1; i < this.state.fiqOptionsRange; i++) {
+            let value = 25 * i
+            FIQoptions.push({ text: value, value: value });
+        };
+
+        for (let i = 1; i < this.state.timeOptionsRange; i++) {
+            let value = 5 * i
+            timeOptions.push({ text: value, value: value });
         };
 
         if (!verifyLogin()) {
@@ -148,33 +178,50 @@ class QuizCreation extends React.Component {
                                 <Grid columns='equal'>
                                     <Grid.Row columns={2}>
                                         <Grid.Column>
-                                            <h3>Quiz Title</h3>
+                                            <Popup content='The name of your quiz!' trigger={<h3>Quiz Title</h3>} />
                                             <input type="text" name="quizName" placeholder="Title" onChange={this.handleChange} />
                                         </Grid.Column>
                                         <Grid.Column>
-                                            <h3>Quiz Description</h3>
+                                            <Popup content='Tell us what your quiz is about!' trigger={<h3>Quiz Description</h3>} />
                                             <TextArea name='quizDesc' placeholder='Description' onChange={this.handleChange} />
                                         </Grid.Column>
                                     </Grid.Row>
                                     <Grid.Row columns={3}>
                                         <Grid.Column>
-                                            <h3>Category</h3>
+                                            <Popup content='What category does your quiz belong in?' trigger={<h3>Category</h3>} />
                                             <Dropdown
                                                 name='quizCategory'
                                                 placeholder='Select a Category'
                                                 fluid
                                                 selection
+                                                clearable
                                                 options={categories}
                                                 onChange={this.handleDropdownChange}
                                             />
                                         </Grid.Column>
                                         <Grid.Column>
-                                            <h3>FIQ per question</h3>
-                                            <input type="text" name="quizPoints" placeholder="Points" onChange={this.handleChange} />
+                                            <Popup content='How much FIQ (Financial IQ) points should players earn upon correctly answering each question?' trigger={<h3>FIQ per question</h3>} />
+                                            <Dropdown
+                                                name='quizPoints'
+                                                placeholder='Select FIQ per question'
+                                                fluid
+                                                selection
+                                                clearable
+                                                options={FIQoptions}
+                                                onChange={this.handleDropdownChange}
+                                            />
                                         </Grid.Column>
                                         <Grid.Column>
-                                            <h3>Time per question</h3>
-                                            <input type="text" name="quizTime" placeholder="Time" onChange={this.handleChange} />
+                                            <Popup content='How much time (in seconds) will the player have to answer each question?' trigger={<h3>Time per question</h3>} />
+                                            <Dropdown
+                                                name='quizTime'
+                                                placeholder='Select time (seconds) per question'
+                                                fluid
+                                                selection
+                                                clearable
+                                                options={timeOptions}
+                                                onChange={this.handleDropdownChange}
+                                            />
                                         </Grid.Column>
                                     </Grid.Row>
                                 </Grid>

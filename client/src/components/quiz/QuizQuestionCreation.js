@@ -1,5 +1,5 @@
 import React from 'react';
-import { Segment, Form, Grid, Divider, TextArea, Checkbox } from 'semantic-ui-react'
+import { Segment, Form, Grid, Divider, Popup, TextArea, Dropdown, Checkbox } from 'semantic-ui-react'
 
 class QuizQuestionCreation extends React.Component {
     constructor(props) {
@@ -27,11 +27,23 @@ class QuizQuestionCreation extends React.Component {
     render() {
         const number = this.props.questionNumber;
         const options = [];
+        const FIQoptions = [];
+        const timeOptions = [];
 
         // Dynamically generate an array of option indices
         for (let i = 1; i < (this.props.options + 1); i++) {
             options.push(i)
         }
+
+        for (let i = 1; i < this.props.fiqOptionsRange; i++) {
+            let value = 25 * i
+            FIQoptions.push({ text: value, value: value });
+        };
+
+        for (let i = 1; i < this.props.timeOptionsRange; i++) {
+            let value = 5 * i
+            timeOptions.push({ text: value, value: value });
+        };
 
         // Prevents more than 1 checkbox from being checked at any point in time (customisable)
         const { checked } = this.state;
@@ -46,13 +58,35 @@ class QuizQuestionCreation extends React.Component {
                         <Divider></Divider>
                         <Grid columns='equal'>
                             <Grid.Column>
-                                <h3>Title</h3>
-                                <input type="text" name={"question" + number + "name"} placeholder="Title" onChange={this.props.handleChange} />
+                                <Popup content='Input your question here!' trigger={<h3>Question</h3>} />
+                                <input type="text" name={"question" + number + "name"} placeholder="Question" onChange={this.props.handleChange} />
                             </Grid.Column>
-                            <Grid.Column>
-                                <h3>Description</h3>
-                                <TextArea name={"question" + number + "desc"} placeholder='Description' onChange={this.props.handleChange} />
-                            </Grid.Column>
+                            <Grid.Row columns={2}>
+                                <Grid.Column>
+                                    <Popup content='How much FIQ (Financial IQ) points should players earn upon correctly answering this question?' trigger={<h3>FIQ awarded</h3>} />
+                                    <Dropdown
+                                        name='quizPoints'
+                                        placeholder='Select FIQ for this question'
+                                        fluid
+                                        selection
+                                        clearable
+                                        options={FIQoptions}
+                                        onChange={this.props.handleDropdownChange}
+                                    />
+                                </Grid.Column>
+                                <Grid.Column>
+                                    <Popup content='How much time (in seconds) will the player have to answer this question?' trigger={<h3>Time</h3>} />
+                                    <Dropdown
+                                        name='quizTime'
+                                        placeholder='Select time (seconds) to answer this question'
+                                        fluid
+                                        selection
+                                        clearable
+                                        options={timeOptions}
+                                        onChange={this.props.handleDropdownChange}
+                                    />
+                                </Grid.Column>
+                            </Grid.Row>
                         </Grid>
                         <h3>Options</h3>
                         <Grid>
@@ -75,6 +109,12 @@ class QuizQuestionCreation extends React.Component {
                                     )
                                 })}
                             </Grid.Row>
+                        </Grid>
+                        <Grid>
+                            <Grid.Column>
+                                <Popup content='Let your players know why their selected answer was correct/incorrect!' trigger={<h3>Answer Explanation</h3>} />
+                                <TextArea name={"question" + number + "desc"} placeholder='Description' onChange={this.props.handleChange} />
+                            </Grid.Column>
                         </Grid>
                     </Form>
                 </Segment>
