@@ -176,13 +176,13 @@ app.get("/quiz/category/:id", (request, response) => {
 // POST /quiz
 app.post("/quiz", (request, response) => {
   const quiz = request.body.quiz
-  const name = quiz.name;
+  const name = quiz.title;
   const desc = quiz.description;
   const category = quiz.category;
   const points = quiz.points;
   const time = quiz.time;
 
-  if (!isBlank(name) && !isBlank(category) && !isBlank(points)) {
+  if (!isBlank(name) && !isBlank(category) && !isBlank(points) && !isBlank(time)) {
     const db = dbService.getDbServiceInstance();
     const createQuizResult = db.createQuiz(
       name,
@@ -194,31 +194,41 @@ app.post("/quiz", (request, response) => {
 
     createQuizResult
       .then((data) => {
-        response.json({
-          insertId: data.insertId,
-          categoryid: category,
-          name: name,
-          description: desc,
-          points: points,
-          time: time
-        });
+        // response.json({
+        //   insertId: data.insertId,
+        //   categoryid: category,
+        //   name: name,
+        //   description: desc,
+        //   points: points,
+        //   time: time
+        // });
 
         const quizId = data.insertId;
+        // let createQuestionResult = new Promise((resolve, reject) => { });
+        // createQuestionResult = db.createQuizQuestion(
+        //   quizId,
+        //   quiz.questions
+        // );
         let createQuestionResult = new Promise((resolve, reject) => { });
-        createQuestionResult = db.createQuizQuestion(
-          quizId,
-          quiz.questions
-        );
+
+        const questions = quiz.questions;
+        questions.forEach((question) => {
+          createQuestionResult = db.createQuizQuestion(
+            quizId,
+            JSON.stringify(question)
+          );
+        });
+
         createQuestionResult.catch((err) =>
-          response.status(400).send(`Creation of questions failed. ${err}`)
+          response.send(`Creation of questions failed. ${err}`)
         );
       })
       .catch((err) => {
         // Please addon to this list if you encountered something new
-        response.status(400).send(`Creation of quiz failed. ${err}`);
+        response.send(`Creation of quiz failed. ${err}`);
       });
   } else
-    response.status(400).send(`Category / Name / Description / Points/Time Per Question cannot be empty!`);
+    response.send(`Category / Name / Description / Points/Time Per Question cannot be empty!`);
 });
 
 // update

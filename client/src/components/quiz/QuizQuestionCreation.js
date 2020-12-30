@@ -58,14 +58,14 @@ class QuizQuestionCreation extends React.Component {
                         <Divider></Divider>
                         <Grid columns='equal'>
                             <Grid.Column>
-                                <Popup content='Input your question here!' trigger={<h3>Question</h3>} />
+                                <Popup content='Input your question here!' trigger={<h3>Question *</h3>} />
                                 <input type="text" name={"question" + number + "name"} placeholder="Question" onChange={this.props.handleChange} />
                             </Grid.Column>
                             <Grid.Row columns={2}>
                                 <Grid.Column>
                                     <Popup content='How much FIQ (Financial IQ) points should players earn upon correctly answering this question?' trigger={<h3>FIQ awarded</h3>} />
                                     <Dropdown
-                                        name='quizPoints'
+                                        name={"question" + number + "points"}
                                         placeholder='Select FIQ for this question'
                                         fluid
                                         selection
@@ -77,7 +77,7 @@ class QuizQuestionCreation extends React.Component {
                                 <Grid.Column>
                                     <Popup content='How much time (in seconds) will the player have to answer this question?' trigger={<h3>Time</h3>} />
                                     <Dropdown
-                                        name='quizTime'
+                                        name={"question" + number + "time"}
                                         placeholder='Select time (seconds) to answer this question'
                                         fluid
                                         selection
@@ -88,7 +88,7 @@ class QuizQuestionCreation extends React.Component {
                                 </Grid.Column>
                             </Grid.Row>
                         </Grid>
-                        <h3>Options</h3>
+                        <h3>Options *</h3>
                         <Grid>
                             <Grid.Row columns={2}>
                                 {options.map((value, index) => {
@@ -113,7 +113,8 @@ class QuizQuestionCreation extends React.Component {
                         <Grid>
                             <Grid.Column>
                                 <Popup content='Let your players know why their selected answer was correct/incorrect!' trigger={<h3>Answer Explanation</h3>} />
-                                <TextArea name={"question" + number + "desc"} placeholder='Description' onChange={this.props.handleChange} />
+                                <TextArea name={"question" + number + "explanation"} placeholder='Description' onChange={this.props.handleChange} />
+                                <h3 style={{ float: 'right', color: 'red' }}>* required</h3>
                             </Grid.Column>
                         </Grid>
                     </Form>

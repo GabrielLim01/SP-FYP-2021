@@ -85,7 +85,7 @@ class DbService {
     try {
       return new Promise((resolve, reject) => {
         const query =
-          "INSERT INTO quiz (categoryId, quizName, quizDesc, totalPoints, timePerQuestion) VALUES (?,?,?,?,?);";
+          "INSERT INTO quiz (categoryId, quizName, quizDesc, pointsPerQuestion, timePerQuestion) VALUES (?,?,?,?,?);";
         connection.query(
           query,
           [category, name, desc, points, time],
@@ -100,30 +100,49 @@ class DbService {
     }
   }
 
-  async createQuizQuestion(quizId, questionsObj) {
-    const array = [];
-    Object.keys(questionsObj).forEach(function (item) {
-      console.log(JSON.stringify(questionsObj[item].options));
-      array.push([
-        quizId,
-        questionsObj[item].questionTitle,
-        questionsObj[item].questionDesc,
-        questionsObj[item].fiqPoints,
-        questionsObj[item].timeLimit,
-        questionsObj[item].explanation,
-        JSON.stringify(questionsObj[item].options),
-      ]);
-    });
+  // async createQuizQuestion(quizId, questions) {
+  //   const array = [];
+  //   Object.keys(questions).forEach(function (item) {
+  //     let question = questions[item].question;
+  //     array.push([
+  //       quizId,
+  //       question.name,
+  //       question.points,
+  //       question.time,
+  //       question.explanation,
+  //       question.options
+  //     ]);
+  //   });
 
-    const query =
-      "INSERT into quiz_question (quizId, questionTitle, questionDesc, fiqPoint, timeLimit, explanation, optionObject) values ?;";
-    connection.query(query, [array], (err, result) => {
-      if (err) return err.message;
-      else {
-        console.log("Question(s) created.");
-        return result;
-      }
-    });
+  //   //console.log(array)
+
+  //   const query =
+  //     "INSERT into quiz_question (quizId, question) values ?;";
+  //   connection.query(query, [array], (err, result) => {
+  //     if (err) return err.message;
+  //     else {
+  //       console.log("Question(s) created.");
+  //       return result;
+  //     }
+  //   });
+  // }
+
+  async createQuizQuestion(quizId, question) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query =
+          "INSERT into quiz_question (quizId, question) values (?,?);";
+        connection.query(query, [quizId, question], (err, result) => {
+          if (err) reject(err.message);
+          else {
+            console.log("Questions created. quizQuestionId:", result.insertId);
+            resolve(result);
+          }
+        });
+      });
+    } catch (e) {
+      throw e.message;
+    }
   }
 
   async updateQuizDetailsById(id, title, desc, categoryId) {

@@ -6,10 +6,9 @@ import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
 import QuizQuestionCreation from './QuizQuestionCreation.js';
 import retrieveItems from './retrieveItems.js';
-import Noty from 'noty';
-import '../../../node_modules/noty/lib/noty.css';
-import '../../../node_modules/noty/lib/themes/semanticui.css';
-
+// import Noty from 'noty';
+// import '../../../node_modules/noty/lib/noty.css';
+// import '../../../node_modules/noty/lib/themes/semanticui.css';
 
 // TO-DO
 // 1. Input validation (especially for checkboxes)
@@ -72,7 +71,9 @@ class QuizCreation extends React.Component {
             questions.push({
                 question: {
                     name: this.state['question' + i + 'name'],
-                    description: this.state['question' + i + 'desc'],
+                    points: this.state['question' + i + 'points'],
+                    time: this.state['question' + i + 'time'],
+                    explanation: this.state['question' + i + 'explanation'],
                     options,
                 }
             });
@@ -80,7 +81,7 @@ class QuizCreation extends React.Component {
 
         // Construct a quiz JSON object
         let quiz = {
-            name: this.state.quizName,
+            title: this.state.quizTitle,
             description: this.state.quizDesc,
             category: this.state.quizCategory,
             points: this.state.quizPoints,
@@ -112,10 +113,11 @@ class QuizCreation extends React.Component {
                 });
 
 
-                new Noty({
-                    text: "Some notification text",
-                    layout: 'topRight'
-                }).show();
+                // new Noty({
+                //     text: "Some notification text",
+                //     layout: 'topRight',
+                //     type: 'success'
+                // }).show();
 
 
                 this.setState({ categories: categories });
@@ -123,8 +125,6 @@ class QuizCreation extends React.Component {
             .catch((error) => {
                 alert(error);
             })
-
-
     }
 
     render() {
@@ -178,8 +178,8 @@ class QuizCreation extends React.Component {
                                 <Grid columns='equal'>
                                     <Grid.Row columns={2}>
                                         <Grid.Column>
-                                            <Popup content='The name of your quiz!' trigger={<h3>Quiz Title</h3>} />
-                                            <input type="text" name="quizName" placeholder="Title" onChange={this.handleChange} />
+                                            <Popup content='The name of your quiz!' trigger={<h3>Quiz Title *</h3>} />
+                                            <input type="text" name="quizTitle" placeholder="Title" onChange={this.handleChange} />
                                         </Grid.Column>
                                         <Grid.Column>
                                             <Popup content='Tell us what your quiz is about!' trigger={<h3>Quiz Description</h3>} />
@@ -188,7 +188,7 @@ class QuizCreation extends React.Component {
                                     </Grid.Row>
                                     <Grid.Row columns={3}>
                                         <Grid.Column>
-                                            <Popup content='What category does your quiz belong in?' trigger={<h3>Category</h3>} />
+                                            <Popup content='What category does your quiz belong in?' trigger={<h3>Category *</h3>} />
                                             <Dropdown
                                                 name='quizCategory'
                                                 placeholder='Select a Category'
@@ -200,7 +200,7 @@ class QuizCreation extends React.Component {
                                             />
                                         </Grid.Column>
                                         <Grid.Column>
-                                            <Popup content='How much FIQ (Financial IQ) points should players earn upon correctly answering each question?' trigger={<h3>FIQ per question</h3>} />
+                                            <Popup content='How much FIQ (Financial IQ) points should players earn upon correctly answering each question?' trigger={<h3>FIQ per question *</h3>} />
                                             <Dropdown
                                                 name='quizPoints'
                                                 placeholder='Select FIQ per question'
@@ -212,7 +212,7 @@ class QuizCreation extends React.Component {
                                             />
                                         </Grid.Column>
                                         <Grid.Column>
-                                            <Popup content='How much time (in seconds) will the player have to answer each question?' trigger={<h3>Time per question</h3>} />
+                                            <Popup content='How much time (in seconds) will the player have to answer each question?' trigger={<h3>Time per question *</h3>} />
                                             <Dropdown
                                                 name='quizTime'
                                                 placeholder='Select time (seconds) per question'
@@ -222,6 +222,7 @@ class QuizCreation extends React.Component {
                                                 options={timeOptions}
                                                 onChange={this.handleDropdownChange}
                                             />
+                                            <h3 style={{ float: 'right', color: 'red' }}>* required</h3>
                                         </Grid.Column>
                                     </Grid.Row>
                                 </Grid>
