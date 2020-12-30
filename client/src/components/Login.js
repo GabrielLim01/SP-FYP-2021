@@ -38,9 +38,7 @@ class Login extends React.Component {
                 if (response.data[0] === 'Congrats') {
                     let user = {
                         id: response.data[1],
-                        agId: response.data[2],
                         username: this.state.username,
-                        hobby: response.data[3],
                         isLoggedIn: true,
                     };
                     sessionStorage.setItem('user', JSON.stringify(user));

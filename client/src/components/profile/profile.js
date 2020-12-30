@@ -1,9 +1,9 @@
 import axios from 'axios';
 import React from 'react';
-//import { Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-//import verifyLogin from '../verifyLogin.js';
+import verifyLogin from '../verifyLogin.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
@@ -16,6 +16,7 @@ class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            redirect: null,
             ageGroupItems: [],
             hobbyItems: [],
             categories: [],
@@ -164,62 +165,68 @@ class Profile extends React.Component {
             ageGroupItems.push({ text: name, value: id });
         }
 
-        return (
-            <div className="container">
-                <DashboardMenu page="category"></DashboardMenu>
-                <div className="subContainer" style={containerStyle}>
-                    <div>
-                        <i aria-hidden="true" className="huge user icon"></i>
-                        <h1>Profile</h1>
-                    </div>
-                    <div className="ui stacked segment">
-                        <form className="ui form">
-                            <div className="field">
-                                <label>Username</label>
-                                <input
-                                    value={JSON.parse(userDetails()).username}
-                                    name="username"
-                                    onChange={this.handleChange}
-                                    readOnly={true}
-                                />
-                            </div>
-                            <div className="field">
-                                <label>Age Group</label>
+        if (this.state.redirect) {
+            return <Redirect to={{ host }} />;
+        } else if (!verifyLogin()) {
+            return <h1>403 Forbidden</h1>;
+        } else {
+            return (
+                <div className="container">
+                    <DashboardMenu page="category"></DashboardMenu>
+                    <div className="subContainer" style={containerStyle}>
+                        <div>
+                            <i aria-hidden="true" className="huge user icon"></i>
+                            <h1>Profile</h1>
+                        </div>
+                        <div className="ui stacked segment">
+                            <form className="ui form">
+                                <div className="field">
+                                    <label>Username</label>
+                                    <input
+                                        value={JSON.parse(userDetails()).username}
+                                        name="username"
+                                        onChange={this.handleChange}
+                                        readOnly={true}
+                                    />
+                                </div>
+                                <div className="field">
+                                    <label>Age Group</label>
 
-                                <Dropdown
-                                    name="ageGroup"
-                                    placeholder={this.state.ageGroupVal}
-                                    defaultValue={this.state.ageGroupVal}
-                                    fluid
-                                    selection
-                                    options={ageGroupItems}
-                                    onChange={this.handleDropdownChange}
-                                />
-                            </div>
-                            <div className="field">
-                                <label>Hobby</label>
-                                <Dropdown
-                                    name="hobby"
-                                    labeled={true}
-                                    placeholder={this.state.hobbyVal}
-                                    fluid
-                                    multiple
-                                    search
-                                    selection
-                                    options={hobbyItems}
-                                    onChange={this.handleDropdownChange}
-                                />
-                            </div>
-                            <div className="field">
-                                <button type="submit" className="ui primary button" onClick={this.handleSubmit}>
-                                    Update<i aria-hidden="true" className="right edit icon"></i>
-                                </button>
-                            </div>
-                        </form>
+                                    <Dropdown
+                                        name="ageGroup"
+                                        placeholder={this.state.ageGroupVal}
+                                        defaultValue={this.state.ageGroupVal}
+                                        fluid
+                                        selection
+                                        options={ageGroupItems}
+                                        onChange={this.handleDropdownChange}
+                                    />
+                                </div>
+                                <div className="field">
+                                    <label>Hobby</label>
+                                    <Dropdown
+                                        name="hobby"
+                                        labeled={true}
+                                        placeholder={this.state.hobbyVal}
+                                        fluid
+                                        multiple
+                                        search
+                                        selection
+                                        options={hobbyItems}
+                                        onChange={this.handleDropdownChange}
+                                    />
+                                </div>
+                                <div className="field">
+                                    <button type="submit" className="ui primary button" onClick={this.handleSubmit}>
+                                        Update<i aria-hidden="true" className="right edit icon"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-        );
+            );
+        }
     }
 }
 

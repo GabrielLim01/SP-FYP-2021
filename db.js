@@ -214,12 +214,7 @@ class DbService {
                     } else {
                         // Resolve promise with an access token string and send it back to the front-end
                         const accessToken = 'Congrats';
-                        resolve([
-                            accessToken,
-                            jsonResults[0].insertId,
-                            jsonResults[0].ageGroupId,
-                            jsonResults[0].hobby,
-                        ]);
+                        resolve([accessToken, jsonResults[0].insertId]);
                     }
                 });
             });
