@@ -356,23 +356,35 @@ app.delete('/category/:id', async (request, response) => {
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
-//update profile
-app.patch('/profile/:id', (request, response) => {
-    const username = request.body.username;
-    const hobbyId = request.body.hobbyId;
-    //const hobbies = [];
-    //hobbyId.forEach((id) => hobbies.push(id));
-    const ageGroupId = request.body.ageGroupId;
+app.get('/profile/:id', async (request, response) => {
     const db = dbService.getDbServiceInstance();
     let isValid = validateID(request.params.id);
     if (isValid) {
-        const result = db.updateProfileById(
-            request.params.id,
-            username,
-            hobbyId,
-            // hobbies,
-            ageGroupId,
-        );
+        const result = db.getProfileById(request.params.id);
+
+        result
+            .then((data) => {
+                response.json(data);
+            })
+            .catch((err) => response.status(400).send(`${err}`));
+    }
+});
+
+//update profile
+app.patch('/profile/:id', (request, response) => {
+    let hobbyStr = '';
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const detail = request.body.detail;
+
+        const ageGroupId = detail.ageGroup;
+        const hobby = detail.hobby;
+        Object.values(hobby).forEach((hobbyId) => {
+            hobbyStr += hobbyId;
+        });
+
+        const result = db.updateProfileById(request.params.id, ageGroupId, hobbyStr);
         result
             .then((data) => {
                 response.status(200).send(` Updating profile of id: ${request.params.id} was a success!`);
@@ -479,20 +491,6 @@ app.get('/quest/:id', (request, response) => {
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
-// app.get('/profile/:id', async (request, response) => {
-//     const db = dbService.getDbServiceInstance();
-//     let isValid = validateID(request.params.id);
-//     if (isValid) {
-//         const result = db.getHobbies();
-
-//         result
-//             .then((data) => {
-//                 response.json(data);
-//             })
-//             .catch((err) => response.status(400).send(`${err}`));
-//     }
-// });
-
 app.patch('/quest/:id', (request, response) => {
     let isValid = validateID(request.params.id);
     if (isValid) {
@@ -574,4 +572,18 @@ app.get('/hobby', async (request, response) => {
             response.json(data);
         })
         .catch((err) => response.status(400).send(`${err}`));
+});
+
+app.get('/profile/hobby/:id', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+
+    if (isValid) {
+        const result = db.getAssociatedHobbyById(request.params.id);
+        result
+            .then((data) => {
+                response.json(data);
+            })
+            .catch((err) => response.status(400).send(`${err}`));
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });

@@ -103,6 +103,21 @@ POST http://localhost:9000/quest/createNew
 
 ###
 
-GET http://localhost:9000/hobby
+PATCH http://localhost:9000/profile/3
+Content-Type: application/json
+
+{
+    "detail": {
+        "name": "Jason Teo",
+        "ageGroup":2,
+        "hobby": "[ 2, 1, 3, 4 ]"
+    }
+}
+
+
+###
+
+GET http://localhost:9000/profile/3
+
 
 

@@ -214,8 +214,12 @@ class DbService {
                     } else {
                         // Resolve promise with an access token string and send it back to the front-end
                         const accessToken = 'Congrats';
-                        console.log(jsonResults[0].ageGroupId);
-                        resolve([accessToken, jsonResults[0].insertId, jsonResults[0].ageGroupId]);
+                        resolve([
+                            accessToken,
+                            jsonResults[0].insertId,
+                            jsonResults[0].ageGroupId,
+                            jsonResults[0].hobby,
+                        ]);
                     }
                 });
             });
@@ -401,10 +405,22 @@ class DbService {
         }
     }
 
-    async updateProfileById(id, name, hobbyId, ageGroupId) {
+    async getProfileById(id) {
         return new Promise((resolve, reject) => {
-            const query = 'UPDATE users SET name = ?, hobbyId = ?, ageGroupId = ? WHERE insertId = ?';
-            connection.query(query, [name, hobbyId, ageGroupId, id], (err, result) => {
+            const query = 'SELECT ageGroupId, hobby from users  WHERE insertId = ?;';
+
+            connection.query(query, [id], (err, result) => {
+                if (err) return reject(err.message);
+                resolve(result);
+            });
+        });
+    }
+
+    async updateProfileById(id, ageGroupId, hobby) {
+        return new Promise((resolve, reject) => {
+            const query = 'UPDATE users SET ageGroupId = ?, hobby = ? WHERE insertId = ?;';
+
+            connection.query(query, [ageGroupId, hobby, id], (err, result) => {
                 if (err) return reject(err.message);
                 resolve(result.affectedRows);
             });
@@ -441,7 +457,7 @@ class DbService {
         }
     }
 
-    async getHobbyByUserId(id) {
+    async getAssociatedHobbyById(id) {
         try {
             return new Promise((resolve, reject) => {
                 const query = 'SELECT hobbyId FROM user_hobby where userId = ?;';
@@ -455,21 +471,6 @@ class DbService {
             throw e.message;
         }
     }
-
-    // async getProfileByUserId(id) {
-    //     try {
-    //         return new Promise((resolve, reject) => {
-    //             const query = 'SELECT * FROM hobby;';
-
-    //             connection.query(query, (err, result) => {
-    //                 if (err) return reject(err.message);
-    //                 resolve(result);
-    //             });
-    //         });
-    //     } catch (e) {
-    //         throw e.message;
-    //     }
-    // }
 }
 
 module.exports = DbService;
