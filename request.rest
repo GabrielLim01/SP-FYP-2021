@@ -1,30 +1,27 @@
 GET http://localhost:9000/quizDashboard
 
 ###
-POST http://localhost:9000/createNew
+POST http://localhost:9000/quiz/createNew
+Content-Type: application/json
+
+
+###
+DELETE  http://localhost:9000/quiz/4
+
+###
+PATCH  http://localhost:9000/quiz/7
+
+### 
+
+PATCH  http://localhost:9000/quiz/86
 Content-Type: application/json
 
 {
-    "categoryId": 2,
-    "title": "mat7",
-    "desc": "sadsadasd",
-    "fiqPoints": 200
-    
-}
-
-###
-DELETE  http://localhost:9000/delete/4
-
-###
-PATCH  http://localhost:9000/update/18
-Content-Type: application/json
-
-{
-    "categoryId": 3,
-    "title": "peepeepoopoo",
-    "desc": "sadsadasd",
-    "totalPoints": 500,
-    "quizQuestion": [{
+    "quizCategoryId": 3,
+    "quizTitle": "peepeepoopoo",
+    "quizDesc": "sadsadasd",
+    "questions": [{
+        "quizQuestionId": 6,
         "questionTitle": "Question 1",
         "questionDesc": "",
         "options": [{
@@ -33,6 +30,7 @@ Content-Type: application/json
             "isCorrect": true
         }]
     },{
+        "quizQuestionId": 7,
         "questionTitle": "Question 2",
         "questionDesc": "",
         "options": [{
@@ -80,19 +78,31 @@ Content-Type: application/json
 }
 
 ###
-DELETE  http://localhost:9000/category/4
+DELETE  http://localhost:9000/quest/4
 
 
 ###
-PATCH http://localhost:9000/category/15
+PATCH http://localhost:9000/quest/14
 Content-Type: application/json
 
-{
-    "catName":"Intellectual Property",
-    "catDesc":"IP for short."
-    
-}
 
 ###
 
 GET http://localhost:9000/quiz/category/1
+
+###
+
+GET http://localhost:9000/quiz/5
+
+###
+GET http://localhost:9000/quiz/-1
+
+###
+
+POST http://localhost:9000/quest/createNew
+
+###
+
+GET http://localhost:9000/quest/11
+
+

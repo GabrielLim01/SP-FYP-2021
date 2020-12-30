@@ -15,7 +15,7 @@ import QuizPlay from './quiz/QuizPlay.js';
 
 const Routes = () => {
   return (
-    <Switch> 
+    <Switch>
       <Route exact path='/' component={Login}></Route>
       <Route exact path='/register' component={Registration}></Route>
       <Route exact path='/dashboard' component={Dashboard}></Route>
@@ -25,7 +25,7 @@ const Routes = () => {
       <Route exact path="/quizzes/:categoryName" component={QuizSelection}></Route>
       <Route exact path="/quizzes/:categoryName/:id" component={QuizPlay}></Route>
 
-      <Route component={NotFound} /> 
+      <Route component={NotFound} />
     </Switch>
   );
   // If you prefer to redirect the user to homepage immediately (without displaying an error page), 

@@ -4,7 +4,7 @@ import Routes from './components/Routes.js';
 function App() {
   return (
     <div className="App">
-        <Routes />
+      <Routes />
     </div>
   );
 }
