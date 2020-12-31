@@ -30,6 +30,7 @@ class QuizQuestionPlay extends React.Component {
 
     componentDidMount() {
         let question = JSON.parse(this.props.question).question;
+        alert(question)
         this.setState({ question: question, options: question.options, questionNumber: this.props.questionNumber })
     }
 

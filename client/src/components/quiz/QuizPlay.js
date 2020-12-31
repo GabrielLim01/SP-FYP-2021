@@ -42,10 +42,10 @@ class QuizPlay extends React.Component {
 
         if (this.state.currentQuestion < (this.state.maxQuestions)) {
             // Wait a short while before loading the next question
-           setTimeout(() =>  this.setState({ currentQuestion: this.state.currentQuestion + 1 }), 2000);
+            setTimeout(() => this.setState({ currentQuestion: this.state.currentQuestion + 1 }), 2000);
         } else {
             // Wait a short while before loading the results screen
-           setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000)
+            setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000)
         }
     }
 
@@ -57,13 +57,13 @@ class QuizPlay extends React.Component {
                     let questions = [];
 
                     data.forEach(element => {
-                        questions.push(element.questionObject)
+                        questions.push(element.question)
                     });
 
-                    // Since data returned by the back-end has quiz-specific data appended to the front of every questionObject
-                    // and we only need to reference that data once, simply remove the questionObject from the 
+                    // Since data returned by the back-end has quiz-specific data appended to the front of every question
+                    // and we only need to reference that data once, simply remove the question from the 
                     // first element of the data array and store the quiz-specific data in another variable
-                    delete data[0].questionObject;
+                    delete data[0].question;
                     let quiz = data[0];
 
                     this.setState({ quiz: quiz, questions: questions, maxQuestions: questions.length });
