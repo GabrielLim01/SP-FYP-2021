@@ -69,6 +69,11 @@ class QuizSelection extends React.Component {
                     <DashboardMenu page='quizzes'></DashboardMenu>
                     <div className="subContainer" style={containerStyle}>
                         <h1>Sorry, no quizzes available!</h1>
+                        <div className="field">
+                            <Link to={{ pathname: 'creation' }}>
+                                <Button icon className='fluid large blue'>Create a quiz!</Button>
+                            </Link>
+                        </div>
                     </div>
                 </div >
             )

@@ -14,6 +14,12 @@ import retrieveItems from './retrieveItems.js';
 // 1. Input validation (especially for checkboxes)
 // 2. Unify change handlers if possible
 
+// BUG
+// 1. When clicking slightly above the "Correct Answer?" checkbox for each of the options,
+// you can actually end up ticking the checkbox itself due to the built-in input='hidden' property,
+// However, this will change the option text input value (to true), and NOT the boolean value of the checkbox itself as expected!
+// Find a way to disable interacting with this hidden checkbox above the actual checkbox!
+
 class QuizCreation extends React.Component {
     constructor(props) {
         super(props);
@@ -38,6 +44,7 @@ class QuizCreation extends React.Component {
     }
 
     handleChange = (event) => {
+        console.log(event.target.name + " " + event.target.value)
         this.setState({
             [event.target.name]: event.target.value
         });
@@ -50,6 +57,7 @@ class QuizCreation extends React.Component {
     }
 
     handleCheckboxChange = (checkbox) => {
+        console.log(checkbox.name + " " + !checkbox.checked)
         this.setState({
             [checkbox.name]: !checkbox.checked
         });
