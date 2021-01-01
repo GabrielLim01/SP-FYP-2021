@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom'
-import { Form, Button } from 'semantic-ui-react'
+import { Form, Button, Segment, Grid } from 'semantic-ui-react'
 import { containerStyle } from '../../common.js'
 import DashboardMenu from '../DashboardMenu.js'
 import verifyLogin from '../verifyLogin.js';
@@ -19,6 +19,11 @@ class QuizSelection extends React.Component {
             category: {},
             items: [],
             hasItems: true,
+            functions: [
+                { icon: 'play', color: 'green', path: 'play' },
+                { icon: 'edit', color: 'blue', path: 'update' },
+                { icon: 'trash', color: 'red', path: 'delete' }
+            ],
             redirect: null
         }
     }
@@ -81,21 +86,38 @@ class QuizSelection extends React.Component {
             return (
                 <div className="container">
                     <DashboardMenu page='quizzes'></DashboardMenu>
-                    <div className="subContainer" style={containerStyle}>
+                    <div className="subContainer" style={{
+                        maxWidth: '35%',
+                        margin: 'auto',
+                        paddingTop: '100px'
+                    }}>
                         <h1>Select a quiz!</h1>
                         <div className="ui stacked segment">
                             <Form>
-                                {this.state.items.map((value, index) => {
+                                {this.state.items.map((element, index) => {
                                     return (
-                                        <div className="field" key={index}>
-                                            <Link to={{
-                                                // Gets the last part of the URL after the forward slash (e.g. 'quizzes')
-                                                pathname: `${window.location.href.split("/").pop()}/${value.quizId}`,
-                                                quiz: value
-                                            }}>
-                                            <Button icon className='fluid large teal'>{value.quizName}</Button>
-                                            </Link>
-                                        </div>
+                                        <Segment inverted color='black' key={index} style={{ border: '5px solid black' }}>
+                                            <Grid>
+                                                <Grid.Row columns='equal'>
+                                                    <Grid.Column width={8}>
+                                                        <h3>{element.quizName}</h3>
+                                                    </Grid.Column>
+                                                    {this.state.functions.map((value, index2) => {
+                                                        return (
+                                                            <Grid.Column key={index2}>
+                                                                <Link to={{
+                                                                    // window.location.href.split("/").pop() gets the last part of the URL after the forward slash (e.g. 'quizzes')
+                                                                    pathname: `${window.location.href.split("/").pop()}/${value.path}/${element.quizId}`,
+                                                                    quiz: element
+                                                                }}>
+                                                                    <Button circular icon={value.icon} color={value.color} />
+                                                                </Link>
+                                                            </Grid.Column>
+                                                        )
+                                                    })}
+                                                </Grid.Row>
+                                            </Grid>
+                                        </Segment>
                                     )
                                 })}
                                 <h2>Or...</h2>
