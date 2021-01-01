@@ -105,6 +105,7 @@ class QuizCreation extends React.Component {
         })
             .then((response) => {
                 console.log(response.data)
+                alert("Success!")
             })
             .catch((error) => {
                 alert(error);
