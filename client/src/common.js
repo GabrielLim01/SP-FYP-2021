@@ -9,8 +9,8 @@ module.exports.inProduction = true;
 
 // Used in most components
 module.exports.containerStyle = {
-    maxWidth: '25%', 
-    margin: 'auto', 
+    maxWidth: '25%',
+    margin: 'auto',
     paddingTop: '100px'
 };
 
