@@ -145,14 +145,14 @@ class DbService {
     }
   }
 
-  async updateQuizDetailsById(id, title, desc, categoryId) {
+  async updateQuizDetailsById(id, title, desc, categoryId, points, time) {
     try {
       return new Promise((resolve, reject) => {
         const query =
-          "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ? WHERE quizId = ?";
+          "UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, pointsPerQuestion = ?, timePerQuestion = ? WHERE quizId = ?";
         connection.query(
           query,
-          [categoryId, title, desc, id],
+          [categoryId, title, desc, points, time, id],
           (err, result) => {
             if (err) return reject(err.message);
             resolve(result.affectedRows);
@@ -164,19 +164,20 @@ class DbService {
     }
   }
 
-  async updateQuestionDetailsById(id, questionObject) {
-    let quizQuestionId = questionObject.quizQuestionId;
-    let questionTitle = questionObject.questionTitle;
-    let questionDesc = questionObject.questionDesc;
-    let options = JSON.stringify(questionObject.options);
+  async updateQuestionDetailsById(question) {
+
+    let quizQuestionId = question.quizQuestionId;
+
+    // Wrap the question properties back inside a question object that excludes quizQuestionId, then stringify said object
+    let quizQuestion = JSON.stringify({ question: question.question });
 
     return new Promise((resolve, reject) => {
       const query =
-        "UPDATE quiz_question SET questionTitle = ?, questionDesc = ?, optionObject = ? WHERE quizId = ? and quizQuestionId = ?;";
+        "UPDATE quiz_question SET question = ? WHERE quizQuestionId = ?;";
 
       connection.query(
         query,
-        [questionTitle, questionDesc, options, id, quizQuestionId],
+        [quizQuestion, quizQuestionId],
         (err, result) => {
           if (err) reject(err.message);
           else {
