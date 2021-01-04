@@ -9,7 +9,7 @@ module.exports.inProduction = true;
 
 // Used in most components
 module.exports.containerStyle = {
-    maxWidth: '40%',
+    maxWidth: '70%',
     margin: 'auto',
     paddingTop: '100px',
 };
