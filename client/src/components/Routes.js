@@ -13,8 +13,8 @@ import QuizSelection from './quiz/QuizSelection.js';
 import QuizCreation from './quiz/QuizCreation.js';
 
 // Quest
-import QuestDashboard from './quest/questDashboard';
-import QuestCreation from './quest/questCreate';
+import QuestDashboard from './quest/questDashboard.js';
+import QuestCreation from './quest/questCreation.js';
 
 const Routes = () => {
     return (
