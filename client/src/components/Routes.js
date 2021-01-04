@@ -12,24 +12,31 @@ import CategorySelection from './quiz/CategorySelection.js';
 import QuizSelection from './quiz/QuizSelection.js';
 import QuizCreation from './quiz/QuizCreation.js';
 
+// Quest
+import QuestDashboard from './quest/questDashboard';
+import QuestCreation from './quest/questCreate';
+
 const Routes = () => {
-  return (
-    <Switch>
-      <Route exact path='/' component={Login}></Route>
-      <Route exact path='/register' component={Registration}></Route>
-      <Route exact path='/dashboard' component={Dashboard}></Route>
+    return (
+        <Switch>
+            <Route exact path="/" component={Login}></Route>
+            <Route exact path="/register" component={Registration}></Route>
+            <Route exact path="/dashboard" component={Dashboard}></Route>
 
-      <Route exact path='/quizzes' component={CategorySelection}></Route>
-      <Route exact path='/quizzes/creation' component={QuizCreation}></Route>
-      <Route exact path="/quizzes/:categoryName" component={QuizSelection}></Route>
+            <Route exact path="/quizzes" component={CategorySelection}></Route>
+            <Route exact path="/quizzes/creation" component={QuizCreation}></Route>
+            <Route exact path="/quizzes/:categoryName" component={QuizSelection}></Route>
 
-      <Route component={NotFound} />
-    </Switch>
-  );
-  // If you prefer to redirect the user to homepage immediately (without displaying an error page), 
-  // put the following code under <Switch> instead
-  // <Route render={() => <Redirect to={{pathname: "/"}} />} />
-  // and remember to import Redirect from 'react-router-dom'
-}
+            <Route exact path="/quests" component={QuestDashboard}></Route>
+            <Route exact path="/quests/creation" component={QuestCreation}></Route>
+
+            <Route component={NotFound} />
+        </Switch>
+    );
+    // If you prefer to redirect the user to homepage immediately (without displaying an error page),
+    // put the following code under <Switch> instead
+    // <Route render={() => <Redirect to={{pathname: "/"}} />} />
+    // and remember to import Redirect from 'react-router-dom'
+};
 
 export default Routes;
