@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom'
-import { Form, Button, Modal, Segment, Grid } from 'semantic-ui-react'
+import { Form, Button, Segment, Grid } from 'semantic-ui-react'
 import { containerStyle } from '../../common.js'
 import DashboardMenu from '../DashboardMenu.js'
 import verifyLogin from '../verifyLogin.js';
