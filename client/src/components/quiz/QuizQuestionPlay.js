@@ -5,15 +5,23 @@ import QuizTimer from './QuizTimer.js';
 class QuizQuestionPlay extends React.Component {
     constructor(props) {
         super(props);
+
+        let question = JSON.parse(this.props.question).question;
+
         this.state = {
-            question: {},
-            options: [],
-            questionNumber: 1,
-            isSelected: false
+            question: question,
+            options: question.options,
+            questionNumber: props.questionNumber,
+            isSelected: false,
         };
+
+        this.remainingTime = question.time
     }
 
+    // TO-DO
+    // Compute score before sending it back to QuizPlay
     handleAnswer(answer) {
+        console.log(this.remainingTime)
         this.setState({ isSelected: true })
         this.props.onQuestionAnswered(answer)
     }
@@ -28,20 +36,21 @@ class QuizQuestionPlay extends React.Component {
         }
     }
 
-    componentDidMount() {
-        let question = JSON.parse(this.props.question).question;
-        alert(question)
-        this.setState({ question: question, options: question.options, questionNumber: this.props.questionNumber })
-    }
-
     render() {
         const question = this.state.question;
         const number = this.state.questionNumber;
 
+        console.log("QQP " + question.time)
+
         return (
             <Grid key={number}>
                 <Grid.Row>
-                    <QuizTimer></QuizTimer>
+                    <QuizTimer
+                        time={question.time}
+                        onTick={(remainingTime) => { this.remainingTime = remainingTime }}
+                        onCountdownComplete={() => this.handleAnswer(false)}
+                    >
+                    </QuizTimer>
                 </Grid.Row>
                 <Grid.Row style={{ height: '300px' }}>
                     <Segment raised inverted color='teal' style={{ width: '100%', margin: '0px 20px' }}>

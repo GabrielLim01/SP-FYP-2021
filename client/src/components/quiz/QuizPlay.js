@@ -34,7 +34,8 @@ class QuizPlay extends React.Component {
         this.setState({ isPlaying: false, isFinished: false, currentQuestion: 1, score: 0 })
     }
 
-
+    // TO-DO
+    // answer should be a number (reflecting the FIQ score) instead of true or false
     onQuestionAnswered = (answer) => {
         if (answer) {
             this.setState({ score: this.state.score + 1 });

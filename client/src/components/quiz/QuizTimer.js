@@ -8,7 +8,7 @@ class QuizTimer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            question: {}
+            time: props.time * 1000
         };
     }
 
@@ -24,8 +24,15 @@ class QuizTimer extends React.Component {
     };
 
     render() {
+        console.log(this.state.time)
+
         return (
-            <Countdown date={Date.now() + 10000} renderer={this.renderer} />
+            <Countdown
+                date={Date.now() + this.state.time}
+                renderer={this.renderer}
+                onComplete={this.props.onCountdownComplete}
+                onTick={({ seconds }) => { this.props.onTick(seconds) }}
+            />
         )
     }
 }
