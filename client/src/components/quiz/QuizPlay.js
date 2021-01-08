@@ -16,6 +16,7 @@ class QuizPlay extends React.Component {
             maxQuestions: 0,
             currentQuestion: 1,
             score: 0,
+            totalPoints: 0,
             isPlaying: false,
             isFinished: false,
             redirect: null
@@ -31,14 +32,14 @@ class QuizPlay extends React.Component {
     handleRestart = (event) => {
         event.preventDefault();
 
-        this.setState({ isPlaying: false, isFinished: false, currentQuestion: 1, score: 0 })
+        this.setState({ isPlaying: false, isFinished: false, currentQuestion: 1, score: 0, totalPoints: 0 })
     }
 
     // TO-DO
     // answer should be a number (reflecting the FIQ score) instead of true or false
-    onQuestionAnswered = (answer) => {
+    onQuestionAnswered = (answer, points) => {
         if (answer) {
-            this.setState({ score: this.state.score + 1 });
+            this.setState({ score: this.state.score + 1, totalPoints: this.state.totalPoints + points });
         }
 
         if (this.state.currentQuestion < (this.state.maxQuestions)) {
@@ -66,6 +67,7 @@ class QuizPlay extends React.Component {
                     // first element of the data array and store the quiz-specific data in another variable
                     delete data[0].question;
                     let quiz = data[0];
+                    console.log(quiz)
 
                     this.setState({ quiz: quiz, questions: questions, maxQuestions: questions.length });
                 })
@@ -104,6 +106,8 @@ class QuizPlay extends React.Component {
                         <QuizQuestionPlay
                             questionNumber={this.state.currentQuestion}
                             question={this.state.questions[this.state.currentQuestion - 1]}
+                            globalPointsPerQuestion={this.state.quiz.pointsPerQuestion}
+                            globalTimePerQuestion={this.state.quiz.timePerQuestion}
                             onQuestionAnswered={this.onQuestionAnswered}>
                         </QuizQuestionPlay>
                     </Segment>
@@ -117,7 +121,8 @@ class QuizPlay extends React.Component {
                     <Segment raised inverted color='blue' style={{ height: '500px', maxWidth: '60%', margin: 'auto' }}>
                         <div className="subContainer" style={{ paddingTop: '150px' }}>
                             <h1>Game has ended!</h1>
-                            <h2>You scored {this.state.score} / {this.state.maxQuestions} points.</h2>
+                            <h2>You answered {this.state.score} / {this.state.maxQuestions} questions correctly.</h2>
+                            <h2>You have earned {this.state.totalPoints} FIQ!</h2>
                             <Button color='teal' size='big' onClick={this.handleRestart}>Play Again?</Button>
                         </div>
                     </Segment>

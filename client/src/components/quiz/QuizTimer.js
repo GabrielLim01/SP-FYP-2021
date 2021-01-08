@@ -1,5 +1,5 @@
 import React from 'react';
-import { Segment } from 'semantic-ui-react';
+import { Grid, Segment } from 'semantic-ui-react';
 import Countdown from 'react-countdown';
 
 // WIP
@@ -13,25 +13,30 @@ class QuizTimer extends React.Component {
     }
 
     // Renderer callback with condition
-    renderer = ({ seconds, completed }) => {
-        if (completed) {
-            // Render a completed state
-            return <h1>Test</h1>;
-        } else {
-            // Render a countdown
-            return <h1>{seconds}</h1>;
-        }
+    renderer = ({ seconds }) => {
+        return <div style={{ width: '100%' }}>
+            <Grid columns='equal'>
+
+                <Grid.Column>
+                    <Segment inverted color='red' style={{ border: '2px solid black' }}>
+                    </Segment>
+                </Grid.Column>
+
+                <Grid.Column>
+                    <h2 style={{ border: '2px solid black' }}>{seconds}</h2>
+                </Grid.Column>
+
+            </Grid>
+        </ div >;
     };
 
     render() {
-        console.log(this.state.time)
-
         return (
             <Countdown
                 date={Date.now() + this.state.time}
                 renderer={this.renderer}
-                onComplete={this.props.onCountdownComplete}
                 onTick={({ seconds }) => { this.props.onTick(seconds) }}
+                onComplete={this.props.onCountdownComplete}
             />
         )
     }

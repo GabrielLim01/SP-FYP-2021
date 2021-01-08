@@ -38,6 +38,9 @@
     "semantic-ui-react": "^2.0.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.6"
+    "@craco/craco": "^6.0.0",
+    "@semantic-ui-react/craco-less": "^1.2.1",
+    "nodemon": "^2.0.6",
+    "semantic-ui-less": "^2.4.1"
   }
 }

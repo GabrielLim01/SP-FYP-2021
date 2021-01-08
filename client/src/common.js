@@ -5,7 +5,7 @@ module.exports.appName = "Guru or Goondu";
 module.exports.host = 'http://localhost:9000';
 
 // Used in verifyLogin.js
-module.exports.inProduction = true;
+module.exports.inProduction = false;
 
 // Used in most components
 module.exports.containerStyle = {
