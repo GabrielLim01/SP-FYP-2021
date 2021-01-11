@@ -120,7 +120,7 @@ class CategoryUpdate extends React.Component {
                                     <div className="required field">
                                         <label>Category Name</label>
                                         <input
-                                            placeholder={this.state.category.categoryName}
+                                            defaultValue={this.state.category.categoryName}
                                             name="categoryName"
                                             onChange={this.handleChange}
                                         />
