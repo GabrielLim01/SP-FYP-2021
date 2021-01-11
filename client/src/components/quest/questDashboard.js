@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Switch } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { Form, Button, Segment, Grid } from 'semantic-ui-react';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
@@ -25,9 +25,7 @@ class QuestDashboard extends React.Component {
 
     // renderRedirect = () => {
     //     if (this.state.redirect) {
-    //         <Switch>
-    //             <Redirect to="/quests/creation" />
-    //         </Switch>
+    //        return <Redirect to="/quests/creation" />
     //     } else console.log(this.state.redirect);
     // };
 
