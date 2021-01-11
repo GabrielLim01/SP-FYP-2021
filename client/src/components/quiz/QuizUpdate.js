@@ -105,11 +105,10 @@ class QuizCreation extends React.Component {
         axios.patch(`${host}/quiz/${this.state.quizId}`, {
             quiz: quiz
         })
-            .then((response) => {
-                console.log(response.data)
-                alert("Success!")
-                this.setState({ redirect: "/quizzes" });
-            })
+            .then(
+                alert("Success!"),
+                this.setState({ redirect: "/quizzes" })
+            )
             .catch((error) => {
                 alert(error);
             });

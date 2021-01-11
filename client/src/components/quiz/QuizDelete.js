@@ -20,7 +20,7 @@ class QuizDelete extends React.Component {
         axios.delete(host + `/quiz/${this.state.quiz.quizId}`)
             .then((response) => {
                 if (response.status !== 400) {
-                    alert("Category successfully deleted!")
+                    alert("Quiz successfully deleted!")
                     window.location.reload();
                 } else {
                     alert("Something went wrong!")

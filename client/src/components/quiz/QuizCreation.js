@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom'
 import { Segment, Form, Grid, TextArea, Dropdown, Button, Popup, Icon } from 'semantic-ui-react';
 import { host } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
@@ -29,7 +30,8 @@ class QuizCreation extends React.Component {
             options: 4,
             categories: [],
             fiqOptionsRange: 5,
-            timeOptionsRange: 7
+            timeOptionsRange: 7,
+            redirect: null
         };
     }
 
@@ -103,10 +105,10 @@ class QuizCreation extends React.Component {
         axios.post(host + '/quiz', {
             quiz: quiz
         })
-            .then((response) => {
-                console.log(response.data)
-                alert("Success!")
-            })
+            .then(
+                alert("Success!"),
+                this.setState({ redirect: "/quizzes" })
+            )
             .catch((error) => {
                 alert(error);
             });
@@ -172,7 +174,9 @@ class QuizCreation extends React.Component {
             timeOptions.push({ text: value, value: value });
         };
 
-        if (!verifyLogin()) {
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirect} />
+        } else if (!verifyLogin()) {
             return (
                 <h1>403 Forbidden</h1>
             )
