@@ -24,7 +24,7 @@ const Routes = () => {
       <Route exact path='/quizzes' component={CategorySelection}></Route>
       <Route exact path='/quizzes/creation' component={QuizCreation}></Route>
       <Route exact path="/quizzes/:categoryName" component={QuizSelection}></Route>
-      <Route exact path="/quizzes/:categoryName/:id" component={QuizPlay}></Route>
+      <Route exact path="/quizzes/:categoryName/play/:id" component={QuizPlay}></Route>
       <Route exact path="/quizzes/:categoryName/update/:id" component={QuizUpdate}></Route>
 
       <Route component={NotFound} />
