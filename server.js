@@ -235,33 +235,37 @@ app.post("/quiz", (request, response) => {
 app.patch("/quiz/:id", (request, response) => {
   let isValid = validateID(request.params.id);
   if (isValid) {
-    const title = request.body.quizTitle;
-    const desc = request.body.quizDesc;
-    const categoryId = request.body.quizCategoryId;
-    const quizQuestionObject = request.body.questions;
+    const quiz = request.body.quiz;
+    const title = quiz.title;
+    const desc = quiz.description;
+    const category = quiz.category;
+    const points = quiz.points;
+    const time = quiz.time;
+    const questions = quiz.questions;
 
     const db = dbService.getDbServiceInstance();
     const result = db.updateQuizDetailsById(
       request.params.id,
       title,
       desc,
-      categoryId
+      category,
+      points,
+      time
     );
 
     result
       .then((data) => {
         response.json({ data: data });
 
-        var updateQuestionsResult = new Promise((resolve, reject) => { });
-        quizQuestionObject.forEach((question) => {
-          updateQuestionsResult = db.updateQuestionDetailsById(
-            request.params.id,
-            question
-          );
+        let updateQuestionsResult = new Promise((resolve, reject) => { });
+
+        questions.forEach((question) => {
+          updateQuestionsResult = db.updateQuestionDetailsById(question);
         });
+
         updateQuestionsResult.catch((err) =>
           response
-            .status(400)
+            //.status(400)
             .send(
               `Updating of questions where quiz id equals to ${request.params.id} has failed. ${err}`
             )
@@ -269,14 +273,14 @@ app.patch("/quiz/:id", (request, response) => {
       })
       .catch((err) =>
         response
-          .status(400)
+          //.status(400)
           .send(
             `Updating of quiz where id equals to ${request.params.id} has failed. ${err}`
           )
       );
   } else
     response
-      .status(400)
+      //.status(400)
       .send(
         `${request.params.id} contained illegal characters. Please check again.`
       );

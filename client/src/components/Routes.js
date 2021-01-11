@@ -12,10 +12,7 @@ import CategorySelection from './quiz/CategorySelection.js';
 import QuizSelection from './quiz/QuizSelection.js';
 import QuizCreation from './quiz/QuizCreation.js';
 import QuizPlay from './quiz/QuizPlay.js';
-/*
 import QuizUpdate from './quiz/QuizUpdate.js';
-import QuizDelete from './quiz/QuizDelete.js';
-*/
 
 const Routes = () => {
   return (
@@ -28,10 +25,7 @@ const Routes = () => {
       <Route exact path='/quizzes/creation' component={QuizCreation}></Route>
       <Route exact path="/quizzes/:categoryName" component={QuizSelection}></Route>
       <Route exact path="/quizzes/:categoryName/:id" component={QuizPlay}></Route>
-
-      <Route exact path="/quizzes/:categoryName/play/:id" component={QuizPlay}></Route>
-      {/* <Route exact path="/quizzes/:categoryName/update/:id" component={QuizUpdate}></Route>
-      <Route exact path="/quizzes/:categoryName/delete/:id" component={QuizDelete}></Route> */}
+      <Route exact path="/quizzes/:categoryName/update/:id" component={QuizUpdate}></Route>
 
       <Route component={NotFound} />
     </Switch>
