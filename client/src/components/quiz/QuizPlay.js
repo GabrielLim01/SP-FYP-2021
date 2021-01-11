@@ -25,18 +25,14 @@ class QuizPlay extends React.Component {
 
     handleStart = (event) => {
         event.preventDefault();
-
         this.setState({ isPlaying: true })
     }
 
     handleRestart = (event) => {
         event.preventDefault();
-
         this.setState({ isPlaying: false, isFinished: false, currentQuestion: 1, score: 0, totalPoints: 0 })
     }
 
-    // TO-DO
-    // answer should be a number (reflecting the FIQ score) instead of true or false
     onQuestionAnswered = (answer, points) => {
         if (answer) {
             this.setState({ score: this.state.score + 1, totalPoints: this.state.totalPoints + points });
@@ -67,7 +63,6 @@ class QuizPlay extends React.Component {
                     // first element of the data array and store the quiz-specific data in another variable
                     delete data[0].question;
                     let quiz = data[0];
-                    console.log(quiz)
 
                     this.setState({ quiz: quiz, questions: questions, maxQuestions: questions.length });
                 })

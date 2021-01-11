@@ -2,8 +2,6 @@ import React from 'react';
 import { Grid, Segment } from 'semantic-ui-react';
 import Countdown from 'react-countdown';
 
-// WIP
-
 class QuizTimer extends React.Component {
     constructor(props) {
         super(props);
@@ -16,16 +14,13 @@ class QuizTimer extends React.Component {
     renderer = ({ seconds }) => {
         return <div style={{ width: '100%' }}>
             <Grid columns='equal'>
-
                 <Grid.Column>
                     <Segment inverted color='red' style={{ border: '2px solid black' }}>
                     </Segment>
                 </Grid.Column>
-
                 <Grid.Column>
-                    <h2 style={{ border: '2px solid black' }}>{seconds}</h2>
+                    <h2>{seconds}</h2>
                 </Grid.Column>
-
             </Grid>
         </ div >;
     };

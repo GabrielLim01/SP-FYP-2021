@@ -2,7 +2,7 @@ import React from 'react';
 import { Segment, Grid, Button } from 'semantic-ui-react';
 import QuizTimer from './QuizTimer.js';
 
-//  Subsequent loading of questions 
+//  This component handles loading of quiz questions 
 
 class QuizQuestionPlay extends React.Component {
     constructor(props) {
@@ -19,12 +19,8 @@ class QuizQuestionPlay extends React.Component {
             isSelected: false,
         };
 
-        // This will be called on the first question, but will NOT be called for subsequent questions unless onTick is called (at least 1 second has elapsed)
-        // Can lead to abnormally high FIQ if people answer correctly immediately (0 seconds elapsed) 
-        // Find a fix for this
         if (this.state.question.time) {
             this.remainingTime = question.time;
-            console.log("Called!")
         } else {
             this.remainingTime = this.state.globalTimePerQuestion;
         }
@@ -39,6 +35,8 @@ class QuizQuestionPlay extends React.Component {
             let basePoints = 0;
             let baseTime = 0;
 
+            // Can probably cut down on if statements here and make the overall handling of 
+            // global/customizable points/time values more robust
             if (this.state.question.points) {
                 basePoints = this.state.question.points
             } else {
@@ -51,23 +49,26 @@ class QuizQuestionPlay extends React.Component {
                 baseTime = this.state.globalTimePerQuestion
             }
 
-            console.log(basePoints)
-            console.log(this.remainingTime)
-            console.log(baseTime)
             // Formula to determine FIQ points awarded per correct answer
             points = Math.floor(basePoints * (this.remainingTime / baseTime))
-            console.log(points)
         }
         this.props.onQuestionAnswered(answer, points)
     }
 
     componentDidUpdate(prevState) {
         let currentQuestion = this.props.question;
+        let question = JSON.parse(this.props.question).question;
 
         // Both of the following are strings
         if (currentQuestion !== prevState.question) {
-            let question = JSON.parse(this.props.question).question;
             this.setState({ isSelected: false, question: question, options: question.options, questionNumber: this.props.questionNumber })
+        }
+
+        // Updates the remaining time to use the globally-set value if customizable time is not set for the question
+        if (question.time) {
+            this.remainingTime = question.time;
+        } else {
+            this.remainingTime = this.state.globalTimePerQuestion;
         }
     }
 

@@ -96,7 +96,7 @@ class QuizSelection extends React.Component {
                             <Form>
                                 {this.state.items.map((element, index) => {
                                     return (
-                                        <Segment inverted color='black' key={index} style={{ border: '5px solid black' }}>
+                                        <Segment inverted color='black' key={index}>
                                             <Grid>
                                                 <Grid.Row columns='equal'>
                                                     <Grid.Column width={8}>
