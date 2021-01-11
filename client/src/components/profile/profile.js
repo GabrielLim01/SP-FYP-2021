@@ -20,7 +20,7 @@ class Profile extends React.Component {
             categories: [],
             userDetails: [],
             ageGroup: '',
-            hobby: ''
+            hobby: '',
         };
     }
 
@@ -48,13 +48,13 @@ class Profile extends React.Component {
                     window.location.reload();
                 }, 1000),
             )
-            .catch(
+            .catch((err) => {
                 new Noty({
-                    text: 'Something went wrong.',
+                    text: `${err}`,
                     type: 'error',
                     theme: 'semanticui',
-                }).show(),
-            );
+                }).show();
+            });
     };
 
     handleChange = (event) => {
@@ -80,18 +80,6 @@ class Profile extends React.Component {
                     });
 
                     this.setState({ ageGroupItems: tempArray });
-
-                    // Section B
-                    // let ageGroupId = this.state.userDetails.ageGroupId;
-                    // if (ageGroupId !== null) {
-                    //     this.state.ageGroupItems.map((value) => {
-                    //         if (value.ageGroupId === ageGroupId) {
-                    //             return this.setState({ ageGroupVal: value.ageGroupId });
-                    //         } else return null;
-                    //     });
-                    // } else {
-                    //     this.setState({ ageGroupVal: 'Select Option' });
-                    // }
                 } else {
                     // use a noty here
                 }
@@ -104,28 +92,13 @@ class Profile extends React.Component {
     getHobbyOptions() {
         retrieveItems(`hobby`)
             .then((data) => {
-                //console.log(data);
                 if (data !== undefined) {
                     let tempArray = [];
-                    // let hobby = Array.from(this.state.userDetails.hobby);
-                    // let Str = '';
 
                     data.forEach((element) => {
                         tempArray.push(element);
                     });
 
-                    // if (hobby !== '') {
-                    //     const hobbyId = tempArray.map((id) => id.hobbyId);
-                    //     const hobbyName = tempArray.map((id) => id.hobbyName);
-
-                    //     hobby.forEach((hobby) => {
-                    //         let id = JSON.parse(hobby);
-                    //         if (hobbyId.includes(id)) {
-                    //             Str += hobbyName[hobbyId.indexOf(id)];
-                    //         }
-                    //     });
-                    // } else Str = 'Select Option';
-                    // this.setState({ hobbyItems: tempArray, hobbyVal: Str });
                     this.setState({ hobbyItems: tempArray });
                 } else {
                     // use a noty here
@@ -138,8 +111,11 @@ class Profile extends React.Component {
 
     onLoad() {
         retrieveItems(`profile/${this.userId}`)
-            .then((data) => this.setState({ userDetails: data[0] },
-                () => this.setState({ ageGroup: this.state.userDetails.ageGroupId, hobby: this.state.userDetails.hobby })))
+            .then((data) =>
+                this.setState({ userDetails: data[0] }, () =>
+                    this.setState({ ageGroup: this.state.userDetails.ageGroupId, hobby: this.state.userDetails.hobby }),
+                ),
+            )
             .catch((err) => console.log(err));
     }
 
@@ -168,7 +144,7 @@ class Profile extends React.Component {
         if (!verifyLogin()) {
             return <h1>403 Forbidden</h1>;
 
-            // Force the component to skip the initial render 
+            // Force the component to skip the initial render
             // Doing this allows correct initialization of dropdown defaultValues (since they are initialized on componentDidMount)
         } else if (this.state.userDetails.ageGroupId !== undefined) {
             return (
@@ -230,7 +206,7 @@ class Profile extends React.Component {
                 </div>
             );
         } else {
-            return null
+            return null;
         }
     }
 }
