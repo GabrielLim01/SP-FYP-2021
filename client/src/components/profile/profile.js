@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React from 'react';
-import { Redirect } from 'react-router-dom';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
@@ -16,15 +15,12 @@ class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            redirect: null,
             ageGroupItems: [],
             hobbyItems: [],
             categories: [],
             userDetails: [],
-            ageGroupVal: null,
-            hobbyVal: null,
             ageGroup: '',
-            hobby: '',
+            hobby: ''
         };
     }
 
@@ -32,6 +28,7 @@ class Profile extends React.Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
+
         let detail = {
             name: JSON.parse(userDetails()).username,
             ageGroup: this.state.ageGroup,
@@ -85,16 +82,16 @@ class Profile extends React.Component {
                     this.setState({ ageGroupItems: tempArray });
 
                     // Section B
-                    let ageGroupId = this.state.userDetails.ageGroupId;
-                    if (ageGroupId !== null) {
-                        this.state.ageGroupItems.map((value) => {
-                            if (value.ageGroupId === ageGroupId) {
-                                return this.setState({ ageGroupVal: value.ageGroupDesc });
-                            } else return null;
-                        });
-                    } else {
-                        this.setState({ ageGroupVal: 'Select Option' });
-                    }
+                    // let ageGroupId = this.state.userDetails.ageGroupId;
+                    // if (ageGroupId !== null) {
+                    //     this.state.ageGroupItems.map((value) => {
+                    //         if (value.ageGroupId === ageGroupId) {
+                    //             return this.setState({ ageGroupVal: value.ageGroupId });
+                    //         } else return null;
+                    //     });
+                    // } else {
+                    //     this.setState({ ageGroupVal: 'Select Option' });
+                    // }
                 } else {
                     // use a noty here
                 }
@@ -110,25 +107,26 @@ class Profile extends React.Component {
                 //console.log(data);
                 if (data !== undefined) {
                     let tempArray = [];
-                    let hobby = Array.from(this.state.userDetails.hobby);
-                    let Str = '';
+                    // let hobby = Array.from(this.state.userDetails.hobby);
+                    // let Str = '';
 
                     data.forEach((element) => {
                         tempArray.push(element);
                     });
 
-                    if (hobby !== '') {
-                        const hobbyId = tempArray.map((id) => id.hobbyId);
-                        const hobbyName = tempArray.map((id) => id.hobbyName);
+                    // if (hobby !== '') {
+                    //     const hobbyId = tempArray.map((id) => id.hobbyId);
+                    //     const hobbyName = tempArray.map((id) => id.hobbyName);
 
-                        hobby.forEach((hobby) => {
-                            let id = JSON.parse(hobby);
-                            if (hobbyId.includes(id)) {
-                                Str += hobbyName[hobbyId.indexOf(id)];
-                            }
-                        });
-                    } else Str = 'Select Option';
-                    this.setState({ hobbyItems: tempArray, hobbyVal: Str });
+                    //     hobby.forEach((hobby) => {
+                    //         let id = JSON.parse(hobby);
+                    //         if (hobbyId.includes(id)) {
+                    //             Str += hobbyName[hobbyId.indexOf(id)];
+                    //         }
+                    //     });
+                    // } else Str = 'Select Option';
+                    // this.setState({ hobbyItems: tempArray, hobbyVal: Str });
+                    this.setState({ hobbyItems: tempArray });
                 } else {
                     // use a noty here
                 }
@@ -140,7 +138,8 @@ class Profile extends React.Component {
 
     onLoad() {
         retrieveItems(`profile/${this.userId}`)
-            .then((data) => this.setState({ userDetails: data[0] }))
+            .then((data) => this.setState({ userDetails: data[0] },
+                () => this.setState({ ageGroup: this.state.userDetails.ageGroupId, hobby: this.state.userDetails.hobby })))
             .catch((err) => console.log(err));
     }
 
@@ -153,6 +152,7 @@ class Profile extends React.Component {
     render() {
         const hobbyItems = [];
         const ageGroupItems = [];
+
         for (let i = 0; i < this.state.hobbyItems.length; i++) {
             let id = this.state.hobbyItems[i].hobbyId;
             let name = this.state.hobbyItems[i].hobbyName;
@@ -165,11 +165,12 @@ class Profile extends React.Component {
             ageGroupItems.push({ text: name, value: id });
         }
 
-        if (this.state.redirect) {
-            return <Redirect to={{ host }} />;
-        } else if (!verifyLogin()) {
+        if (!verifyLogin()) {
             return <h1>403 Forbidden</h1>;
-        } else {
+
+            // Force the component to skip the initial render 
+            // Doing this allows correct initialization of dropdown defaultValues (since they are initialized on componentDidMount)
+        } else if (this.state.userDetails.ageGroupId !== undefined) {
             return (
                 <div className="container">
                     <DashboardMenu page="category"></DashboardMenu>
@@ -194,8 +195,8 @@ class Profile extends React.Component {
 
                                     <Dropdown
                                         name="ageGroup"
-                                        placeholder={this.state.ageGroupVal}
-                                        defaultValue={this.state.ageGroupVal}
+                                        placeholder="Select an age group"
+                                        defaultValue={this.state.userDetails.ageGroupId}
                                         fluid
                                         selection
                                         options={ageGroupItems}
@@ -207,7 +208,9 @@ class Profile extends React.Component {
                                     <Dropdown
                                         name="hobby"
                                         labeled={true}
-                                        placeholder={this.state.hobbyVal}
+                                        placeholder="Select a hobby"
+                                        // Converts an integer string (e.g. "123") into an array of digits (e.g. [1, 2, 3])
+                                        defaultValue={Array.from(this.state.userDetails.hobby).map(Number)}
                                         fluid
                                         multiple
                                         search
@@ -226,6 +229,8 @@ class Profile extends React.Component {
                     </div>
                 </div>
             );
+        } else {
+            return null
         }
     }
 }
