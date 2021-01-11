@@ -2,9 +2,16 @@ import React from 'react';
 import { Segment, Grid, Button } from 'semantic-ui-react';
 import QuizTimer from './QuizTimer.js';
 
-//  This component handles loading of quiz questions 
+// This component handles loading of quiz questions 
+
+// Code for clockRef and related functions are taken from here 
+// https://stackoverflow.com/questions/59130667/how-to-call-start-and-pause-functions-from-the-react-countdown-now-library
+
+// The overall code in this component is quite a mess (but it works), and would greatly benefit off a code cleanup
 
 class QuizQuestionPlay extends React.Component {
+    clockRef = null;
+
     constructor(props) {
         super(props);
 
@@ -16,7 +23,8 @@ class QuizQuestionPlay extends React.Component {
             questionNumber: props.questionNumber,
             globalPointsPerQuestion: props.globalPointsPerQuestion,
             globalTimePerQuestion: props.globalTimePerQuestion,
-            isSelected: false,
+            hasAnswered: false,
+            temporaryTime: 0
         };
 
         if (this.state.question.time) {
@@ -24,10 +32,19 @@ class QuizQuestionPlay extends React.Component {
         } else {
             this.remainingTime = this.state.globalTimePerQuestion;
         }
+
+        this.setClockRef = this.setClockRef.bind(this);
+        this.pause = this.pause.bind(this);
     }
 
     handleAnswer(answer) {
-        this.setState({ isSelected: true })
+        // setState triggers a re-render and resets the remainingTime back to the default time value,
+        // so we want to store the remainingTime value in a temporaryTime property so that the player
+        // does not abruptly see the timer reset back to the default time value in the QuizTimer component
+        this.setState({ hasAnswered: true, temporaryTime: this.remainingTime })
+
+        // Pause the quiz timer when an answer has been registered
+        this.pause();
 
         let points = 0;
 
@@ -55,13 +72,28 @@ class QuizQuestionPlay extends React.Component {
         this.props.onQuestionAnswered(answer, points)
     }
 
+    pause() {
+        this.clockRef.pause();
+    }
+
+    setClockRef(ref) {
+        // When the `Clock` (and subsequently `Countdown` mounts
+        // this will give us access to the API
+        this.clockRef = ref;
+    }
+
     componentDidUpdate(prevState) {
         let currentQuestion = this.props.question;
         let question = JSON.parse(this.props.question).question;
 
         // Both of the following are strings
         if (currentQuestion !== prevState.question) {
-            this.setState({ isSelected: false, question: question, options: question.options, questionNumber: this.props.questionNumber })
+            this.setState({
+                hasAnswered: false,
+                question: question,
+                options: question.options,
+                questionNumber: this.props.questionNumber
+            })
         }
 
         // Updates the remaining time to use the globally-set value if customizable time is not set for the question
@@ -80,9 +112,11 @@ class QuizQuestionPlay extends React.Component {
             <Grid key={number} style={{ height: '100%' }}>
                 <Grid.Row style={{ margin: '0px 20px' }}>
                     <QuizTimer
-                        time={question.time ? question.time : this.state.globalTimePerQuestion}
+                        time={this.state.hasAnswered ? this.state.temporaryTime : question.time ? question.time : this.state.globalTimePerQuestion}
+                        hasAnswered={this.state.hasAnswered}
                         onTick={(remainingTime) => { this.remainingTime = remainingTime }}
                         onCountdownComplete={() => this.handleAnswer(false)}
+                        refCallback={this.setClockRef}
                     >
                     </QuizTimer>
                 </Grid.Row>
@@ -96,11 +130,11 @@ class QuizQuestionPlay extends React.Component {
                     {this.state.options.map((element, index) => {
                         return (
                             <Grid.Column stretched key={index + 1}>
-                                <Button color={this.state.isSelected ? element.isCorrect ? 'green' : 'red' : 'teal'}
+                                <Button color={this.state.hasAnswered ? element.isCorrect ? 'green' : 'red' : 'teal'}
                                     name={`options-${index}`}
-                                    style={this.state.isSelected ? { margin: '5px 0px', opacity: '1' } : { margin: '5px 0px' }}
+                                    style={this.state.hasAnswered ? { margin: '5px 0px' } : { margin: '5px 0px' }}
                                     onClick={() => this.handleAnswer(element.isCorrect)}
-                                    disabled={this.state.isSelected}>
+                                    disabled={this.state.hasAnswered}>
                                     <h3>{element.name}</h3>
                                 </Button>
                             </Grid.Column>
@@ -108,7 +142,6 @@ class QuizQuestionPlay extends React.Component {
                     })}
                 </Grid.Row>
             </Grid>
-
         )
     }
 }
