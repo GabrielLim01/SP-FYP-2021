@@ -83,69 +83,70 @@ class CategoryCreate extends React.Component {
                         theme: 'semanticui',
                     }).show();
                 }
+            }
             })
             .catch((err) => {
-                new Noty({
-                    text: 'Something went wrong.',
-                    type: 'error',
-                    theme: 'semanticui',
-                }).show();
-            });
+    new Noty({
+        text: 'Something went wrong.',
+        type: 'error',
+        theme: 'semanticui',
+    }).show();
+});
     };
 
-    render() {
-        if (!verifyLogin()) {
-            return <h1>403 Forbidden</h1>;
-        } else {
-            const { errors } = this.state;
-            return (
-                <div className="container">
-                    <DashboardMenu page="category"></DashboardMenu>
-                    <div className="subContainer" style={containerStyle}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <h1>Create New Category</h1>
-                        </div>
-                        {errors.map((error) => (
-                            <p style={{ color: 'red' }} key={error}>
-                                Error: {error}
-                            </p>
-                        ))}
-                        <div className="ui stacked segment">
-                            <form className="ui form">
-                                <div className="field">
-                                    <div className="required field">
-                                        <label>Category Name</label>
-                                        <input
-                                            placeholder="Category Name"
-                                            name="categoryName"
-                                            onChange={this.handleChange}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="field">
-                                    <label>Category Description</label>
-                                    <textarea
-                                        placeholder="Category Description.."
-                                        rows="3"
-                                        name="categoryDesc"
+render() {
+    if (!verifyLogin()) {
+        return <h1>403 Forbidden</h1>;
+    } else {
+        const { errors } = this.state;
+        return (
+            <div className="container">
+                <DashboardMenu page="category"></DashboardMenu>
+                <div className="subContainer" style={containerStyle}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <h1>Create New Category</h1>
+                    </div>
+                    {errors.map((error) => (
+                        <p style={{ color: 'red' }} key={error}>
+                            Error: {error}
+                        </p>
+                    ))}
+                    <div className="ui stacked segment">
+                        <form className="ui form">
+                            <div className="field">
+                                <div className="required field">
+                                    <label>Category Name</label>
+                                    <input
+                                        placeholder="Category Name"
+                                        name="categoryName"
                                         onChange={this.handleChange}
-                                    ></textarea>
+                                    />
                                 </div>
-                                <div className="field" style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                                    <button type="submit" className="ui primary button" onClick={this.handleSubmit}>
-                                        Create<i aria-hidden="true" className="right pencil icon"></i>
-                                    </button>
-                                    <button type="button" className="ui button" onClick={this.redirectHandler}>
-                                        Back {this.renderRedirect()}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+                            </div>
+                            <div className="field">
+                                <label>Category Description</label>
+                                <textarea
+                                    placeholder="Category Description.."
+                                    rows="3"
+                                    name="categoryDesc"
+                                    onChange={this.handleChange}
+                                ></textarea>
+                            </div>
+                            <div className="field" style={{ display: 'flex', flexDirection: 'row-reverse' }}>
+                                <button type="submit" className="ui primary button" onClick={this.handleSubmit}>
+                                    Create<i aria-hidden="true" className="right pencil icon"></i>
+                                </button>
+                                <button type="button" className="ui button" onClick={this.redirectHandler}>
+                                    Back {this.renderRedirect()}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            );
-        }
+            </div>
+        );
     }
+}
 }
 
 export default CategoryCreate;

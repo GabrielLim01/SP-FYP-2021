@@ -8,6 +8,7 @@ import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
 import validateCat from './validation.js';
 import { host } from '../../common.js';
+import retrieveItems from '../quiz/retrieveItems.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
@@ -85,21 +86,34 @@ class CategoryUpdate extends React.Component {
     };
 
     componentDidMount() {
-        if (this.props.location.category !== null) {
+        if (this.props.location.category !== undefined) {
             let category = this.props.location.category;
             this.setState({ category: category });
         } else {
-            this.setState({ redirect: '/category' });
-            console.log(`${this.state.redirect}`);
-            //window.location.href(`${this.state.redirect}`);
-            //<Redirect to={this.state.redirect} />;
+            let categoryID = parseInt(window.location.href.split("/").pop());
+
+            retrieveItems(`category/${categoryID}`)
+                .then(data => {
+                    if (data.length !== 0) {
+                        this.setState({ category: data[0] });
+                    } else {
+                        alert("No such category exists!")
+                        this.setState({ redirect: '/dashboard' });
+                    }
+                })
+                .catch((error) => {
+                    alert(error);
+                    this.setState({ redirect: '/dashboard' });
+                })
         }
     }
 
     render() {
-        if (!verifyLogin()) {
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirect} />;
+        } else if (!verifyLogin()) {
             return <h1>403 Forbidden</h1>;
-        } else {
+        } else if (this.state.category !== undefined) {
             const { errors } = this.state;
             return (
                 <div className="container">
@@ -148,6 +162,8 @@ class CategoryUpdate extends React.Component {
                     </div>
                 </div>
             );
+        } else {
+            return null;
         }
     }
 }
