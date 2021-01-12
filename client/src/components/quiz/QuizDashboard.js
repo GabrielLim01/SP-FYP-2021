@@ -1,6 +1,6 @@
 import React from 'react';
 //import { Link } from 'react-router-dom';
-import { Form, Button, Segment, Grid, Label, Input, Select, Message } from 'semantic-ui-react';
+import { Form, Button, Segment, Grid, Label, Input, Select, Message, Accordion } from 'semantic-ui-react';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
@@ -16,7 +16,6 @@ class CategorySelection extends React.Component {
             quizItems: [],
             categoryItems: [],
             category: null,
-            //items: [],
             functions: [
                 { icon: 'trash', color: 'red', path: 'delete' },
                 { icon: 'edit', color: 'blue', path: 'update' },
@@ -30,14 +29,12 @@ class CategorySelection extends React.Component {
             filterType: null,
             filterOptions: [
                 { key: 'name', text: 'Quiz Name', value: 'name' },
-                { key: 'id', text: 'Quiz ID', value: 'id' },
                 { key: 'category', text: 'Category', value: 'category' },
             ],
         };
     }
 
     handleChange = (event) => {
-        // console.log(event.target.name + ' ' + event.target.value);
         this.setState({
             [event.target.name]: event.target.value,
         });
@@ -48,6 +45,20 @@ class CategorySelection extends React.Component {
             [data.name]: data.value,
         });
     };
+
+    panel(value) {
+        return [
+            {
+                key: 'details',
+                title: 'Description',
+                content: {
+                    as: Form.Field,
+
+                    label: value !== null ? `${value}` : 'No descriptions available.',
+                },
+            },
+        ];
+    }
 
     getAllCategories() {
         retrieveItems('category')
@@ -93,8 +104,6 @@ class CategorySelection extends React.Component {
     render() {
         let quizItems = this.state.quizItems.filter((item) => {
             switch (this.state.filterType) {
-                case 'id':
-                    return item.quizId === parseInt(this.state.filter);
                 case 'category':
                     return item.categoryId === parseInt(this.state.filter);
                 default:
@@ -134,15 +143,13 @@ class CategorySelection extends React.Component {
                                         return (
                                             <Segment color="green" key={index}>
                                                 <Grid.Row>
-                                                    <h2>
-                                                        #{value.quizId}: {value.quizName}
-                                                    </h2>
+                                                    <h2>{value.quizName}</h2>
                                                     <div style={{ fontStyle: 'italic' }}>
-                                                        <p>Description: {value.quizDesc}</p>
                                                         Category:
                                                         <Label style={{ margin: '0 5px' }} horizontal>
                                                             {value.categoryId}
                                                         </Label>
+                                                        <Accordion panels={this.panel(value.quizDesc)} />
                                                     </div>
                                                 </Grid.Row>
                                                 <Grid.Row style={{ display: 'flex', flexDirection: 'row-reverse' }}>
