@@ -54,7 +54,7 @@ class CategorySelection extends React.Component {
                 content: {
                     as: Form.Field,
 
-                    label: value.length > 0 ? `${value}` : 'No descriptions available.',
+                    label: value.length > 0 ? `${value}` : 'No description available.',
                 },
             },
         ];
