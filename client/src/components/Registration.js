@@ -86,10 +86,10 @@ class Registration extends React.Component {
         ];
 
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirect} />
+            return <Redirect push to={this.state.redirect} />
         } else if (verifyLogin()) {
             return (
-                <Redirect to='/dashboard' />
+                <Redirect push to='/dashboard' />
             )
         } return (
             <div className="container" style={containerStyle}>

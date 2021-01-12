@@ -35,7 +35,7 @@ export default class DashboardMenu extends React.Component {
         const { activeItem } = this.state
 
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirect} />
+            return <Redirect push to={this.state.redirect} />
         } else {
             return (
                 <Menu inverted>

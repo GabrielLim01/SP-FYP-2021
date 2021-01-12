@@ -63,7 +63,7 @@ class QuizSelection extends React.Component {
 
     render() {
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirect} />
+            return <Redirect push to={this.state.redirect} />
         } else if (!verifyLogin()) {
             return (
                 <h1>403 Forbidden</h1>
