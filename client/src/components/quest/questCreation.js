@@ -1,11 +1,14 @@
 import React from 'react';
-//import { Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { Button, Dropdown, Icon, Segment, Form, Grid, TextArea } from 'semantic-ui-react';
 import DashboardMenu from '../DashboardMenu.js';
 import QuestScenarioCreation from './questScenarioCreation.js';
 import retrieveItems from '../quiz/retrieveItems.js';
 import axios from 'axios';
 import { host } from '../../common.js';
+import Noty from 'noty';
+import '../../../node_modules/noty/lib/noty.css';
+import '../../../node_modules/noty/lib/themes/semanticui.css';
 
 class QuestCreation extends React.Component {
     constructor(props) {
@@ -18,6 +21,15 @@ class QuestCreation extends React.Component {
             options: 3,
         };
     }
+    redirectHandler = () => {
+        this.setState({ redirect: true });
+        this.renderRedirect();
+    };
+    renderRedirect = () => {
+        if (this.state.redirect) {
+            return <Redirect push to="/quests" />;
+        }
+    };
 
     onAddScenario = () => {
         if (this.state.scenario < this.state.maxScenario) {
@@ -70,7 +82,35 @@ class QuestCreation extends React.Component {
             scenarios: scenario,
         };
 
-        axios.post(`${host}/something`, { quest: questObj });
+        const result = axios.post(`${host}/quests/createNew`, { quest: questObj });
+        result
+            .then((response) => {
+                if (response.status === 200) {
+                    new Noty({
+                        text: `Quest Created: ${this.state.questTitle}`,
+                        type: 'success',
+                        theme: 'semanticui',
+                    }).show();
+
+                    // set timeout to 2 seconds
+                    // setTimeout(() => {
+                    //     window.location.reload();
+                    // }, 1000);
+                } else {
+                    new Noty({
+                        text: 'Something went wrong.',
+                        type: 'error',
+                        theme: 'semanticui',
+                    }).show();
+                }
+            })
+            .catch((err) => {
+                new Noty({
+                    text: `${err}`,
+                    type: 'error',
+                    theme: 'semanticui',
+                }).show();
+            });
     };
 
     generateItems() {
@@ -175,6 +215,7 @@ class QuestCreation extends React.Component {
                     </Segment>
                     {scenarios}
                     <div className="subContainer" style={{ padding: '25px 0px', textAlign: 'right' }}>
+                        <Button onClick={this.redirectHandler}>Back{this.renderRedirect()}</Button>
                         <Button
                             icon
                             labelPosition="left"

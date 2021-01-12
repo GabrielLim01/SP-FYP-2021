@@ -1,5 +1,5 @@
 import React from 'react';
-import { Segment, Grid, Divider, TextArea, Form, Accordion } from 'semantic-ui-react';
+import { Segment, Grid, Divider, Form, Accordion } from 'semantic-ui-react';
 
 class QuestScenarioCreation extends React.Component {
     constructor(props) {
@@ -27,24 +27,26 @@ class QuestScenarioCreation extends React.Component {
         this.setState({ activeIndex: newIndex });
     };
 
-    panels = [
-        {
-            key: 'details',
-            title: 'Add-on Details',
-            content: {
-                as: Form.TextArea,
-                label: 'Pros / Cons',
-                placeholder: 'Description',
-            },
-        },
-    ];
-
     render() {
         const number = this.props.scenarioNumber;
         const options = [];
+        const panel = [];
 
         for (let i = 1; i < this.props.options + 1; i++) {
             options.push(i);
+        }
+
+        for (let i = 1; i < this.props.options + 1; i++) {
+            panel.push({
+                key: 'details', // must have prop
+                title: 'Add-On Details',
+                content: {
+                    as: Form.TextArea,
+                    name: `desc-${this.props.scenarioNumber}-${i}`,
+                    label: 'Pros / Cons',
+                    placeholder: 'Description',
+                },
+            });
         }
 
         return (
@@ -80,7 +82,8 @@ class QuestScenarioCreation extends React.Component {
                                                 <Accordion
                                                     as={Form.Field}
                                                     style={{ padding: '20px 0px' }}
-                                                    panels={this.panels}
+                                                    //name={'desc-' + number + '-' + value}
+                                                    panels={[panel[value - 1]]}
                                                     onChange={this.props.handleChange}
                                                 />
                                             </div>
