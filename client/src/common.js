@@ -1,5 +1,5 @@
 // Used in Login, Registration, Dashboard and DashboardMenu.js
-module.exports.appName = "Guru or Goondu";
+module.exports.appName = 'Guru or Goondu';
 
 // Used in components that make axios calls
 module.exports.host = 'http://localhost:9000';
@@ -9,9 +9,7 @@ module.exports.inProduction = false;
 
 // Used in most components
 module.exports.containerStyle = {
-    maxWidth: '25%',
+    maxWidth: '70%',
     margin: 'auto',
-    paddingTop: '100px'
+    paddingTop: '100px',
 };
-
-

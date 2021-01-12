@@ -103,6 +103,7 @@ POST http://localhost:9000/quest/createNew
 
 ###
 
-GET http://localhost:9000/quest/11
+GET http://localhost:9000/quiz
+
 
 
