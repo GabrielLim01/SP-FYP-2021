@@ -1,10 +1,11 @@
 import React from 'react';
-//import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Form, Button, Segment, Grid, Label, Input, Select, Message, Accordion } from 'semantic-ui-react';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
 import retrieveItems from './retrieveItems.js';
+import QuizDelete from './QuizDelete.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
@@ -17,7 +18,6 @@ class CategorySelection extends React.Component {
             categoryItems: [],
             category: null,
             functions: [
-                { icon: 'trash', color: 'red', path: 'delete' },
                 { icon: 'edit', color: 'blue', path: 'update' },
                 { icon: 'play', color: 'green', path: 'play' },
             ],
@@ -47,14 +47,14 @@ class CategorySelection extends React.Component {
     };
 
     panel(value) {
+        const empty = 'None.';
         return [
             {
                 key: 'details',
                 title: 'Description',
                 content: {
                     as: Form.Field,
-
-                    label: value.length > 0 ? `${value}` : 'No description available.',
+                    label: JSON.stringify(value).length > 0 ? `${value}` : `${empty}`,
                 },
             },
         ];
@@ -104,8 +104,6 @@ class CategorySelection extends React.Component {
     render() {
         let quizItems = this.state.quizItems.filter((item) => {
             switch (this.state.filterType) {
-                case 'category':
-                    return item.categoryId === parseInt(this.state.filter);
                 default:
                     return item.quizName.toLowerCase().indexOf(this.state.filter) !== -1;
             }
@@ -124,6 +122,7 @@ class CategorySelection extends React.Component {
                                 <input name="filter" onChange={this.handleChange} />
                                 <Select
                                     name="filterType"
+                                    disabled
                                     options={this.state.filterOptions}
                                     onChange={this.handleDropdownChange}
                                     defaultValue="name"
@@ -132,9 +131,11 @@ class CategorySelection extends React.Component {
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <h1>All Quizzes</h1>
-                            <button className="ui primary button" onClick={this.redirectHandler}>
-                                Create New<i className="right wrench icon"></i>
-                            </button>
+                            <Link to={{ pathname: 'quizzes/creation' }}>
+                                <button className="ui primary button">
+                                    Create New<i className="right wrench icon"></i>
+                                </button>
+                            </Link>
                         </div>
                         <div className="ui stacked segment">
                             <Form>
@@ -147,20 +148,42 @@ class CategorySelection extends React.Component {
                                                     <div style={{ fontStyle: 'italic' }}>
                                                         Category:
                                                         <Label style={{ margin: '0 5px' }} horizontal>
-                                                            {value.categoryId}
+                                                            {this.state.categoryItems.map((category, index) => {
+                                                                return category.categoryId === value.categoryId
+                                                                    ? category.categoryName
+                                                                    : '';
+                                                            })}
                                                         </Label>
+                                                        Created At: {value.createdAt}
                                                         <Accordion panels={this.panel(value.quizDesc)} />
                                                     </div>
                                                 </Grid.Row>
                                                 <Grid.Row style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                                                    {this.state.functions.map((value, index2) => {
+                                                    <Grid.Column>
+                                                        <QuizDelete
+                                                            trigger={<Button circular icon="trash" color="red" />}
+                                                            quiz={value}
+                                                        />
+                                                    </Grid.Column>
+                                                    {this.state.functions.map((button, index2) => {
                                                         return (
                                                             <Grid.Column key={index2} style={{ display: 'flex' }}>
-                                                                <Button
-                                                                    circular
-                                                                    icon={value.icon}
-                                                                    color={value.color}
-                                                                />
+                                                                <Link
+                                                                    push
+                                                                    to={{
+                                                                        // window.location.href.split("/").pop() gets the last part of the URL after the forward slash (e.g. 'quizzes')
+                                                                        pathname: `${window.location.href
+                                                                            .split('/')
+                                                                            .pop()}/${button.path}/${value.quizId}`,
+                                                                        quiz: value,
+                                                                    }}
+                                                                >
+                                                                    <Button
+                                                                        circular
+                                                                        icon={button.icon}
+                                                                        color={button.color}
+                                                                    />
+                                                                </Link>
                                                             </Grid.Column>
                                                         );
                                                     })}
