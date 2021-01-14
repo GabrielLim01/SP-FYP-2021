@@ -20,6 +20,11 @@ import QuizUpdate from './quiz/QuizUpdate.js';
 import QuizDelete from './quiz/QuizDelete.js';
 */
 
+// Category
+import CategoryDashboard from './category/categoryDashboard';
+import CategoryCreate from './category/categoryCreate';
+import CategoryUpdate from './category/categoryUpdate';
+
 const Routes = () => {
   return (
     <Switch>
@@ -27,11 +32,15 @@ const Routes = () => {
       <Route exact path="/register" component={Registration}></Route>
       <Route exact path="/dashboard" component={Dashboard}></Route>
 
-      <Route exact path="/profile" component={Profile}></Route>
+      <Route exact path="/account" component={Profile}></Route>
 
       <Route exact path="/quizzes" component={CategorySelection}></Route>
       <Route exact path="/quizzes/creation" component={QuizCreation}></Route>
       <Route exact path="/quizzes/:categoryName" component={QuizSelection}></Route>
+
+      <Route exact path="/category" component={CategoryDashboard}></Route>
+      <Route exact path="/category/create" component={CategoryCreate}></Route>
+      <Route exact path="/category/update/:id" component={CategoryUpdate}></Route>
 
       <Route component={NotFound} />
     </Switch>

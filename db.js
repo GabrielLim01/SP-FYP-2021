@@ -23,8 +23,7 @@ connection.connect((err) => {
 
 const joinQuizTableQuery = 'SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId';
 
-const retrieveQuizByCategoryIdQuery =
-  'SELECT DISTINCT(quiz.quizId), quiz.quizName FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId';
+const retrieveQuizByCategoryIdQuery = 'SELECT DISTINCT(quiz.quizId), quiz.quizName FROM quiz';
 
 const joinQuestTableQuery = 'SELECT * FROM quest INNER JOIN quest_scenario ON quest.insertId = quest_scenario.questId';
 
@@ -177,7 +176,6 @@ class DbService {
             if (result.affectedRows === 0) {
               console.log(`Deleted 0 rows.`);
             }
-            resolve(result.affectedRows);
           }
         });
       });
@@ -226,7 +224,7 @@ class DbService {
           } else {
             // Resolve promise with an access token string and send it back to the front-end
             const accessToken = 'Congrats';
-            resolve([accessToken, jsonResults[0].insertId]);
+            resolve([accessToken, jsonResults[0].insertId]);;
           }
         });
       });
@@ -260,6 +258,7 @@ class DbService {
       throw e.message;
     }
   }
+
   //Retrieve all categories
   async getAllCategories() {
     try {
@@ -292,6 +291,21 @@ class DbService {
     }
   }
 
+  // Retrieve a category by its ID
+  async getCategoryDetailsById(id) {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT * from category WHERE categoryId = ?;';
+
+      connection.query(query, id, (err, result) => {
+        if (err) reject(err.message);
+        else {
+          console.log(result);
+          resolve(result);
+        }
+      });
+    });
+  }
+
   //Update category
   async updateCategoryById(id, catName, catDesc) {
     try {
@@ -310,6 +324,7 @@ class DbService {
       throw e.message;
     }
   }
+
   //Delete Category
   async deleteCategoryById(id) {
     try {
@@ -370,6 +385,18 @@ class DbService {
       throw e.message;
     }
   }
+
+  async updateQuestDetailsById(id, title, desc, objective, categoryId, fiqPoint) {
+    return new Promise((resolve, reject) => {
+      const query =
+        'UPDATE quest SET title = ?, description = ?, objective = ?, categoryId = ?, fiqPoint = ?  WHERE insertId = ?;';
+      connection.query(query, [title, desc, objective, categoryId, fiqPoint, id], (err, result) => {
+        if (err) return reject(err.message);
+        resolve(result.affectedRows);
+      });
+    });
+  }
+
 
   async updateQuestDetailsById(id, title, desc, objective, categoryId, fiqPoint) {
     return new Promise((resolve, reject) => {

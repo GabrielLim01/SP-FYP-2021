@@ -281,6 +281,7 @@ app.post('/authenticate', (request, response) => {
     result
       .then((data) => {
         response.json(data);
+        //response.status(200).send(`User is authenticated`);
       })
       .catch((err) => {
         response
@@ -292,11 +293,12 @@ app.post('/authenticate', (request, response) => {
 
 //create
 app.post('/category', async (request, response) => {
-  const categoryName = request.body.catName;
-  const categoryDesc = request.body.catDesc;
+  const category = request.body.category;
+  const categoryName = category.name;
+  const categoryDesc = category.description;
   let isValid = validateString(categoryName);
   const db = dbService.getDbServiceInstance();
-  if (isValid) {
+  if (isValid && !isBlank(categoryName)) {
     let result = db.createCategory(categoryName, categoryDesc);
 
     result
@@ -306,7 +308,7 @@ app.post('/category', async (request, response) => {
       .catch((err) => {
         response.status(500).send(`Error creating category: ${categoryName}`, err);
       });
-  } else response.status(400).send(`${categoryName} contained illegal characters. Please check again.`);
+  } else response.status(400).send(`${categoryName} contained illegal characters or is empty. Please check again.`);
 });
 
 //read
@@ -322,22 +324,25 @@ app.get('/category', async (request, response) => {
     .catch((err) => response.status(400).send(`${err}`));
 });
 
-app.get('/category/:name', async (request, response) => {
-  const db = dbService.getDbServiceInstance();
-
-  const result = db.getCategoryByName(request.params.name);
-
-  result
-    .then((data) => {
-      response.json(data);
-    })
-    .catch((err) => response.status(400).send(`${err}`));
+// Get by ID
+app.get('/category/:id', (request, response) => {
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const db = dbService.getDbServiceInstance();
+    const result = db.getCategoryDetailsById(request.params.id);
+    result
+      .then((data) => {
+        response.json(data);
+      })
+      .catch((err) => response.status(400).send(`${err}`));
+  } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
 //update
 app.patch('/category/:id', (request, response) => {
-  const categoryName = request.body.catName;
-  const categoryDesc = request.body.catDesc;
+  const category = request.body.category;
+  const categoryName = category.name;
+  const categoryDesc = category.description;
   const db = dbService.getDbServiceInstance();
   let isValid = validateID(request.params.id);
   if (isValid) {
@@ -460,6 +465,50 @@ const obj = {
     },
   ],
 };
+//create
+app.post('/quest/createNew', async (request, response) => {
+  //syntaxes to change during integration
+  const title = obj.questTitle;
+  const desc = obj.questDesc;
+  const objective = obj.questObjective;
+  const categoryId = obj.questCategoryId;
+  const fiqPoints = obj.fiqPoints;
+  const scenarioObj = obj.questions;
+  let isValid = validateString(title);
+  const db = dbService.getDbServiceInstance();
+  if (isValid) {
+    let result = db.createQuest(title, desc, objective, categoryId, fiqPoints);
+    result
+      .then((data) => {
+        response.json({ data: data.insertId });
+
+        let createQuestScenarioResult = db.createQuestScenario(data.insertId, scenarioObj);
+        createQuestScenarioResult.catch((err) => console.log(`Creation of scenario(s) failed. ${err}`));
+      })
+      .catch((err) => {
+        response.status(500).send(`Error creating quest: ${title}, ${err}`);
+      });
+  } else response.status(400).send(`${title} contained illegal characters. Please check again.`);
+});
+
+app.get('/quest/:id', (request, response) => {
+  const db = dbService.getDbServiceInstance();
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.getQuestById(request.params.id);
+    result
+      .then((data) => {
+        if (!isEmpty(data)) {
+          const questObject = JSON.parse(JSON.stringify(data));
+          response.json({ data: questObject });
+        } else response.status(400).send(`Quest of id: ${request.params.id} is not present.`);
+      })
+      .catch((err) => {
+        response.status(400).send(`Unable to retrieve specified quest of id: ${request.params.id}.`, err);
+      });
+  } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
 //create
 app.post('/quest/createNew', async (request, response) => {
   //syntaxes to change during integration

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link, Redirect } from 'react-router-dom'
-import { Form, Button, Segment, Grid } from 'semantic-ui-react'
-import { containerStyle } from '../../common.js'
-import DashboardMenu from '../DashboardMenu.js'
+import { Link, Redirect } from 'react-router-dom';
+import { Segment, Grid, Form, Button } from 'semantic-ui-react';
+import { containerStyle } from '../../common.js';
+import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
 import retrieveItems from './retrieveItems.js';
 
@@ -10,7 +10,7 @@ import retrieveItems from './retrieveItems.js';
 // 1. Category is valid (i.e. recognised in the database), but there are no quizzes associated with the category (e.g. newly-created category)
 
 // TO-DO
-// 1. Better error handling/validation for scenario 1 above 
+// 1. Better error handling/validation for scenario 1 above
 
 class QuizSelection extends React.Component {
     constructor(props) {
@@ -30,12 +30,12 @@ class QuizSelection extends React.Component {
 
     generateItems() {
         retrieveItems(`quiz/category/${this.state.category.categoryId}`)
-            .then(data => {
+            .then((data) => {
                 if (data !== undefined) {
                     let quizzes = [];
 
-                    data.forEach(element => {
-                        quizzes.push(element)
+                    data.forEach((element) => {
+                        quizzes.push(element);
                     });
 
                     this.setState({ items: quizzes });
@@ -45,7 +45,7 @@ class QuizSelection extends React.Component {
             })
             .catch((error) => {
                 alert(error);
-            })
+            });
     }
 
     componentDidMount() {
@@ -54,24 +54,22 @@ class QuizSelection extends React.Component {
         if (this.props.location.category !== undefined) {
             this.setState({ category: this.props.location.category }, () => {
                 this.generateItems();
-            })
+            });
         } else {
             // Redirect users to /quizzes if they attempt to access this component directly via the URL
-            this.setState({ redirect: "/quizzes" });
+            this.setState({ redirect: '/quizzes' });
         }
     }
 
     render() {
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirect} />
+            return <Redirect to={this.state.redirect} />;
         } else if (!verifyLogin()) {
-            return (
-                <h1>403 Forbidden</h1>
-            )
+            return <h1>403 Forbidden</h1>;
         } else if (!this.state.hasItems) {
             return (
                 <div className="container">
-                    <DashboardMenu page='quizzes'></DashboardMenu>
+                    <DashboardMenu page="quizzes"></DashboardMenu>
                     <div className="subContainer" style={containerStyle}>
                         <h1>Sorry, no quizzes available!</h1>
                         <div className="field">
@@ -80,17 +78,13 @@ class QuizSelection extends React.Component {
                             </Link>
                         </div>
                     </div>
-                </div >
-            )
+                </div>
+            );
         } else {
             return (
                 <div className="container">
-                    <DashboardMenu page='quizzes'></DashboardMenu>
-                    <div className="subContainer" style={{
-                        maxWidth: '35%',
-                        margin: 'auto',
-                        paddingTop: '100px'
-                    }}>
+                    <DashboardMenu page="quizzes"></DashboardMenu>
+                    <div className="subContainer" style={containerStyle}>
                         <h1>Select a quiz!</h1>
                         <div className="ui stacked segment">
                             <Form>
@@ -122,17 +116,21 @@ class QuizSelection extends React.Component {
                                 })}
                                 <h2>Or...</h2>
                                 <div className="field">
-                                    <Link to={{
-                                        pathname: 'creation'
-                                    }}>
-                                        <Button icon className='fluid large blue'>Create a quiz!</Button>
+                                    <Link
+                                        to={{
+                                            pathname: 'creation',
+                                        }}
+                                    >
+                                        <Button icon className="fluid large blue">
+                                            Create a quiz!
+                                        </Button>
                                     </Link>
                                 </div>
                             </Form>
                         </div>
                     </div>
-                </div >
-            )
+                </div>
+            );
         }
     }
 }

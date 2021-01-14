@@ -10,6 +10,7 @@ export default class DashboardMenu extends React.Component {
             { name: 'home', path: 'dashboard' },
             { name: 'quizzes', path: 'quizzes' },
             { name: 'quests', path: 'quests' },
+            { name: 'category', path: 'category' },
         ],
         redirect: null,
     };
@@ -55,12 +56,12 @@ export default class DashboardMenu extends React.Component {
                             <Input icon="search" placeholder="Search..." />
                         </Menu.Item>
 
-                        <Dropdown item text="Account" className="icon">
+                        <Dropdown item text="Profile" className="icon">
                             <Dropdown.Menu>
                                 <Dropdown.Item
                                     icon="user"
-                                    text="Profile"
-                                    name="profile"
+                                    text="Account"
+                                    name="account"
                                     onClick={this.handleItemClick}
                                 ></Dropdown.Item>
                                 <Dropdown.Item
