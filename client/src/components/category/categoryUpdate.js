@@ -57,8 +57,6 @@ class CategoryUpdate extends React.Component {
                         type: 'success',
                         theme: 'semanticui',
                     }).show();
-
-                    this.setState({ redirect: true });
                 } else {
                     new Noty({
                         text: 'Something went wrong.',

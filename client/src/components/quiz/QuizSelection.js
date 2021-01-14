@@ -5,6 +5,7 @@ import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
 import retrieveItems from './retrieveItems.js';
+import QuizDelete from './QuizDelete.js'
 
 // No quizzes will be rendered (i.e. hasItems property will be set to false) under the following scenario:
 // 1. Category is valid (i.e. recognised in the database), but there are no quizzes associated with the category (e.g. newly-created category)
@@ -21,8 +22,7 @@ class QuizSelection extends React.Component {
             hasItems: true,
             functions: [
                 { icon: 'play', color: 'green', path: 'play' },
-                { icon: 'edit', color: 'blue', path: 'update' },
-                { icon: 'trash', color: 'red', path: 'delete' }
+                { icon: 'edit', color: 'blue', path: 'update' }
             ],
             redirect: null
         }
@@ -63,7 +63,7 @@ class QuizSelection extends React.Component {
 
     render() {
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirect} />;
+            return <Redirect push to={this.state.redirect} />
         } else if (!verifyLogin()) {
             return <h1>403 Forbidden</h1>;
         } else if (!this.state.hasItems) {
@@ -90,7 +90,7 @@ class QuizSelection extends React.Component {
                             <Form>
                                 {this.state.items.map((element, index) => {
                                     return (
-                                        <Segment inverted color='black' key={index} style={{ border: '5px solid black' }}>
+                                        <Segment inverted color='black' key={index}>
                                             <Grid>
                                                 <Grid.Row columns='equal'>
                                                     <Grid.Column width={8}>
@@ -109,6 +109,12 @@ class QuizSelection extends React.Component {
                                                             </Grid.Column>
                                                         )
                                                     })}
+                                                    <Grid.Column>
+                                                        <QuizDelete
+                                                            trigger={<Button circular icon='trash' color='red' />}
+                                                            quiz={element}
+                                                        />
+                                                    </Grid.Column>
                                                 </Grid.Row>
                                             </Grid>
                                         </Segment>

@@ -1,14 +1,15 @@
 import React from 'react';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
 import { Segment, Form, Grid, TextArea, Dropdown, Button, Popup, Icon } from 'semantic-ui-react';
 import { host } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
 import QuizQuestionCreation from './QuizQuestionCreation.js';
 import retrieveItems from './retrieveItems.js';
-// import Noty from 'noty';
-// import '../../../node_modules/noty/lib/noty.css';
-// import '../../../node_modules/noty/lib/themes/semanticui.css';
+import Noty from 'noty';
+import '../../../node_modules/noty/lib/noty.css';
+import '../../../node_modules/noty/lib/themes/semanticui.css';
 
 // TO-DO
 // 1. Input validation (especially for checkboxes)
@@ -29,9 +30,21 @@ class QuizCreation extends React.Component {
             options: 4,
             categories: [],
             fiqOptionsRange: 5,
-            timeOptionsRange: 7
+            timeOptionsRange: 7,
+            redirect: null,
         };
     }
+
+    redirectHandler = () => {
+        this.setState({ redirect: '/quizzes' });
+        this.renderRedirect();
+    };
+
+    renderRedirect = () => {
+        if (this.state.redirect) {
+            return <Redirect push to={this.state.redirect} />;
+        }
+    };
 
     onAddQuestion = () => {
         if (this.state.questions < this.state.maxQuestions) {
@@ -44,7 +57,6 @@ class QuizCreation extends React.Component {
     };
 
     handleChange = (event) => {
-        console.log(event.target.name + " " + event.target.value)
         this.setState({
             [event.target.name]: event.target.value,
         });
@@ -57,7 +69,7 @@ class QuizCreation extends React.Component {
     };
 
     handleCheckboxChange = (checkbox) => {
-        console.log(checkbox.name + " " + !checkbox.checked)
+        // console.log(checkbox.name + ' ' + !checkbox.checked);
         this.setState({
             [checkbox.name]: !checkbox.checked,
         });
@@ -99,17 +111,22 @@ class QuizCreation extends React.Component {
             questions: questions,
         };
 
-        //console.log(JSON.stringify(quiz))
+        console.log(JSON.stringify(quiz));
 
         // Send quiz object to the back-end via axios
         axios
             .post(host + '/quiz', {
                 quiz: quiz,
             })
-            .then((response) => {
-                console.log(response.data)
-                alert("Success!")
-            })
+            .then(
+                new Noty({
+                    text: `Quiz Created: ${quiz.title}`,
+                    type: 'success',
+                    theme: 'semanticui',
+                }).show(),
+                this.setState({ redirect: '/quizzes' }),
+            )
+
             .catch((error) => {
                 alert(error);
             });
@@ -123,14 +140,6 @@ class QuizCreation extends React.Component {
                 data.forEach((element) => {
                     categories.push(element);
                 });
-
-
-                // new Noty({
-                //     text: "Some notification text",
-                //     layout: 'topRight',
-                //     type: 'success'
-                // }).show();
-
 
                 this.setState({ categories: categories });
             })
@@ -167,16 +176,18 @@ class QuizCreation extends React.Component {
         }
 
         for (let i = 1; i < this.state.fiqOptionsRange; i++) {
-            let value = 25 * i
+            let value = 25 * i;
             FIQoptions.push({ text: value, value: value });
-        };
+        }
 
         for (let i = 1; i < this.state.timeOptionsRange; i++) {
-            let value = 5 * i
+            let value = 5 * i;
             timeOptions.push({ text: value, value: value });
-        };
+        }
 
-        if (!verifyLogin()) {
+        if (this.state.redirect) {
+            return <Redirect push to={this.state.redirect} />;
+        } else if (!verifyLogin()) {
             return <h1>403 Forbidden</h1>;
         } else {
             return (
@@ -192,17 +203,32 @@ class QuizCreation extends React.Component {
                                 <Grid columns="equal">
                                     <Grid.Row columns={2}>
                                         <Grid.Column>
-                                            <Popup content='The name of your quiz!' trigger={<h3>Quiz Title *</h3>} />
-                                            <input type="text" name="quizTitle" placeholder="Title" onChange={this.handleChange} />
+                                            <Popup content="The name of your quiz!" trigger={<h3>Quiz Title *</h3>} />
+                                            <input
+                                                type="text"
+                                                name="quizTitle"
+                                                placeholder="Title"
+                                                onChange={this.handleChange}
+                                            />
                                         </Grid.Column>
                                         <Grid.Column>
-                                            <Popup content='Tell us what your quiz is about!' trigger={<h3>Quiz Description</h3>} />
-                                            <TextArea name='quizDesc' placeholder='Description' onChange={this.handleChange} />
+                                            <Popup
+                                                content="Tell us what your quiz is about!"
+                                                trigger={<h3>Quiz Description</h3>}
+                                            />
+                                            <TextArea
+                                                name="quizDesc"
+                                                placeholder="Description"
+                                                onChange={this.handleChange}
+                                            />
                                         </Grid.Column>
                                     </Grid.Row>
                                     <Grid.Row columns={3}>
                                         <Grid.Column>
-                                            <Popup content='What category does your quiz belong in?' trigger={<h3>Category *</h3>} />
+                                            <Popup
+                                                content="What category does your quiz belong in?"
+                                                trigger={<h3>Category *</h3>}
+                                            />
                                             <Dropdown
                                                 name="quizCategory"
                                                 placeholder="Select a Category"
@@ -214,10 +240,13 @@ class QuizCreation extends React.Component {
                                             />
                                         </Grid.Column>
                                         <Grid.Column>
-                                            <Popup content='How much FIQ (Financial IQ) points should players earn upon correctly answering each question?' trigger={<h3>FIQ per question *</h3>} />
+                                            <Popup
+                                                content="How much FIQ (Financial IQ) points should players earn upon correctly answering each question?"
+                                                trigger={<h3>FIQ per question *</h3>}
+                                            />
                                             <Dropdown
-                                                name='quizPoints'
-                                                placeholder='Select FIQ per question'
+                                                name="quizPoints"
+                                                placeholder="Select FIQ per question"
                                                 fluid
                                                 selection
                                                 clearable
@@ -226,10 +255,13 @@ class QuizCreation extends React.Component {
                                             />
                                         </Grid.Column>
                                         <Grid.Column>
-                                            <Popup content='How much time (in seconds) will the player have to answer each question?' trigger={<h3>Time per question *</h3>} />
+                                            <Popup
+                                                content="How much time (in seconds) will the player have to answer each question?"
+                                                trigger={<h3>Time per question *</h3>}
+                                            />
                                             <Dropdown
-                                                name='quizTime'
-                                                placeholder='Select time (seconds) per question'
+                                                name="quizTime"
+                                                placeholder="Select time (seconds) per question"
                                                 fluid
                                                 selection
                                                 clearable
@@ -244,6 +276,7 @@ class QuizCreation extends React.Component {
                         </Segment>
                         {questions}
                         <div className="subContainer" style={{ padding: '25px 0px', textAlign: 'right' }}>
+                            <Button onClick={this.redirectHandler}>Back{this.renderRedirect()}</Button>
                             <Button
                                 icon
                                 labelPosition="left"
@@ -259,7 +292,7 @@ class QuizCreation extends React.Component {
                             </Button>
                         </div>
                     </div>
-                </div>
+                </div >
             );
         }
     }

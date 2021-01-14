@@ -119,5 +119,9 @@ Content-Type: application/json
 
 GET http://localhost:9000/profile/3
 
+###
+
+GET http://localhost:9000/quiz
+
 
 

@@ -1,7 +1,8 @@
+const { response } = require('express');
 const mysql = require('mysql');
 const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
-const { response } = require('express');
+
 let instance = null;
 dotenv.config();
 
@@ -23,7 +24,8 @@ connection.connect((err) => {
 
 const joinQuizTableQuery = 'SELECT * FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId';
 
-const retrieveQuizByCategoryIdQuery = 'SELECT DISTINCT(quiz.quizId), quiz.quizName FROM quiz';
+const retrieveQuizByCategoryIdQuery =
+  'SELECT DISTINCT(quiz.quizId), quiz.quizName FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId';
 
 const joinQuestTableQuery = 'SELECT * FROM quest INNER JOIN quest_scenario ON quest.insertId = quest_scenario.questId';
 
@@ -32,6 +34,156 @@ class DbService {
     if (!instance) instance = new DbService();
     return instance;
   }
+
+  // LOGIN AND REGISTRATION ======================================================================================================
+
+  // POST /register
+  async insertNewUser(name, pwd) {
+    try {
+      const insertId = await new Promise((resolve, reject) => {
+        const query = 'INSERT INTO users (name, password) VALUES (?,?);';
+
+        connection.query(query, [name, pwd], (err, result) => {
+          if (err) reject(new Error(err.message));
+          resolve(result);
+        });
+      });
+      return {
+        name: name,
+        password: pwd,
+        insertId: insertId,
+      };
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  // POST /authenticate
+  async authenticate(username, password) {
+    try {
+      const response = await new Promise((resolve, reject) => {
+        const query = 'SELECT * from users where name=?';
+
+        connection.query(query, [username], (err, results) => {
+          // Case 1 - Reject promise if query fails
+          if (err) reject(`There are some errors with the query statement. ${err}`);
+
+          const jsonResults = JSON.parse(JSON.stringify(results));
+          const verify = bcrypt.compareSync(password, jsonResults[0].password);
+
+          // Case 2 - Reject promise if passwords do not match, otherwise resolve promise with the access token
+          if (!verify) {
+            reject('Passwords do not match!');
+          } else {
+
+            const data = {
+              user: jsonResults,
+              token: 'Congrats'
+            }
+            resolve(data);
+          }
+        });
+      });
+
+      return response;
+    } catch (error) {
+      // Catch rejected promises (errors)
+
+      // If a promise is rejected above, logic gets passed to this catch block, so a return error statement
+      // is needed in order to pass the error string to server.js
+      // This might not be the best practice, but without further research, not sure if there is a better way to pass error message info
+      return error;
+    }
+  }
+
+  // CATEGORY ===================================================================================================================
+
+  //Retrieve all categories
+  async getAllCategories() {
+    try {
+      return new Promise((resolve, reject) => {
+        const query = 'SELECT * from category;';
+
+        connection.query(query, (err, result) => {
+          if (err) reject(err.message);
+          resolve(result);
+        });
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
+
+  // Retrieve a category by its ID
+  async getCategoryDetailsById(id) {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT * from category WHERE categoryId = ?;';
+
+      connection.query(query, id, (err, result) => {
+        if (err) reject(err.message);
+        else {
+          console.log(result);
+          resolve(result);
+        }
+      });
+    });
+  }
+
+  //Create category
+  async createCategory(catName, catDesc) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO category (categoryName, categoryDesc) VALUES (?,?);';
+
+        connection.query(query, [catName, catDesc], (err, result) => {
+          if (err) {
+            console.log(err.message);
+            reject(err.message);
+          }
+          resolve(result);
+        });
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
+
+  //Update category
+  async updateCategoryById(id, catName, catDesc) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query = 'UPDATE category SET categoryName = ?, categoryDesc = ? WHERE categoryId = ?';
+
+        connection.query(query, [catName, catDesc, id], (err, result) => {
+          if (err) reject(err.message);
+          else {
+            console.log('Updated category and details', result);
+            resolve(result.affectedRows);
+          }
+        });
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
+
+  //Delete Category
+  async deleteCategoryById(id) {
+    try {
+      return new Promise((resolve, reject) => {
+        const query = 'DELETE FROM category WHERE categoryId = ?';
+
+        connection.query(query, id, (err, result) => {
+          if (err) return reject(err.message);
+          resolve(result.affectedRows);
+        });
+      });
+    } catch (e) {
+      throw e.message;
+    }
+  }
+
+  // QUIZZES ===================================================================================================================
 
   async getAllQuizzes() {
     try {
@@ -81,16 +233,13 @@ class DbService {
   async createQuiz(name, desc, category, points, time) {
     try {
       return new Promise((resolve, reject) => {
+        let createdAt = new Date();
         const query =
-          "INSERT INTO quiz (categoryId, quizName, quizDesc, pointsPerQuestion, timePerQuestion) VALUES (?,?,?,?,?);";
-        connection.query(
-          query,
-          [category, name, desc, points, time],
-          (err, result) => {
-            if (err) return reject(err.message);
-            resolve(result);
-          }
-        );
+          'INSERT INTO quiz (categoryId, quizName, quizDesc, pointsPerQuestion, timePerQuestion, createdAt) VALUES (?,?,?,?,?,?);';
+        connection.query(query, [category, name, desc, points, time, createdAt], (err, result) => {
+          if (err) return reject(err.message);
+          resolve(result);
+        });
       });
     } catch (e) {
       throw e.message;
@@ -100,12 +249,11 @@ class DbService {
   async createQuizQuestion(quizId, question) {
     try {
       return new Promise((resolve, reject) => {
-        const query =
-          "INSERT into quiz_question (quizId, question) values (?,?);";
+        const query = 'INSERT into quiz_question (quizId, question) values (?,?);';
         connection.query(query, [quizId, question], (err, result) => {
           if (err) reject(err.message);
           else {
-            console.log("Questions created. quizQuestionId:", result.insertId);
+            console.log('Questions created. quizQuestionId:', result.insertId);
             resolve(result);
           }
         });
@@ -131,11 +279,12 @@ class DbService {
   //     ]);
   //   });
 
-  async updateQuizDetailsById(id, title, desc, categoryId) {
+  async updateQuizDetailsById(id, title, desc, categoryId, points, time) {
     try {
       return new Promise((resolve, reject) => {
-        const query = 'UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ? WHERE quizId = ?';
-        connection.query(query, [categoryId, title, desc, id], (err, result) => {
+        const query =
+          'UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, pointsPerQuestion = ?, timePerQuestion = ? WHERE quizId = ?';
+        connection.query(query, [categoryId, title, desc, points, time, id], (err, result) => {
           if (err) return reject(err.message);
           resolve(result.affectedRows);
         });
@@ -145,17 +294,16 @@ class DbService {
     }
   }
 
-  async updateQuestionDetailsById(id, questionObject) {
-    let quizQuestionId = questionObject.quizQuestionId;
-    let questionTitle = questionObject.questionTitle;
-    let questionDesc = questionObject.questionDesc;
-    let options = JSON.stringify(questionObject.options);
+  async updateQuestionDetailsById(question) {
+    let quizQuestionId = question.quizQuestionId;
+
+    // Wrap the question properties back inside a question object that excludes quizQuestionId, then stringify said object
+    let quizQuestion = JSON.stringify({ question: question.question });
 
     return new Promise((resolve, reject) => {
-      const query =
-        'UPDATE quiz_question SET questionTitle = ?, questionDesc = ?, optionObject = ? WHERE quizId = ? and quizQuestionId = ?;';
+      const query = 'UPDATE quiz_question SET question = ? WHERE quizQuestionId = ?;';
 
-      connection.query(query, [questionTitle, questionDesc, options, id, quizQuestionId], (err, result) => {
+      connection.query(query, [quizQuestion, quizQuestionId], (err, result) => {
         if (err) reject(err.message);
         else {
           console.log(`Updated questions ${quizQuestionId}. ${result}`);
@@ -184,162 +332,23 @@ class DbService {
     }
   }
 
-  // POST /register
-  async insertNewUser(name, pwd) {
-    try {
-      const insertId = await new Promise((resolve, reject) => {
-        const query = 'INSERT INTO users (name, password) VALUES (?,?);';
+  // QUESTS =====================================================================================================================
 
-        connection.query(query, [name, pwd], (err, result) => {
-          if (err) reject(new Error(err.message));
-          resolve(result);
-        });
-      });
-      return {
-        name: name,
-        password: pwd,
-        insertId: insertId,
-      };
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
-
-  // POST /authenticate
-  async authenticate(username, password) {
-    try {
-      const response = await new Promise((resolve, reject) => {
-        const query = 'SELECT * from users where name=?';
-
-        connection.query(query, [username], (err, results) => {
-          // Case 1 - Reject promise if query fails
-          if (err) reject(`There are some errors with the query statement. ${err}`);
-
-          const jsonResults = JSON.parse(JSON.stringify(results));
-          const verify = bcrypt.compareSync(password, jsonResults[0].password);
-
-          // Case 2 - Reject promise if passwords do not match, otherwise resolve promise with the access token
-          if (!verify) {
-            reject('Passwords do not match!');
-          } else {
-            // Resolve promise with an access token string and send it back to the front-end
-            const accessToken = 'Congrats';
-            resolve([accessToken, jsonResults[0].insertId]);;
-          }
-        });
-      });
-
-      return response;
-    } catch (error) {
-      // Catch rejected promises (errors)
-
-      // If a promise is rejected above, logic gets passed to this catch block, so a return error statement
-      // is needed in order to pass the error string to server.js
-      // This might not be the best practice, but without further research, not sure if there is a better way to pass error message info
-      return error;
-    }
-  }
-
-  //Create category
-  async createCategory(catName, catDesc) {
+  async getQuestById(id) {
     try {
       return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO category (categoryName, categoryDesc) VALUES (?,?);';
-
-        connection.query(query, [catName, catDesc], (err, result) => {
-          if (err) {
-            console.log(err.message);
-            reject(err.message);
-          }
-          resolve(result);
-        });
-      });
-    } catch (e) {
-      throw e.message;
-    }
-  }
-
-  //Retrieve all categories
-  async getAllCategories() {
-    try {
-      return new Promise((resolve, reject) => {
-        const query = 'SELECT * from category;';
-
-        connection.query(query, (err, result) => {
-          if (err) reject(err.message);
-          resolve(result);
-        });
-      });
-    } catch (e) {
-      throw e.message;
-    }
-  }
-
-  // Retrieve a category by its name
-  async getCategoryByName(name) {
-    try {
-      return new Promise((resolve, reject) => {
-        const query = 'SELECT * from category WHERE categoryName = ?;';
-
-        connection.query(query, name, (err, result) => {
-          if (err) reject(err.message);
-          resolve(result);
-        });
-      });
-    } catch (e) {
-      throw e.message;
-    }
-  }
-
-  // Retrieve a category by its ID
-  async getCategoryDetailsById(id) {
-    return new Promise((resolve, reject) => {
-      const query = 'SELECT * from category WHERE categoryId = ?;';
-
-      connection.query(query, id, (err, result) => {
-        if (err) reject(err.message);
-        else {
-          console.log(result);
-          resolve(result);
-        }
-      });
-    });
-  }
-
-  //Update category
-  async updateCategoryById(id, catName, catDesc) {
-    try {
-      return new Promise((resolve, reject) => {
-        const query = 'UPDATE category SET categoryName = ?, categoryDesc = ? WHERE categoryId = ?';
-
-        connection.query(query, [catName, catDesc, id], (err, result) => {
-          if (err) reject(err.message);
-          else {
-            console.log('Updated category and details', result);
-            resolve(result.affectedRows);
-          }
-        });
-      });
-    } catch (e) {
-      throw e.message;
-    }
-  }
-
-  //Delete Category
-  async deleteCategoryById(id) {
-    try {
-      return new Promise((resolve, reject) => {
-        const query = 'DELETE FROM category WHERE categoryId = ?';
+        const query = `${joinQuestTableQuery} WHERE quest.insertId = ?;`;
 
         connection.query(query, id, (err, result) => {
           if (err) return reject(err.message);
-          resolve(result.affectedRows);
+          resolve(result);
         });
       });
     } catch (e) {
       throw e.message;
     }
   }
+
   //Create quest
   async createQuest(title, description, objective, categoryId, fiqPoints) {
     return new Promise((resolve, reject) => {
@@ -354,6 +363,7 @@ class DbService {
       });
     });
   }
+
   //Create quest scenarios
   async createQuestScenario(questId, obj) {
     const array = [];
@@ -371,21 +381,6 @@ class DbService {
     });
   }
 
-  async getQuestById(id) {
-    try {
-      return new Promise((resolve, reject) => {
-        const query = `${joinQuestTableQuery} WHERE quest.insertId = ?;`;
-
-        connection.query(query, id, (err, result) => {
-          if (err) return reject(err.message);
-          resolve(result);
-        });
-      });
-    } catch (e) {
-      throw e.message;
-    }
-  }
-
   async updateQuestDetailsById(id, title, desc, objective, categoryId, fiqPoint) {
     return new Promise((resolve, reject) => {
       const query =
@@ -396,7 +391,6 @@ class DbService {
       });
     });
   }
-
 
   async updateQuestDetailsById(id, title, desc, objective, categoryId, fiqPoint) {
     return new Promise((resolve, reject) => {
@@ -438,6 +432,8 @@ class DbService {
       throw e.message;
     }
   }
+
+  // PROFILE =====================================================================================================================
 
   async getProfileById(id) {
     return new Promise((resolve, reject) => {
@@ -504,6 +500,21 @@ class DbService {
     } catch (e) {
       throw e.message;
     }
+  }
+
+  async updateFIQ(id, FIQ) {
+    return new Promise((resolve, reject) => {
+      const query =
+        "UPDATE users SET FIQ = ? WHERE insertId = ?";
+      connection.query(
+        query,
+        [FIQ, id],
+        (err, result) => {
+          if (err) return reject(err.message);
+          resolve("Test " + result.affectedRows);
+        }
+      );
+    });
   }
 }
 

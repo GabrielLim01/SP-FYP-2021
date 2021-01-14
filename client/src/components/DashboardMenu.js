@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { Dropdown, Input, Menu } from 'semantic-ui-react';
-import { appName } from '../common.js';
+import { appName, inProduction } from '../common.js';
 
 export default class DashboardMenu extends React.Component {
     state = {
@@ -12,8 +12,15 @@ export default class DashboardMenu extends React.Component {
             { name: 'quests', path: 'quests' },
             { name: 'category', path: 'category' },
         ],
+        currentLevel: 1,
+        maxLevel: 99,
+        isMaxLevel: false,
+        currentFIQ: !inProduction ? JSON.parse(sessionStorage.getItem("user")).FIQ ? JSON.parse(sessionStorage.getItem("user")).FIQ : 0 : 0,
+        fiqToNextLevel: 100,
+        isLoggingOut: false,
         redirect: null,
-    };
+        inProduction: inProduction
+    }
 
     handleItemClick = (event, { name }) => {
         // Prevents menu from disappearing when double-clicked on
@@ -28,19 +35,94 @@ export default class DashboardMenu extends React.Component {
 
     handleLogout = (event) => {
         event.preventDefault();
-        sessionStorage.removeItem('user');
-        this.setState({ redirect: '/' });
-    };
+        this.setState({ isLoggingOut: true }, () => {
+            if (!this.state.inProduction) {
+                sessionStorage.removeItem('user');
+            }
+            this.setState({ redirect: '/' });
+        })
+    }
+
+    calculateFIQToNextLevel(currentLevel) {
+        let fiqToNextlevel = (currentLevel * (currentLevel * 250) + ((currentLevel + 1) * 500));
+        return fiqToNextlevel;
+    }
+
+    componentDidUpdate() {
+        if (!this.state.inProduction) {
+            if (!this.state.isLoggingOut) {
+                if (this.state.currentFIQ !== JSON.parse(sessionStorage.getItem("user")).FIQ) {
+                    this.setState({ currentFIQ: JSON.parse(sessionStorage.getItem("user")).FIQ }, () => {
+                        if (this.state.currentFIQ >= this.state.fiqToNextLevel) {
+                            let currentLevel = this.state.currentLevel;
+                            let levelIncrease = 0;
+                            let fiqToNextLevel = 0;
+
+                            do {
+                                fiqToNextLevel = this.calculateFIQToNextLevel(currentLevel);
+                                currentLevel++;
+                                levelIncrease++;
+                            } while (this.state.currentFIQ >= fiqToNextLevel)
+
+                            if ((this.state.currentLevel + levelIncrease) >= this.state.maxLevel) {
+                                this.setState({ currentLevel: this.state.maxLevel, isMaxLevel: true });
+                            } else {
+                                this.setState({ currentLevel: this.state.currentLevel + levelIncrease }, () => {
+                                    let currentLevel = this.state.currentLevel;
+                                    this.setState({ fiqToNextLevel: this.calculateFIQToNextLevel(currentLevel) })
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    componentDidMount() {
+        if (!this.state.inProduction) {
+            let currentLevel = this.state.currentLevel;
+            this.setState({ fiqToNextLevel: (currentLevel * (currentLevel * 250) + ((currentLevel + 1) * 500)) }, () => {
+                if (this.state.currentFIQ >= this.state.fiqToNextLevel) {
+                    let currentLevel = this.state.currentLevel;
+                    let levelIncrease = 0;
+                    let fiqToNextLevel = 0;
+
+                    do {
+                        fiqToNextLevel = this.calculateFIQToNextLevel(currentLevel);
+                        currentLevel++;
+                        levelIncrease++;
+                    } while (this.state.currentFIQ >= fiqToNextLevel)
+
+
+                    if ((this.state.currentLevel + levelIncrease) >= this.state.maxLevel) {
+                        this.setState({ currentLevel: this.state.maxLevel, isMaxLevel: true });
+                    } else {
+                        this.setState({ currentLevel: this.state.currentLevel + levelIncrease }, () => {
+                            let currentLevel = this.state.currentLevel;
+                            this.setState({ fiqToNextLevel: this.calculateFIQToNextLevel(currentLevel) })
+                        });
+                    }
+                }
+            })
+        }
+    }
 
     render() {
         const { activeItem } = this.state;
 
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirect} />;
+            return <Redirect push to={this.state.redirect} />
         } else {
             return (
                 <Menu inverted>
-                    <Menu.Item name={appName} />
+                    <Menu.Item
+                        name={appName}
+                    />
+
+                    <Menu.Item
+                        content={!this.state.isMaxLevel ? `Level ${this.state.currentLevel}: ` + this.state.currentFIQ + '/' + this.state.fiqToNextLevel + " FIQ" : `Level ${this.state.currentLevel}: Max level reached!`}
+                    />
                     {this.state.menuItems.map((value, index) => {
                         return (
                             <Menu.Item

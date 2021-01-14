@@ -11,14 +11,10 @@ import NotFound from './NotFound.js';
 import Profile from './profile/profile.js';
 
 // Quizzes
-import CategorySelection from './quiz/CategorySelection.js';
-import QuizSelection from './quiz/QuizSelection.js';
+import QuizDashboard from './quiz/QuizDashboard.js';
 import QuizCreation from './quiz/QuizCreation.js';
-/*
 import QuizPlay from './quiz/QuizPlay.js';
 import QuizUpdate from './quiz/QuizUpdate.js';
-import QuizDelete from './quiz/QuizDelete.js';
-*/
 
 // Category
 import CategoryDashboard from './category/categoryDashboard';
@@ -34,13 +30,14 @@ const Routes = () => {
 
       <Route exact path="/account" component={Profile}></Route>
 
-      <Route exact path="/quizzes" component={CategorySelection}></Route>
-      <Route exact path="/quizzes/creation" component={QuizCreation}></Route>
-      <Route exact path="/quizzes/:categoryName" component={QuizSelection}></Route>
-
       <Route exact path="/category" component={CategoryDashboard}></Route>
       <Route exact path="/category/create" component={CategoryCreate}></Route>
       <Route exact path="/category/update/:id" component={CategoryUpdate}></Route>
+
+      <Route exact path="/quizzes" component={QuizDashboard}></Route>
+      <Route exact path="/quizzes/creation" component={QuizCreation}></Route>
+      <Route exact path="/quizzes/play/:id" component={QuizPlay}></Route>
+      <Route exact path="/quizzes/update/:id" component={QuizUpdate}></Route>
 
       <Route component={NotFound} />
     </Switch>

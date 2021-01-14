@@ -20,14 +20,14 @@ class Dashboard extends React.Component {
     };
 
     componentDidMount() {
-        if (sessionStorage.getItem('user') !== null) {
-            this.setState({ username: JSON.parse(sessionStorage.getItem('user')).username });
+        if (sessionStorage.getItem("user") !== null) {
+            this.setState({ username: JSON.parse(sessionStorage.getItem("user")).username });
         }
     }
 
     render() {
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirect} />;
+            return <Redirect push to={this.state.redirect} />
         } else if (!verifyLogin()) {
             return <h1>403 Forbidden</h1>;
         } else {

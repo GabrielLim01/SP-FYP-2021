@@ -35,14 +35,15 @@ class Login extends React.Component {
                 password: this.state.password,
             })
             .then((response) => {
-                if (response.data[0] === 'Congrats') {
+                if (response.data.token === 'Congrats') {
                     let user = {
-                        id: response.data[1],
+                        id: response.data.user[0].insertId,
                         username: this.state.username,
                         isLoggedIn: true,
-                    };
-                    sessionStorage.setItem('user', JSON.stringify(user));
-                    this.setState({ redirect: '/dashboard' });
+                        FIQ: response.data.user[0].FIQ
+                    }
+                    sessionStorage.setItem("user", JSON.stringify(user));
+                    this.setState({ redirect: "/dashboard" });
                 } else {
                     alert('Error: ' + response.data);
                 }
@@ -54,9 +55,11 @@ class Login extends React.Component {
 
     render() {
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirect} />;
+            return <Redirect push to={this.state.redirect} />
         } else if (verifyLogin()) {
-            return <Redirect to="/dashboard" />;
+            return (
+                <Redirect push to='/dashboard' />
+            )
         } else {
             return (
                 <div className="container" style={containerStyle}>
