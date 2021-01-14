@@ -248,9 +248,12 @@ class DbService {
           if (!verify) {
             reject("Passwords do not match!");
           } else {
-            // Resolve promise with an access token string and send it back to the front-end
-            const accessToken = "Congrats";
-            resolve(accessToken);
+
+            const data = {
+              user: jsonResults,
+              token: 'Congrats'
+            }
+            resolve(data);
           }
         });
       });
@@ -485,6 +488,21 @@ class DbService {
         (err, result) => {
           if (err) return reject(err.message);
           resolve(result.affectedRows);
+        }
+      );
+    });
+  }
+
+  async updateFIQ(id, FIQ) {
+    return new Promise((resolve, reject) => {
+      const query =
+        "UPDATE users SET FIQ = ? WHERE insertId = ?";
+      connection.query(
+        query,
+        [FIQ, id],
+        (err, result) => {
+          if (err) return reject(err.message);
+          resolve("Test " + result.affectedRows);
         }
       );
     });

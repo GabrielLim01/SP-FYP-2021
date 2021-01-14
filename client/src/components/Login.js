@@ -34,8 +34,13 @@ class Login extends React.Component {
             password: this.state.password
         })
             .then((response) => {
-                if (response.data === 'Congrats') {
-                    let user = { username: this.state.username, isLoggedIn: true }
+                if (response.data.token === 'Congrats') {
+                    let user = {
+                        id: response.data.user[0].insertId,
+                        username: this.state.username,
+                        isLoggedIn: true,
+                        FIQ: response.data.user[0].FIQ
+                    }
                     sessionStorage.setItem("user", JSON.stringify(user));
                     this.setState({ redirect: "/dashboard" });
                 } else {

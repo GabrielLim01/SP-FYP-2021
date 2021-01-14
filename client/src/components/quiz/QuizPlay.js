@@ -1,6 +1,8 @@
 import React from 'react';
+import axios from 'axios';
 import { Redirect } from 'react-router-dom'
 import { Segment, Button } from 'semantic-ui-react';
+import { host, inProduction } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import QuizQuestionPlay from './QuizQuestionPlay.js';
 import retrieveItems from './retrieveItems.js';
@@ -24,6 +26,7 @@ class QuizPlay extends React.Component {
 
     handleStart = (event) => {
         event.preventDefault();
+        console.log(sessionStorage.getItem("user"))
         this.setState({ isPlaying: true })
     }
 
@@ -34,15 +37,70 @@ class QuizPlay extends React.Component {
 
     onQuestionAnswered = (answer, points) => {
         if (answer) {
-            this.setState({ score: this.state.score + 1, totalPoints: this.state.totalPoints + points });
-        }
+            this.setState({ score: this.state.score + 1, totalPoints: this.state.totalPoints + points }, () => {
 
-        if (this.state.currentQuestion < (this.state.maxQuestions)) {
-            // Wait a short while before loading the next question
-            setTimeout(() => this.setState({ currentQuestion: this.state.currentQuestion + 1 }), 2000);
+                if (this.state.currentQuestion < (this.state.maxQuestions)) {
+                    // Wait a short while before loading the next question
+                    setTimeout(() => this.setState({ currentQuestion: this.state.currentQuestion + 1 }), 2000);
+                } else if (!inProduction) {
+                    let newFIQ = JSON.parse(sessionStorage.getItem("user")).FIQ + this.state.totalPoints;
+
+                    // Update the user's FIQ 
+                    axios.patch(`${host}/fiq/${JSON.parse(sessionStorage.getItem("user")).id}`, {
+                        FIQ: newFIQ
+                    })
+                        .then(() => {
+                            console.log("FIQ update successful!")
+
+                            let user = JSON.parse(sessionStorage.getItem('user'));
+                            user.FIQ = newFIQ;
+                            sessionStorage.setItem("user", JSON.stringify(user));
+
+                            // Wait a short while before loading the results screen
+                            setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000)
+                        })
+                        .catch((error) => {
+                            console.log(error);
+
+                            // Wait a short while before loading the results screen
+                            setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000)
+                        });
+                } else {
+                    // Wait a short while before loading the results screen
+                    setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000)
+                }
+            });
         } else {
-            // Wait a short while before loading the results screen
-            setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000)
+            if (this.state.currentQuestion < (this.state.maxQuestions)) {
+                // Wait a short while before loading the next question
+                setTimeout(() => this.setState({ currentQuestion: this.state.currentQuestion + 1 }), 2000);
+            } else if (!inProduction) {
+                let newFIQ = JSON.parse(sessionStorage.getItem("user")).FIQ + this.state.totalPoints;
+
+                // Update the user's FIQ 
+                axios.patch(`${host}/fiq/${JSON.parse(sessionStorage.getItem("user")).id}`, {
+                    FIQ: newFIQ
+                })
+                    .then(() => {
+                        console.log("FIQ update successful!")
+
+                        let user = JSON.parse(sessionStorage.getItem('user'));
+                        user.FIQ = newFIQ;
+                        sessionStorage.setItem("user", JSON.stringify(user));
+
+                        // Wait a short while before loading the results screen
+                        setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000)
+                    })
+                    .catch((error) => {
+                        console.log(error);
+
+                        // Wait a short while before loading the results screen
+                        setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000)
+                    });
+            } else {
+                // Wait a short while before loading the results screen
+                setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000)
+            }
         }
     }
 

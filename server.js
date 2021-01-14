@@ -713,3 +713,36 @@ app.delete("/quest/:id", async (request, response) => {
         `${request.params.id} contained illegal characters. Please check again.`
       );
 });
+
+//update user FIQ
+app.patch("/fiq/:id", (request, response) => {
+  const FIQ = request.body.FIQ;
+  console.log(FIQ)
+  console.log(request.params.id)
+  const db = dbService.getDbServiceInstance();
+  let isValid = validateID(request.params.id);
+  if (isValid) {
+    const result = db.updateFIQ(
+      request.params.id,
+      FIQ
+    );
+    result
+      .then((data) => {
+        response
+          .status(200)
+          .send(
+            ` Updating FIQ of id: ${request.params.id} was a success!`
+          );
+      })
+      .catch((err) =>
+        response
+          .status(400)
+          .send(`${err}, updating of ${request.params.id} failed`)
+      );
+  } else
+    response
+      .status(400)
+      .send(
+        `${request.params.id} contained illegal characters. Please check again.`
+      );
+});
