@@ -16,7 +16,7 @@ class Login extends React.Component {
             username: null,
             password: null,
             isLoggedIn: false,
-            redirect: null
+            redirect: null,
         };
     }
 
@@ -24,36 +24,39 @@ class Login extends React.Component {
         let nam = event.target.name;
         let val = event.target.value;
         this.setState({ [nam]: val });
-    }
+    };
 
     handleSubmit = (event) => {
         event.preventDefault();
 
-        axios.post(host + '/authenticate', {
-            username: this.state.username,
-            password: this.state.password
-        })
+        axios
+            .post(host + '/authenticate', {
+                username: this.state.username,
+                password: this.state.password,
+            })
             .then((response) => {
-                if (response.data === 'Congrats') {
-                    let user = { username: this.state.username, isLoggedIn: true }
-                    sessionStorage.setItem("user", JSON.stringify(user));
-                    this.setState({ redirect: "/dashboard" });
+                if (response.data[0] === 'Congrats') {
+                    let user = {
+                        id: response.data[1],
+                        username: this.state.username,
+                        isLoggedIn: true,
+                    };
+                    sessionStorage.setItem('user', JSON.stringify(user));
+                    this.setState({ redirect: '/dashboard' });
                 } else {
-                    alert("Error: " + response.data);
+                    alert('Error: ' + response.data);
                 }
             })
             .catch((error) => {
                 alert(error);
             });
-    }
+    };
 
     render() {
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirect} />
+            return <Redirect to={this.state.redirect} />;
         } else if (verifyLogin()) {
-            return (
-                <Redirect to='/dashboard' />
-            )
+            return <Redirect to="/dashboard" />;
         } else {
             return (
                 <div className="container" style={containerStyle}>
@@ -63,16 +66,28 @@ class Login extends React.Component {
                             <div className="field">
                                 <div className="ui left icon input">
                                     <i className="user icon"></i>
-                                    <input type="text" name="username" placeholder="Username" onChange={this.handleChange} />
+                                    <input
+                                        type="text"
+                                        name="username"
+                                        placeholder="Username"
+                                        onChange={this.handleChange}
+                                    />
                                 </div>
                             </div>
                             <div className="field">
                                 <div className="ui left icon input">
                                     <i className="lock icon"></i>
-                                    <input type="password" name="password" placeholder="Password" onChange={this.handleChange} />
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        placeholder="Password"
+                                        onChange={this.handleChange}
+                                    />
                                 </div>
                             </div>
-                            <Button className="fluid large teal" onClick={this.handleSubmit}>Login</Button>
+                            <Button className="fluid large teal" onClick={this.handleSubmit}>
+                                Login
+                            </Button>
                         </Form>
                     </div>
                     <div className="ui message">
