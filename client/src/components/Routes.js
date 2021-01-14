@@ -21,50 +21,25 @@ import QuizDelete from './quiz/QuizDelete.js';
 */
 
 const Routes = () => {
-<<<<<<< HEAD
   return (
     <Switch>
-      <Route exact path='/' component={Login}></Route>
-      <Route exact path='/register' component={Registration}></Route>
-      <Route exact path='/dashboard' component={Dashboard}></Route>
+      <Route exact path="/" component={Login}></Route>
+      <Route exact path="/register" component={Registration}></Route>
+      <Route exact path="/dashboard" component={Dashboard}></Route>
 
-      <Route exact path='/quizzes' component={CategorySelection}></Route>
-      <Route exact path='/quizzes/creation' component={QuizCreation}></Route>
+      <Route exact path="/profile" component={Profile}></Route>
+
+      <Route exact path="/quizzes" component={CategorySelection}></Route>
+      <Route exact path="/quizzes/creation" component={QuizCreation}></Route>
       <Route exact path="/quizzes/:categoryName" component={QuizSelection}></Route>
-
-      {/* <Route exact path="/quizzes/:categoryName/play/:id" component={QuizPlay}></Route>
-      <Route exact path="/quizzes/:categoryName/update/:id" component={QuizUpdate}></Route>
-      <Route exact path="/quizzes/:categoryName/delete/:id" component={QuizDelete}></Route> */}
 
       <Route component={NotFound} />
     </Switch>
   );
-  // If you prefer to redirect the user to homepage immediately (without displaying an error page), 
+  // If you prefer to redirect the user to homepage immediately (without displaying an error page),
   // put the following code under <Switch> instead
   // <Route render={() => <Redirect to={{pathname: "/"}} />} />
   // and remember to import Redirect from 'react-router-dom'
-}
-=======
-    return (
-        <Switch>
-            <Route exact path="/" component={Login}></Route>
-            <Route exact path="/register" component={Registration}></Route>
-            <Route exact path="/dashboard" component={Dashboard}></Route>
-
-            <Route exact path="/profile" component={Profile}></Route>
-
-            <Route exact path="/quizzes" component={CategorySelection}></Route>
-            <Route exact path="/quizzes/creation" component={QuizCreation}></Route>
-            <Route exact path="/quizzes/:categoryName" component={QuizSelection}></Route>
-
-            <Route component={NotFound} />
-        </Switch>
-    );
-    // If you prefer to redirect the user to homepage immediately (without displaying an error page),
-    // put the following code under <Switch> instead
-    // <Route render={() => <Redirect to={{pathname: "/"}} />} />
-    // and remember to import Redirect from 'react-router-dom'
 };
->>>>>>> profile
 
 export default Routes;
