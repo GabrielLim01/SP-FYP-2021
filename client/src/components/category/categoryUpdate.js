@@ -79,7 +79,9 @@ class CategoryUpdate extends React.Component {
     componentDidMount() {
         if (this.props.location.category !== undefined) {
             let category = this.props.location.category;
-            this.setState({ category: category });
+            this.setState({ category: category }, () => {
+                this.setState({ categoryName: this.state.category.categoryName, categoryDesc: this.state.category.categoryDesc })
+            });
         } else {
             let categoryID = parseInt(window.location.href.split("/").pop());
 
@@ -134,7 +136,7 @@ class CategoryUpdate extends React.Component {
                                 <div className="field">
                                     <label>Category Description</label>
                                     <textarea
-                                        placeholder={this.state.category.categoryDesc}
+                                        defaultValue={this.state.category.categoryDesc}
                                         rows="3"
                                         name="categoryDesc"
                                         onChange={this.handleChange}
@@ -144,7 +146,7 @@ class CategoryUpdate extends React.Component {
                                     <button type="submit" className="ui primary button" onClick={this.handleSubmit}>
                                         Update<i aria-hidden="true" className="right edit icon"></i>
                                     </button>
-                                    <button type="button" className="ui button" onClick={() => this.setState({ redirect: true })}>
+                                    <button type="button" className="ui button" onClick={() => this.setState({ redirect: '/category' })}>
                                         Back
                                     </button>
                                 </div>

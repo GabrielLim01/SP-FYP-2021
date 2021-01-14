@@ -93,7 +93,7 @@ app.get('/quiz/category/:id', (request, response) => {
         if (!isEmpty(data)) {
           const quizObject = JSON.parse(JSON.stringify(data));
           response.json(quizObject);
-        } else response.status(400).send(`Category of id: ${request.params.id} is not present.`);
+        } else response.status(200).send(`Category of id: ${request.params.id} is not present.`);
       })
       .catch((err) => {
         response.status(400).send(`Unable to retrieve specified category of id: ${request.params.id}.`, err);
