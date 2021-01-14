@@ -313,6 +313,22 @@ class DbService {
             throw e.message;
         }
     }
+
+    async getAllQuests() {
+        try {
+            return new Promise((resolve, reject) => {
+                const query = 'SELECT * FROM quest;';
+
+                connection.query(query, (err, result) => {
+                    if (err) return reject(err.message);
+                    resolve(result);
+                });
+            });
+        } catch (e) {
+            throw e.message;
+        }
+    }
+
     //Create quest
     async createQuest(title, description, categoryId, fiqPoints) {
         return new Promise((resolve, reject) => {

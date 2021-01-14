@@ -436,6 +436,18 @@ const obj = {
         },
     ],
 };
+
+// Get all quests from database
+app.get('/quest', (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    const result = db.getAllQuests();
+    result
+        .then((data) => {
+            response.json(data);
+        })
+        .catch((err) => response.status(400).send(`Fetching of data failed. ${err}`));
+});
+
 //create
 app.post('/quests/createNew', async (request, response) => {
     const quest = request.body.quest;
