@@ -103,6 +103,10 @@ POST http://localhost:9000/quest/createNew
 
 ###
 
-GET http://localhost:9000/quest
+GET http://localhost:9000/quests
+
+###
+
+DELETE http://localhost:9000/quests/12
 
 

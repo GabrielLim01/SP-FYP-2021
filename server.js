@@ -438,7 +438,7 @@ const obj = {
 };
 
 // Get all quests from database
-app.get('/quest', (request, response) => {
+app.get('/quests', (request, response) => {
     const db = dbService.getDbServiceInstance();
     const result = db.getAllQuests();
     result

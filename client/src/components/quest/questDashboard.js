@@ -5,6 +5,7 @@ import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
 import retrieveItems from '../quiz/retrieveItems.js';
+import QuestDelete from './questDelete.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
@@ -17,7 +18,6 @@ class QuestDashboard extends React.Component {
             categoryItems: [],
             items: [],
             functions: [
-                { icon: 'trash', color: 'red', path: 'delete' },
                 { icon: 'edit', color: 'blue', path: 'update' },
                 { icon: 'play', color: 'green', path: 'play' },
             ],
@@ -40,6 +40,7 @@ class QuestDashboard extends React.Component {
     //        return <Redirect to="/quests/creation" />
     //     } else console.log(this.state.redirect);
     // };
+
     handleChange = (event) => {
         this.setState({
             [event.target.name]: event.target.value,
@@ -87,7 +88,7 @@ class QuestDashboard extends React.Component {
     }
 
     componentDidMount() {
-        retrieveItems('quest')
+        retrieveItems('quests')
             .then((data) => {
                 if (data.length <= 0) {
                     new Noty({
@@ -164,18 +165,22 @@ class QuestDashboard extends React.Component {
                                                     </div>
                                                 </Grid.Row>
                                                 <Grid.Row style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                                                    <Grid.Column></Grid.Column>
+                                                    <Grid.Column>
+                                                        <QuestDelete
+                                                            trigger={<Button circular icon="trash" color="red" />}
+                                                            quest={value}
+                                                        />
+                                                    </Grid.Column>
                                                     {this.state.functions.map((button, index2) => {
                                                         return (
                                                             <Grid.Column key={index2} style={{ display: 'flex' }}>
                                                                 <Link
                                                                     push
                                                                     to={{
-                                                                        // window.location.href.split("/").pop() gets the last part of the URL after the forward slash (e.g. 'quizzes')
                                                                         pathname: `${window.location.href
                                                                             .split('/')
-                                                                            .pop()}/${button.path}/${value.quizId}`,
-                                                                        quiz: value,
+                                                                            .pop()}/${button.path}/${value.insertId}`,
+                                                                        quest: value,
                                                                     }}
                                                                 >
                                                                     <Button

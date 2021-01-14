@@ -92,10 +92,9 @@ class QuestCreation extends React.Component {
                         theme: 'semanticui',
                     }).show();
 
-                    // set timeout to 2 seconds
-                    // setTimeout(() => {
-                    //     window.location.reload();
-                    // }, 1000);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
                 } else {
                     new Noty({
                         text: 'Something went wrong.',
