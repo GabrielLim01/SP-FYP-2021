@@ -28,11 +28,8 @@ class QuizCreation extends React.Component {
             maxQuestions: 10,
             options: 4,
             categories: [],
-<<<<<<< HEAD
             fiqOptionsRange: 5,
             timeOptionsRange: 7
-=======
->>>>>>> profile
         };
     }
 
@@ -110,12 +107,8 @@ class QuizCreation extends React.Component {
                 quiz: quiz,
             })
             .then((response) => {
-<<<<<<< HEAD
                 console.log(response.data)
                 alert("Success!")
-=======
-                console.log(response.data);
->>>>>>> profile
             })
             .catch((error) => {
                 alert(error);
@@ -199,30 +192,12 @@ class QuizCreation extends React.Component {
                                 <Grid columns="equal">
                                     <Grid.Row columns={2}>
                                         <Grid.Column>
-<<<<<<< HEAD
                                             <Popup content='The name of your quiz!' trigger={<h3>Quiz Title *</h3>} />
                                             <input type="text" name="quizTitle" placeholder="Title" onChange={this.handleChange} />
                                         </Grid.Column>
                                         <Grid.Column>
                                             <Popup content='Tell us what your quiz is about!' trigger={<h3>Quiz Description</h3>} />
                                             <TextArea name='quizDesc' placeholder='Description' onChange={this.handleChange} />
-=======
-                                            <h3>Quiz Title</h3>
-                                            <input
-                                                type="text"
-                                                name="quizName"
-                                                placeholder="Title"
-                                                onChange={this.handleChange}
-                                            />
-                                        </Grid.Column>
-                                        <Grid.Column>
-                                            <h3>Quiz Description</h3>
-                                            <TextArea
-                                                name="quizDesc"
-                                                placeholder="Description"
-                                                onChange={this.handleChange}
-                                            />
->>>>>>> profile
                                         </Grid.Column>
                                     </Grid.Row>
                                     <Grid.Row columns={3}>
@@ -239,7 +214,6 @@ class QuizCreation extends React.Component {
                                             />
                                         </Grid.Column>
                                         <Grid.Column>
-<<<<<<< HEAD
                                             <Popup content='How much FIQ (Financial IQ) points should players earn upon correctly answering each question?' trigger={<h3>FIQ per question *</h3>} />
                                             <Dropdown
                                                 name='quizPoints'
@@ -263,24 +237,6 @@ class QuizCreation extends React.Component {
                                                 onChange={this.handleDropdownChange}
                                             />
                                             <h3 style={{ float: 'right', color: 'red' }}>* required</h3>
-=======
-                                            <h3>FIQ per question</h3>
-                                            <input
-                                                type="text"
-                                                name="quizPoints"
-                                                placeholder="Points"
-                                                onChange={this.handleChange}
-                                            />
-                                        </Grid.Column>
-                                        <Grid.Column>
-                                            <h3>Time per question</h3>
-                                            <input
-                                                type="text"
-                                                name="quizTime"
-                                                placeholder="Time"
-                                                onChange={this.handleChange}
-                                            />
->>>>>>> profile
                                         </Grid.Column>
                                     </Grid.Row>
                                 </Grid>
