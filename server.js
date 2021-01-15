@@ -258,7 +258,6 @@ app.post("/quiz", (request, response) => {
 
     createQuizResult
       .then((data) => {
-        console.log("Quiz data" + data)
         // response.json({
         //   insertId: data.insertId,
         //   categoryid: category,
@@ -397,8 +396,8 @@ app.delete('/quiz/:id', (request, response) => {
     const result = db.deleteQuizById(request.params.id);
 
     result
-      .then((data) => {
-        response.json({ data: data });
+      .then(() => {
+        response.sendStatus(204);
       })
       .catch((err) =>
         response.status(400).send(`Deletion of quiz where id equals to ${request.params.id} has failed.`),

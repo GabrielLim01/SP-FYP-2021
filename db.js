@@ -325,6 +325,7 @@ class DbService {
               console.log(`Deleted 0 rows.`);
             }
           }
+          resolve();
         });
       });
     } catch (e) {
