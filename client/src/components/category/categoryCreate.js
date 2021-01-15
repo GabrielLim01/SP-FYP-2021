@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React from 'react';
-// import { Link } from "react-router-dom";
 import { Redirect } from 'react-router';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
@@ -72,7 +71,6 @@ class CategoryCreate extends React.Component {
                         theme: 'semanticui',
                     }).show();
 
-                    // set timeout to 2 seconds
                     setTimeout(() => {
                         window.location.reload();
                     }, 1000);

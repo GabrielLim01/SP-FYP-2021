@@ -121,7 +121,7 @@ GET http://localhost:9000/profile/3
 
 ###
 
-GET http://localhost:9000/quiz
+GET http://localhost:9000/user/2
 
 
 

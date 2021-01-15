@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
@@ -7,7 +8,7 @@ import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
 import retrieveItems from '../quiz/retrieveItems';
-import { Dropdown } from 'semantic-ui-react';
+import { Button, Dropdown } from 'semantic-ui-react';
 import userDetails from '../getUserInfo.js';
 import { host } from '../../common.js';
 
@@ -150,6 +151,11 @@ class Profile extends React.Component {
             return (
                 <div className="container">
                     <DashboardMenu page="category"></DashboardMenu>
+                    <div style={{ maxWidth: '70%', margin: 'auto' }}>
+                        <Link push to={{ pathname: 'admin/accountOverview' }}>
+                            <Button floated="right">Account Management Console</Button>
+                        </Link>
+                    </div>
                     <div className="subContainer" style={containerStyle}>
                         <div>
                             <i aria-hidden="true" className="huge user icon"></i>

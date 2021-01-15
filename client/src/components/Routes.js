@@ -17,35 +17,42 @@ import QuizPlay from './quiz/QuizPlay.js';
 import QuizUpdate from './quiz/QuizUpdate.js';
 
 // Category
-import CategoryDashboard from './category/categoryDashboard';
-import CategoryCreate from './category/categoryCreate';
-import CategoryUpdate from './category/categoryUpdate';
+import CategoryDashboard from './category/categoryDashboard.js';
+import CategoryCreate from './category/categoryCreate.js';
+import CategoryUpdate from './category/categoryUpdate.js';
+
+// Account
+import AccountOverview from './Account/accountOverview.js';
+import AdminRegistration from './Account/adminRegister.js';
 
 const Routes = () => {
-  return (
-    <Switch>
-      <Route exact path="/" component={Login}></Route>
-      <Route exact path="/register" component={Registration}></Route>
-      <Route exact path="/dashboard" component={Dashboard}></Route>
+    return (
+        <Switch>
+            <Route exact path="/" component={Login}></Route>
+            <Route exact path="/register" component={Registration}></Route>
+            <Route exact path="/dashboard" component={Dashboard}></Route>
 
-      <Route exact path="/account" component={Profile}></Route>
+            <Route exact path="/account" component={Profile}></Route>
 
-      <Route exact path="/category" component={CategoryDashboard}></Route>
-      <Route exact path="/category/create" component={CategoryCreate}></Route>
-      <Route exact path="/category/update/:id" component={CategoryUpdate}></Route>
+            <Route exact path="/category" component={CategoryDashboard}></Route>
+            <Route exact path="/category/create" component={CategoryCreate}></Route>
+            <Route exact path="/category/update/:id" component={CategoryUpdate}></Route>
 
-      <Route exact path="/quizzes" component={QuizDashboard}></Route>
-      <Route exact path="/quizzes/creation" component={QuizCreation}></Route>
-      <Route exact path="/quizzes/play/:id" component={QuizPlay}></Route>
-      <Route exact path="/quizzes/update/:id" component={QuizUpdate}></Route>
+            <Route exact path="/quizzes" component={QuizDashboard}></Route>
+            <Route exact path="/quizzes/creation" component={QuizCreation}></Route>
+            <Route exact path="/quizzes/play/:id" component={QuizPlay}></Route>
+            <Route exact path="/quizzes/update/:id" component={QuizUpdate}></Route>
 
-      <Route component={NotFound} />
-    </Switch>
-  );
-  // If you prefer to redirect the user to homepage immediately (without displaying an error page),
-  // put the following code under <Switch> instead
-  // <Route render={() => <Redirect to={{pathname: "/"}} />} />
-  // and remember to import Redirect from 'react-router-dom'
+            <Route exact path="/admin/accountOverview" component={AccountOverview}></Route>
+            <Route exact path="/admin/registration" component={AdminRegistration}></Route>
+
+            <Route component={NotFound} />
+        </Switch>
+    );
+    // If you prefer to redirect the user to homepage immediately (without displaying an error page),
+    // put the following code under <Switch> instead
+    // <Route render={() => <Redirect to={{pathname: "/"}} />} />
+    // and remember to import Redirect from 'react-router-dom'
 };
 
 export default Routes;
