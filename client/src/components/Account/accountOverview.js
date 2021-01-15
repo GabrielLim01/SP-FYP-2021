@@ -17,11 +17,14 @@ class AccountOverview extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            displayItems: [],
             defaultAccounts: [],
+            adminAccounts: [],
             roles: [],
             filter: '',
-            toggle: false,
+            isChecked: false,
         };
+        this.handleChecked = this.handleChecked.bind(this);
     }
 
     redirectHandler = () => {
@@ -39,6 +42,10 @@ class AccountOverview extends React.Component {
             [event.target.name]: event.target.value,
         });
     };
+
+    handleChecked() {
+        this.setState({ isChecked: !this.state.isChecked });
+    }
 
     onLoad() {
         retrieveItems('roles')
@@ -68,11 +75,33 @@ class AccountOverview extends React.Component {
                     theme: 'semanticui',
                 }).show();
             });
+        retrieveItems('user/1')
+            .then((data) => {
+                if (data !== undefined) {
+                    this.setState({ adminAccounts: data });
+                }
+            })
+            .catch((err) => {
+                new Noty({
+                    text: `Something went wrong. ${err}`,
+                    type: 'error',
+                    theme: 'semanticui',
+                }).show();
+            });
         this.onLoad();
     }
 
     render() {
-        let filteredContent = this.state.defaultAccounts.filter((account) => {
+        let filteredContent = [];
+        let accountType = '';
+        if (this.state.isChecked) {
+            accountType = 'Administrative Accounts';
+            this.state.displayItems = this.state.adminAccounts;
+        } else {
+            accountType = 'Default Accounts';
+            this.state.displayItems = this.state.defaultAccounts;
+        }
+        filteredContent = this.state.displayItems.filter((account) => {
             return account.name.toLowerCase().indexOf(this.state.filter) !== -1;
         });
 
@@ -84,7 +113,7 @@ class AccountOverview extends React.Component {
                     <DashboardMenu></DashboardMenu>
                     <div className="subContainer" style={containerStyle}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <h1>List of available Default Accounts</h1>
+                            <h1>List of available {`${accountType}`}</h1>
                             <Popup
                                 content="Search users by their username!"
                                 trigger={
@@ -101,9 +130,8 @@ class AccountOverview extends React.Component {
                             toggle
                             name="toggle"
                             defaultChecked={this.state.toggle}
-                            onChange={this.handleChange}
+                            onChange={this.handleChecked}
                         />
-                        {console.log(this.state.toggle)}
                         <div className="ui stacked segment">
                             {filteredContent.length > 0 ? (
                                 <Table celled>
