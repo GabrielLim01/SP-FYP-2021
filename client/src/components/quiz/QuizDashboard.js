@@ -10,7 +10,7 @@ import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
 
-class CategorySelection extends React.Component {
+class QuizDashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -25,7 +25,7 @@ class CategorySelection extends React.Component {
             filterOptions: [
                 { key: 'name', text: 'Quiz Title', value: 'name' },
                 { key: 'category', text: 'Category', value: 'category' },
-            ],
+            ]
         };
     }
 
@@ -72,6 +72,15 @@ class CategorySelection extends React.Component {
                     theme: 'semanticui',
                 }).show();
             });
+    }
+
+    componentDidUpdate() {
+        retrieveItems('quiz')
+            .then((data) => {
+                if (JSON.stringify(data) !== JSON.stringify(this.state.quizItems)) {
+                    this.setState({ quizItems: data });
+                }
+            })
     }
 
     componentDidMount() {
@@ -196,4 +205,4 @@ class CategorySelection extends React.Component {
     }
 }
 
-export default CategorySelection;
+export default QuizDashboard;

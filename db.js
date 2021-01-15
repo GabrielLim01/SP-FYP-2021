@@ -458,11 +458,34 @@ class DbService {
         return new Promise((resolve, reject) => {
             const query = 'SELECT ageGroupId, hobby from users  WHERE insertId = ?;';
 
-            connection.query(query, [id], (err, result) => {
-                if (err) return reject(err.message);
-                resolve(result);
+            connection.query(query, [quizQuestion, quizQuestionId], (err, result) => {
+                if (err) reject(err.message);
+                else {
+                    console.log(`Updated questions ${quizQuestionId}. ${result}`);
+                    resolve(result.affectedRows);
+                }
             });
         });
+    }
+
+    async deleteQuizById(id) {
+        try {
+            return new Promise((resolve, reject) => {
+                const query = 'DELETE FROM quiz WHERE quizId = ?';
+
+                connection.query(query, id, (err, result) => {
+                    if (err) reject(err.message);
+                    else {
+                        if (result.affectedRows === 0) {
+                            console.log(`Deleted 0 rows.`);
+                        }
+                    }
+                    resolve();
+                });
+            });
+        } catch (e) {
+            throw e.message;
+        }
     }
 
     async updateProfileById(id, ageGroupId, hobby) {

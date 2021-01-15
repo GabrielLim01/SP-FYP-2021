@@ -111,7 +111,7 @@ class QuizCreation extends React.Component {
             questions: questions,
         };
 
-        console.log(JSON.stringify(quiz));
+        //console.log(JSON.stringify(quiz));
 
         // Send quiz object to the back-end via axios
         axios

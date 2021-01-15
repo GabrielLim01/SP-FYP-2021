@@ -272,7 +272,6 @@ app.post('/quiz', (request, response) => {
 
         createQuizResult
             .then((data) => {
-                console.log('Quiz data' + data);
                 // response.json({
                 //   insertId: data.insertId,
                 //   categoryid: category,
@@ -288,7 +287,7 @@ app.post('/quiz', (request, response) => {
                 //   quizId,
                 //   quiz.questions
                 // );
-                let createQuestionResult = new Promise((resolve, reject) => {});
+                let createQuestionResult = new Promise((resolve, reject) => { });
 
                 const questions = quiz.questions;
                 questions.forEach((question) => {
@@ -359,7 +358,7 @@ app.patch('/quiz/:id', (request, response) => {
             .then((data) => {
                 response.json({ data: data });
 
-                let updateQuestionsResult = new Promise((resolve, reject) => {});
+                let updateQuestionsResult = new Promise((resolve, reject) => { });
 
                 questions.forEach((question) => {
                     updateQuestionsResult = db.updateQuestionDetailsById(question);
@@ -392,8 +391,8 @@ app.delete('/quiz/:id', (request, response) => {
         const result = db.deleteQuizById(request.params.id);
 
         result
-            .then((data) => {
-                response.json({ data: data });
+            .then(() => {
+                response.sendStatus(204);
             })
             .catch((err) =>
                 response.status(400).send(`Deletion of quiz where id equals to ${request.params.id} has failed.`),
@@ -564,7 +563,7 @@ app.patch('/quest/:id', (request, response) => {
             .then((data) => {
                 response.json({ data: data });
 
-                let updateScenarioResult = new Promise((resolve, reject) => {});
+                let updateScenarioResult = new Promise((resolve, reject) => { });
                 scenearioObj.forEach((scenario) => {
                     updateScenarioResult = db.updateScenarioDetailsById(
                         request.params.id,
