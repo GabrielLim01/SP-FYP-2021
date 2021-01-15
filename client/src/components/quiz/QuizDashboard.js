@@ -47,14 +47,13 @@ class CategorySelection extends React.Component {
     };
 
     panel(value) {
-        const empty = 'None.';
         return [
             {
                 key: 'details',
                 title: 'Description',
                 content: {
                     as: Form.Field,
-                    label: JSON.stringify(value).length > 0 ? `${value}` : `${empty}`,
+                    label: value ? `${value}` : `No description.`,
                 },
             },
         ];
@@ -191,8 +190,8 @@ class CategorySelection extends React.Component {
                                         );
                                     })
                                 ) : (
-                                        <h2>No Results..</h2>
-                                    )}
+                                    <h2>No Results..</h2>
+                                )}
                             </Form>
                         </div>
                     </div>

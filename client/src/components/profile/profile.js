@@ -31,8 +31,8 @@ class Profile extends React.Component {
 
         let detail = {
             name: JSON.parse(userDetails()).username,
-            ageGroup: this.state.ageGroup,
-            hobby: this.state.hobby,
+            ageGroup: this.state.ageGroup ? this.state.ageGroup : null,
+            hobby: this.state.hobby ? this.state.hobby : null,
         };
 
         const result = axios.patch(`${host}/profile/${this.userId}`, { detail: detail });
@@ -186,7 +186,11 @@ class Profile extends React.Component {
                                         labeled={true}
                                         placeholder="Select a hobby"
                                         // Converts an integer string (e.g. "123") into an array of digits (e.g. [1, 2, 3])
-                                        defaultValue={Array.from(this.state.userDetails.hobby).map(Number)}
+                                        defaultValue={
+                                            this.state.userDetails.hobby
+                                                ? Array.from(this.state.userDetails.hobby).map(Number)
+                                                : ''
+                                        }
                                         fluid
                                         multiple
                                         search
