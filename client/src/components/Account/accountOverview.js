@@ -23,7 +23,7 @@ class AccountOverview extends React.Component {
             roles: [],
             filter: '',
             isChecked: false,
-            accountType: ''
+            accountType: '',
         };
         this.handleChecked = this.handleChecked.bind(this);
     }
@@ -57,7 +57,11 @@ class AccountOverview extends React.Component {
     onLoad() {
         retrieveItems('roles')
             .then((data) => {
-                this.setState({ roles: data, displayItems: this.state.defaultAccounts, accountType: 'Default Accounts' });
+                this.setState({
+                    roles: data,
+                    displayItems: this.state.defaultAccounts,
+                    accountType: 'Default Accounts',
+                });
             })
             .catch((err) => {
                 new Noty({
@@ -130,7 +134,7 @@ class AccountOverview extends React.Component {
                         <Checkbox
                             toggle
                             name="toggle"
-                            defaultChecked={this.state.toggle}
+                            defaultChecked={this.state.isChecked}
                             onChange={this.handleChecked}
                         />
                         <div className="ui stacked segment">
@@ -185,8 +189,8 @@ class AccountOverview extends React.Component {
                                     })}
                                 </Table>
                             ) : (
-                                    <h2>No Results..</h2>
-                                )}
+                                <h2>No Results..</h2>
+                            )}
                             <div className="field" style={{ display: 'flex', flexDirection: 'row-reverse' }}>
                                 <Link to={{ pathname: '/admin/registration' }}>
                                     <button type="submit" className="ui primary button">
