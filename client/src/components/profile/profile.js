@@ -152,7 +152,7 @@ class Profile extends React.Component {
                 <div className="container">
                     <DashboardMenu page="category"></DashboardMenu>
                     <div style={{ maxWidth: '70%', margin: 'auto' }}>
-                        <Link push to={{ pathname: 'admin/accountOverview' }}>
+                        <Link to={{ pathname: 'admin/accountOverview' }}>
                             <Button floated="right">Account Management Console</Button>
                         </Link>
                     </div>

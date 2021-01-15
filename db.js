@@ -534,7 +534,7 @@ class DbService {
     async getRoles() {
         try {
             return new Promise((resolve, reject) => {
-                const query = 'SELECT * FROM role;';
+                const query = 'SELECT * FROM roles;';
 
                 connection.query(query, (err, result) => {
                     if (err) return reject(err.message);

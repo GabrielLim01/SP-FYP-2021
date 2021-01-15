@@ -23,6 +23,7 @@ class AccountOverview extends React.Component {
             roles: [],
             filter: '',
             isChecked: false,
+            accountType: ''
         };
         this.handleChecked = this.handleChecked.bind(this);
     }
@@ -44,13 +45,19 @@ class AccountOverview extends React.Component {
     };
 
     handleChecked() {
-        this.setState({ isChecked: !this.state.isChecked });
+        this.setState({ isChecked: !this.state.isChecked }, () => {
+            if (this.state.isChecked) {
+                this.setState({ displayItems: this.state.adminAccounts, accountType: 'Administrative Accounts' });
+            } else {
+                this.setState({ displayItems: this.state.defaultAccounts, accountType: 'Default Accounts' });
+            }
+        });
     }
 
     onLoad() {
         retrieveItems('roles')
             .then((data) => {
-                this.setState({ roles: data });
+                this.setState({ roles: data, displayItems: this.state.defaultAccounts, accountType: 'Default Accounts' });
             })
             .catch((err) => {
                 new Noty({
@@ -93,14 +100,8 @@ class AccountOverview extends React.Component {
 
     render() {
         let filteredContent = [];
-        let accountType = '';
-        if (this.state.isChecked) {
-            accountType = 'Administrative Accounts';
-            this.state.displayItems = this.state.adminAccounts;
-        } else {
-            accountType = 'Default Accounts';
-            this.state.displayItems = this.state.defaultAccounts;
-        }
+        let accountType = this.state.accountType;
+
         filteredContent = this.state.displayItems.filter((account) => {
             return account.name.toLowerCase().indexOf(this.state.filter) !== -1;
         });
@@ -167,10 +168,12 @@ class AccountOverview extends React.Component {
                                                     >
                                                         <Grid.Column>
                                                             <AccountUpdate
+                                                                key={value.insertId + '-update'}
                                                                 trigger={<Button circular icon="edit" color="blue" />}
                                                                 user={value}
                                                             />
                                                             <AccountDelete
+                                                                key={value.insertId + '-delete'}
                                                                 trigger={<Button circular icon="trash" color="red" />}
                                                                 user={value}
                                                             />
@@ -182,8 +185,8 @@ class AccountOverview extends React.Component {
                                     })}
                                 </Table>
                             ) : (
-                                <h2>No Results..</h2>
-                            )}
+                                    <h2>No Results..</h2>
+                                )}
                             <div className="field" style={{ display: 'flex', flexDirection: 'row-reverse' }}>
                                 <Link to={{ pathname: '/admin/registration' }}>
                                     <button type="submit" className="ui primary button">
