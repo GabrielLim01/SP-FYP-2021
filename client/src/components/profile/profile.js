@@ -192,11 +192,15 @@ class Profile extends React.Component {
                                         labeled={true}
                                         placeholder="Select a hobby"
                                         // Converts an integer string (e.g. "123") into an array of digits (e.g. [1, 2, 3])
+<<<<<<< HEAD
                                         defaultValue={
                                             this.state.userDetails.hobby
                                                 ? Array.from(this.state.userDetails.hobby).map(Number)
                                                 : ''
                                         }
+=======
+                                        defaultValue={this.state.userDetails.hobby ? Array.from(this.state.userDetails.hobby).map(Number) : ''}
+>>>>>>> main
                                         fluid
                                         multiple
                                         search

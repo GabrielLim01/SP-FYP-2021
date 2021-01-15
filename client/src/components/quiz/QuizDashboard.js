@@ -16,19 +16,14 @@ class CategorySelection extends React.Component {
         this.state = {
             quizItems: [],
             categoryItems: [],
-            category: null,
             functions: [
                 { icon: 'edit', color: 'blue', path: 'update' },
                 { icon: 'play', color: 'green', path: 'play' },
             ],
-            pagination: {
-                currentPage: 1,
-                perPage: 10,
-            },
             filter: '',
             filterType: null,
             filterOptions: [
-                { key: 'name', text: 'Quiz Name', value: 'name' },
+                { key: 'name', text: 'Quiz Title', value: 'name' },
                 { key: 'category', text: 'Category', value: 'category' },
             ],
         };
