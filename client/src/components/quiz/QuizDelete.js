@@ -29,6 +29,12 @@ class QuizDelete extends React.Component {
             });
     }
 
+    componentDidUpdate(prevState) {
+        if (this.props.quiz !== prevState.quiz) {
+            this.setState({ quiz: this.props.quiz });
+        }
+    }
+
     componentDidMount() {
         retrieveItems(`quiz/${this.state.quiz.quizId}`)
             .then(data => {
