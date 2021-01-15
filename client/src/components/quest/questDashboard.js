@@ -54,14 +54,13 @@ class QuestDashboard extends React.Component {
     };
 
     panel(value) {
-        const empty = 'None.';
         return [
             {
                 key: 'details',
                 title: 'Description',
                 content: {
                     as: Form.Field,
-                    label: JSON.stringify(value).length > 0 ? `${value}` : `${empty}`,
+                    label: value ? `${value}` : `No description.`,
                 },
             },
         ];
