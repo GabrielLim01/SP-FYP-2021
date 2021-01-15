@@ -164,7 +164,6 @@ class QuizDashboard extends React.Component {
                                                 <Grid.Row style={{ display: 'flex', flexDirection: 'row-reverse' }}>
                                                     <Grid.Column>
                                                         <QuizDelete
-                                                            key={value.quizId + '-delete'}
                                                             trigger={<Button circular icon="trash" color="red" />}
                                                             quiz={value}
                                                         />
