@@ -17,6 +17,9 @@ app.use(express.urlencoded({ extended: true }));
 const port = 9000;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
+app.get('/', function (req, res) {
+    res.send('hello world');
+});
 
 // var quizObject = {
 //   quizTitle: "Hello",
