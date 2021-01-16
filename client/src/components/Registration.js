@@ -10,9 +10,7 @@ import verifyLogin from './verifyLogin.js';
 // 2. Database may not have a record inserted successfully even if registration is successful
 
 // TO-DO
-// 1. Additional input fields (Role, Age Group) and appropriate validation
-// Possible validation rules as follows
-// Role/Age Group - Dropdown (so no client-side validation)
+// 1. Input validation
 // Password - Alphanumeric, can consider using a regex 
 
 class Registration extends React.Component {
@@ -114,6 +112,5 @@ class Registration extends React.Component {
         );
     }
 }
-
 
 export default Registration;

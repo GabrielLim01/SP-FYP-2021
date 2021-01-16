@@ -1,9 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Button, Segment, Grid, Label, Input, Select, Message, Accordion } from 'semantic-ui-react';
-import { containerStyle } from '../../common.js';
+import { containerStyle, adminAccountType } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import verifyLogin from '../verifyLogin.js';
 import retrieveItems from './retrieveItems.js';
 import QuizDelete from './QuizDelete.js';
 import Noty from 'noty';
@@ -25,7 +24,8 @@ class QuizDashboard extends React.Component {
             filterOptions: [
                 { key: 'name', text: 'Quiz Title', value: 'name' },
                 { key: 'category', text: 'Category', value: 'category' },
-            ]
+            ],
+            accountType: JSON.parse(sessionStorage.getItem("user")).accountType ? JSON.parse(sessionStorage.getItem("user")).accountType : adminAccountType
         };
     }
 
@@ -112,71 +112,70 @@ class QuizDashboard extends React.Component {
             }
         });
 
-        if (!verifyLogin()) {
-            return <h1>403 Forbidden</h1>;
-        } else {
-            return (
-                <div className="container" style={{ textAlign: 'left' }}>
-                    <DashboardMenu page="quizzes"></DashboardMenu>
-                    <div className="subContainer" style={containerStyle}>
-                        <div className="filter-input" style={{ marginBottom: '50px' }}>
-                            <Message info header="This is a filter component." />
-                            <Input fluid placeholder="Search..." action>
-                                <input name="filter" onChange={this.handleChange} />
-                                <Select
-                                    name="filterType"
-                                    disabled
-                                    options={this.state.filterOptions}
-                                    onChange={this.handleDropdownChange}
-                                    defaultValue="name"
-                                />
-                            </Input>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <h1>All Quizzes</h1>
-                            <Link to={{ pathname: 'quizzes/creation' }}>
-                                <button className="ui primary button">
-                                    Create New<i className="right wrench icon"></i>
-                                </button>
-                            </Link>
-                        </div>
-                        <div className="ui stacked segment">
-                            <Form>
-                                {quizItems.length > 0 ? (
-                                    quizItems.map((value, index) => {
-                                        return (
-                                            <Segment color="green" key={index}>
-                                                <Grid.Row>
-                                                    <h2>{value.quizName}</h2>
-                                                    <div style={{ fontStyle: 'italic' }}>
-                                                        Category:
+        return (
+            <div className="container" style={{ textAlign: 'left' }}>
+                <DashboardMenu page="quizzes"></DashboardMenu>
+                <div className="subContainer" style={containerStyle}>
+                    <div className="filter-input" style={{ marginBottom: '50px' }}>
+                        <Message info header="This is a filter component." />
+                        <Input fluid placeholder="Search..." action>
+                            <input name="filter" onChange={this.handleChange} />
+                            <Select
+                                name="filterType"
+                                disabled
+                                options={this.state.filterOptions}
+                                onChange={this.handleDropdownChange}
+                                defaultValue="name"
+                            />
+                        </Input>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <h1>All Quizzes</h1>
+                        <Link to={{ pathname: 'quizzes/creation' }}>
+                            <button className="ui primary button">
+                                Create New<i className="right wrench icon"></i>
+                            </button>
+                        </Link>
+                    </div>
+                    <div className="ui stacked segment">
+                        <Form>
+                            {quizItems.length > 0 ? (
+                                quizItems.map((value, index) => {
+                                    return (
+                                        <Segment color="green" key={index}>
+                                            <Grid.Row>
+                                                <h2>{value.quizName}</h2>
+                                                <div style={{ fontStyle: 'italic' }}>
+                                                    Category:
                                                         <Label style={{ margin: '0 5px' }} horizontal>
-                                                            {this.state.categoryItems.map((category, index) => {
-                                                                return category.categoryId === value.categoryId
-                                                                    ? category.categoryName
-                                                                    : '';
-                                                            })}
-                                                        </Label>
+                                                        {this.state.categoryItems.map((category, index) => {
+                                                            return category.categoryId === value.categoryId
+                                                                ? category.categoryName
+                                                                : '';
+                                                        })}
+                                                    </Label>
                                                         Created At: {value.createdAt}
-                                                        <Accordion panels={this.panel(value.quizDesc)} />
-                                                    </div>
-                                                </Grid.Row>
-                                                <Grid.Row style={{ display: 'flex', flexDirection: 'row-reverse' }}>
+                                                    <Accordion panels={this.panel(value.quizDesc)} />
+                                                </div>
+                                            </Grid.Row>
+                                            <Grid.Row style={{ display: 'flex', flexDirection: 'row-reverse' }}>
+                                                {this.state.accountType === adminAccountType ? (
                                                     <Grid.Column>
                                                         <QuizDelete
                                                             trigger={<Button circular icon="trash" color="red" />}
                                                             quiz={value}
                                                         />
                                                     </Grid.Column>
-                                                    {this.state.functions.map((button, index2) => {
+
+                                                ) : ''}
+                                                {this.state.accountType === adminAccountType ? (
+                                                    this.state.functions.map((button, index2) => {
                                                         return (
                                                             <Grid.Column key={index2} style={{ display: 'flex' }}>
                                                                 <Link
                                                                     to={{
                                                                         // window.location.href.split("/").pop() gets the last part of the URL after the forward slash (e.g. 'quizzes')
-                                                                        pathname: `${window.location.href
-                                                                            .split('/')
-                                                                            .pop()}/${button.path}/${value.quizId}`,
+                                                                        pathname: `${window.location.href.split('/').pop()}/${button.path}/${value.quizId}`,
                                                                         quiz: value,
                                                                     }}
                                                                 >
@@ -188,20 +187,36 @@ class QuizDashboard extends React.Component {
                                                                 </Link>
                                                             </Grid.Column>
                                                         );
-                                                    })}
-                                                </Grid.Row>
-                                            </Segment>
-                                        );
-                                    })
-                                ) : (
-                                        <h2>No Results..</h2>
-                                    )}
-                            </Form>
-                        </div>
+                                                    })
+                                                ) : (
+                                                        <Grid.Column style={{ display: 'flex' }}>
+                                                            <Link
+                                                                to={{
+                                                                    // window.location.href.split("/").pop() gets the last part of the URL after the forward slash (e.g. 'quizzes')
+                                                                    pathname: `${window.location.href.split('/').pop()}/play/${value.quizId}`,
+                                                                    quiz: value,
+                                                                }}
+                                                            >
+                                                                <Button
+                                                                    circular
+                                                                    icon="play"
+                                                                    color="green"
+                                                                />
+                                                            </Link>
+                                                        </Grid.Column>
+                                                    )}
+                                            </Grid.Row>
+                                        </Segment>
+                                    );
+                                })
+                            ) : (
+                                    <h2>No Results..</h2>
+                                )}
+                        </Form>
                     </div>
                 </div>
-            );
-        }
+            </div>
+        );
     }
 }
 

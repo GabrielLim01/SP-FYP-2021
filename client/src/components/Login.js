@@ -7,7 +7,6 @@ import verifyLogin from './verifyLogin.js';
 
 // TO-DO
 // 1. Input validation
-// 2. Implement RBAC logic
 
 class Login extends React.Component {
     constructor(props) {
@@ -15,7 +14,6 @@ class Login extends React.Component {
         this.state = {
             username: null,
             password: null,
-            isLoggedIn: false,
             redirect: null,
         };
     }
@@ -29,19 +27,21 @@ class Login extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
-        axios
-            .post(host + '/authenticate', {
-                username: this.state.username,
-                password: this.state.password,
-            })
+        axios.post(host + '/authenticate', {
+            username: this.state.username,
+            password: this.state.password,
+        })
             .then((response) => {
                 if (response.data.token === 'Congrats') {
+                    let userData = response.data.user[0];
+
                     let user = {
-                        id: response.data.user[0].insertId,
-                        username: this.state.username,
-                        isLoggedIn: true,
-                        FIQ: response.data.user[0].FIQ
+                        id: userData.insertId,
+                        username: userData.name,
+                        FIQ: userData.FIQ,
+                        accountType: userData.accountType
                     }
+
                     sessionStorage.setItem("user", JSON.stringify(user));
                     this.setState({ redirect: "/dashboard" });
                 } else {

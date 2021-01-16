@@ -3,14 +3,13 @@ import { Redirect } from 'react-router-dom';
 import { Form, Button, Icon } from 'semantic-ui-react';
 import { containerStyle } from '../common.js';
 import DashboardMenu from './DashboardMenu.js';
-import verifyLogin from './verifyLogin.js';
 
 class Dashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: 'John',
-            redirect: null,
+            username: sessionStorage.getItem("user") ? JSON.parse(sessionStorage.getItem("user")).username : 'John',
+            redirect: null
         };
     }
 
@@ -19,17 +18,9 @@ class Dashboard extends React.Component {
         this.setState({ redirect: `/${name}` });
     };
 
-    componentDidMount() {
-        if (sessionStorage.getItem("user") !== null) {
-            this.setState({ username: JSON.parse(sessionStorage.getItem("user")).username });
-        }
-    }
-
     render() {
         if (this.state.redirect) {
             return <Redirect push to={this.state.redirect} />
-        } else if (!verifyLogin()) {
-            return <h1>403 Forbidden</h1>;
         } else {
             return (
                 <div className="container">

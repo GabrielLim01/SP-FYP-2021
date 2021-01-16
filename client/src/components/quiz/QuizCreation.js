@@ -4,7 +4,6 @@ import { Redirect } from 'react-router-dom';
 import { Segment, Form, Grid, TextArea, Dropdown, Button, Popup, Icon } from 'semantic-ui-react';
 import { host } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import verifyLogin from '../verifyLogin.js';
 import QuizQuestionCreation from './QuizQuestionCreation.js';
 import retrieveItems from './retrieveItems.js';
 import Noty from 'noty';
@@ -187,8 +186,6 @@ class QuizCreation extends React.Component {
 
         if (this.state.redirect) {
             return <Redirect push to={this.state.redirect} />;
-        } else if (!verifyLogin()) {
-            return <h1>403 Forbidden</h1>;
         } else {
             return (
                 <div className="container">

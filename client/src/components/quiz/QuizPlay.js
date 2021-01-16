@@ -6,7 +6,6 @@ import { host, inProduction } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import QuizQuestionPlay from './QuizQuestionPlay.js';
 import retrieveItems from './retrieveItems.js';
-import verifyLogin from '../verifyLogin.js';
 
 class QuizPlay extends React.Component {
     constructor(props) {
@@ -128,8 +127,6 @@ class QuizPlay extends React.Component {
     render() {
         if (this.state.redirect) {
             return <Redirect push to={this.state.redirect} />;
-        } else if (!verifyLogin()) {
-            return <h1>403 Forbidden</h1>;
         } else if (!this.state.isPlaying && !this.state.isFinished) {
             return (
                 <div className="container">

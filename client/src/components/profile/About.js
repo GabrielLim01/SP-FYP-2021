@@ -1,14 +1,8 @@
 import React from 'react';
-import { containerStyle } from '../common.js';
-import DashboardMenu from './DashboardMenu.js';
-import { Dropdown } from 'semantic-ui-react';
+import DashboardMenu from '../DashboardMenu.js';
+import { containerStyle } from '../../common.js';
 
 class About extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
-
     render() {
         return (
             <div className="container">
