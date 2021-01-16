@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { Dropdown, Input, Menu } from 'semantic-ui-react';
-import { appName, adminAccountType } from '../common.js';
+import { appName, inProduction, defaultAccountType, adminAccountType } from '../common.js';
 
 export default class DashboardMenu extends React.Component {
     state = {
@@ -11,12 +11,12 @@ export default class DashboardMenu extends React.Component {
             { name: 'quizzes', path: 'quizzes' },
             { name: 'quests', path: 'quests' }
         ],
-        currentFIQ: JSON.parse(sessionStorage.getItem("user")).FIQ ? JSON.parse(sessionStorage.getItem("user")).FIQ : 0,
-        accountType: JSON.parse(sessionStorage.getItem("user")).accountType ? JSON.parse(sessionStorage.getItem("user")).accountType : adminAccountType,
+        currentFIQ: !inProduction ? JSON.parse(sessionStorage.getItem("user")).FIQ ? JSON.parse(sessionStorage.getItem("user")).FIQ : 0 : 0,
+        accountType: !inProduction ? JSON.parse(sessionStorage.getItem("user")).accountType ? JSON.parse(sessionStorage.getItem("user")).accountType : defaultAccountType : adminAccountType,
         currentLevel: 1,
+        fiqToNextLevel: 100,
         maxLevel: 99,
         isMaxLevel: false,
-        fiqToNextLevel: 100,
         isLoggingOut: false,
         redirect: null
     }
@@ -34,7 +34,7 @@ export default class DashboardMenu extends React.Component {
 
     handleLogout = (event) => {
         this.setState({ isLoggingOut: true }, () => {
-            sessionStorage.removeItem('user');
+            if (!inProduction) sessionStorage.removeItem('user');
             this.setState({ redirect: '/' });
         })
     }
@@ -67,9 +67,11 @@ export default class DashboardMenu extends React.Component {
     }
 
     componentDidUpdate() {
-        if (!this.state.isLoggingOut) {
-            if (this.state.currentFIQ !== JSON.parse(sessionStorage.getItem("user")).FIQ) {
-                this.calculateLevelDifference();
+        if (!inProduction) {
+            if (!this.state.isLoggingOut) {
+                if (this.state.currentFIQ !== JSON.parse(sessionStorage.getItem("user")).FIQ) {
+                    this.calculateLevelDifference();
+                }
             }
         }
     }
@@ -125,6 +127,7 @@ export default class DashboardMenu extends React.Component {
                                     text="Account"
                                     name="account"
                                     onClick={this.handleItemClick}
+                                    disabled={inProduction}
                                 ></Dropdown.Item>
                                 <Dropdown.Item
                                     icon="info"

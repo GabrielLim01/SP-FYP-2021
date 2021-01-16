@@ -15,41 +15,26 @@ import '../../../node_modules/noty/lib/themes/semanticui.css';
 // 2. Unify change handlers if possible
 
 // BUG
-// 1. When clicking slightly above the "Correct Answer?" checkbox for each of the options,
-// you can actually end up ticking the checkbox itself due to the built-in input='hidden' property,
-// However, this will change the option text input value (to true), and NOT the boolean value of the checkbox itself as expected!
-// Find a way to disable interacting with this hidden checkbox above the actual checkbox!
+// 1. Clicking slightly above the "Correct Answer?" checkbox sets the option text input to "true" instead of the checkbox
+// as there is a hidden checkbox field above the actual checkbox field
 
 class QuizCreation extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            categories: [],
             questions: 1,
             maxQuestions: 10,
             options: 4,
-            categories: [],
             fiqOptionsRange: 5,
             timeOptionsRange: 7,
             redirect: null,
         };
     }
 
-    redirectHandler = () => {
-        this.setState({ redirect: '/quizzes' });
-        this.renderRedirect();
-    };
-
-    renderRedirect = () => {
-        if (this.state.redirect) {
-            return <Redirect push to={this.state.redirect} />;
-        }
-    };
-
     onAddQuestion = () => {
         if (this.state.questions < this.state.maxQuestions) {
-            this.setState({
-                questions: this.state.questions + 1,
-            });
+            this.setState({ questions: this.state.questions + 1 });
         } else {
             alert('Maximum number of questions reached!');
         }
@@ -68,7 +53,6 @@ class QuizCreation extends React.Component {
     };
 
     handleCheckboxChange = (checkbox) => {
-        // console.log(checkbox.name + ' ' + !checkbox.checked);
         this.setState({
             [checkbox.name]: !checkbox.checked,
         });
@@ -113,10 +97,7 @@ class QuizCreation extends React.Component {
         //console.log(JSON.stringify(quiz));
 
         // Send quiz object to the back-end via axios
-        axios
-            .post(host + '/quiz', {
-                quiz: quiz,
-            })
+        axios.post(host + '/quiz', { quiz: quiz })
             .then(
                 new Noty({
                     text: `Quiz Created: ${quiz.title}`,
@@ -125,7 +106,6 @@ class QuizCreation extends React.Component {
                 }).show(),
                 this.setState({ redirect: '/quizzes' }),
             )
-
             .catch((error) => {
                 alert(error);
             });
@@ -273,7 +253,7 @@ class QuizCreation extends React.Component {
                         </Segment>
                         {questions}
                         <div className="subContainer" style={{ padding: '25px 0px', textAlign: 'right' }}>
-                            <Button onClick={this.redirectHandler}>Back{this.renderRedirect()}</Button>
+                            <Button onClick={() => this.setState({ redirect: '/quizzes' })}>Back</Button>
                             <Button
                                 icon
                                 labelPosition="left"

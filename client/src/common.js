@@ -4,7 +4,7 @@ module.exports.appName = 'Guru or Goondu';
 // Used in components that make axios calls
 module.exports.host = 'http://localhost:9000';
 
-// Used in DashboardMenu.js,  ProtectedRoute.js and verifyLogin.js
+// Used in Profile,js, QuizPlay.js, DashboardMenu.js,  ProtectedRoute.js and verifyLogin.js
 module.exports.inProduction = false;
 
 // If the application is in production (i.e. set to true), the following features are available:

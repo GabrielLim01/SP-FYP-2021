@@ -31,12 +31,12 @@ class ProtectedRoute extends React.Component {
         if (isAuthenticated) {
             if (requiresAdmin) {
                 if (isAdmin) {
-                    return <Route exact path={this.props.path} component={this.props.component} />
+                    return <Route component={this.props.component} />
                 } else {
                     return <h1>401 Unauthorized</h1>
                 }
             } else {
-                return <Route exact path={this.props.path} component={this.props.component} />
+                return <Route component={this.props.component} />
             }
         } else {
             return <h1>403 Forbidden</h1>

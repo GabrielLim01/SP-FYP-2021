@@ -4,9 +4,11 @@ import { Redirect } from 'react-router-dom'
 import { Segment, Form, Grid, TextArea, Dropdown, Button, Popup } from 'semantic-ui-react';
 import { host } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import verifyLogin from '../verifyLogin.js';
 import QuizQuestionUpdate from './QuizQuestionUpdate.js';
 import retrieveItems from './retrieveItems.js';
+import Noty from 'noty';
+import '../../../node_modules/noty/lib/noty.css';
+import '../../../node_modules/noty/lib/themes/semanticui.css';
 
 // TO-DO
 // 1. Input validation (especially for checkboxes)
@@ -14,19 +16,17 @@ import retrieveItems from './retrieveItems.js';
 // 3. Implement functionality to handle addition/deletion of questions
 
 // BUG
-// 1. When clicking slightly above the "Correct Answer?" checkbox for each of the options,
-// you can actually end up ticking the checkbox itself due to the built-in input='hidden' property,
-// However, this will change the option text input value (to true), and NOT the boolean value of the checkbox itself as expected!
-// Find a way to disable interacting with this hidden checkbox above the actual checkbox!
+// 1. Clicking slightly above the "Correct Answer?" checkbox sets the option text input to "true" instead of the checkbox
+// as there is a hidden checkbox field above the actual checkbox field
 
 class QuizCreation extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            categories: [],
             questions: {},
             //maxQuestions: 10,
             options: 4,
-            categories: [],
             fiqOptionsRange: 5,
             timeOptionsRange: 7,
             redirect: null
@@ -102,11 +102,13 @@ class QuizCreation extends React.Component {
         //console.log(JSON.stringify(quiz))
 
         // Send quiz object to the back-end via axios 
-        axios.patch(`${host}/quiz/${this.state.quizId}`, {
-            quiz: quiz
-        })
+        axios.patch(`${host}/quiz/${this.state.quizId}`, { quiz: quiz })
             .then(
-                alert("Success!"),
+                new Noty({
+                    text: `Quiz Updated: ${quiz.title}`,
+                    type: 'success',
+                    theme: 'semanticui',
+                }).show(),
                 this.setState({ redirect: "/quizzes" })
             )
             .catch((error) => {
@@ -227,10 +229,6 @@ class QuizCreation extends React.Component {
 
         if (this.state.redirect) {
             return <Redirect push to={this.state.redirect} />
-        } else if (!verifyLogin()) {
-            return (
-                <h1>403 Forbidden</h1>
-            )
 
             // Since quizId will be undefined on the initial render, 
             // when the component is mounted and the data is populated by the axios call,

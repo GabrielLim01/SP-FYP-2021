@@ -6,7 +6,7 @@ class About extends React.Component {
     render() {
         return (
             <div className="container">
-                <DashboardMenu page="dashboard"></DashboardMenu>
+                <DashboardMenu></DashboardMenu>
                 <div className="subContainer" style={containerStyle}>
                     <h1>Welcome to our application!</h1>
 

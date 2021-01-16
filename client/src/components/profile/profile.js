@@ -150,7 +150,7 @@ class Profile extends React.Component {
         } else if (this.state.userDetails.ageGroupId !== undefined) {
             return (
                 <div className="container">
-                    <DashboardMenu page="category"></DashboardMenu>
+                    <DashboardMenu></DashboardMenu>
                     <div style={{ maxWidth: '70%', margin: 'auto' }}>
                         <Link to={{ pathname: 'admin/accountOverview' }}>
                             <Button floated="right">Account Management Console</Button>

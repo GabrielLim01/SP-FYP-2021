@@ -32,21 +32,21 @@ const Routes = () => {
         <Switch>
             <Route exact path="/" component={Login}></Route>
             <Route exact path="/register" component={Registration}></Route>
-            <ProtectedRoute exact path="/dashboard" component={Dashboard}></ProtectedRoute>
+            <ProtectedRoute path="/dashboard" component={Dashboard}></ProtectedRoute>
 
-            <ProtectedRoute path="/category" component={CategoryDashboard} adminOnly={true}></ProtectedRoute>
-            <ProtectedRoute path="/category/create" component={CategoryCreate} adminOnly={true}></ProtectedRoute>
-            <ProtectedRoute path="/category/update/:id" component={CategoryUpdate} adminOnly={true}></ProtectedRoute>
+            <ProtectedRoute exact path="/category" component={CategoryDashboard} adminOnly={true}></ProtectedRoute>
+            <ProtectedRoute exact path="/category/create" component={CategoryCreate} adminOnly={true}></ProtectedRoute>
+            <ProtectedRoute exact path="/category/update/:id" component={CategoryUpdate} adminOnly={true}></ProtectedRoute>
 
-            <ProtectedRoute path="/quizzes" component={QuizDashboard}></ProtectedRoute>
-            <ProtectedRoute path="/quizzes/creation" component={QuizCreation} adminOnly={true}></ProtectedRoute>
-            <ProtectedRoute path="/quizzes/play/:id" component={QuizPlay}></ProtectedRoute>
-            <ProtectedRoute path="/quizzes/update/:id" component={QuizUpdate} adminOnly={true}></ProtectedRoute>
+            <ProtectedRoute exact path="/quizzes" component={QuizDashboard}></ProtectedRoute>
+            <ProtectedRoute exact path="/quizzes/creation" component={QuizCreation} adminOnly={true}></ProtectedRoute>
+            <ProtectedRoute exact path="/quizzes/play/:id" component={QuizPlay}></ProtectedRoute>
+            <ProtectedRoute exact path="/quizzes/update/:id" component={QuizUpdate} adminOnly={true}></ProtectedRoute>
 
-            <ProtectedRoute path="/account" component={Profile}></ProtectedRoute>
-            <ProtectedRoute path="/about" component={About}></ProtectedRoute>
-            <ProtectedRoute path="/admin/accountOverview" component={AccountOverview} adminOnly={true}></ProtectedRoute>
-            <ProtectedRoute path="/admin/registration" component={AdminRegistration} adminOnly={true}></ProtectedRoute>
+            <ProtectedRoute exact path="/account" component={Profile}></ProtectedRoute>
+            <ProtectedRoute exact path="/about" component={About}></ProtectedRoute>
+            <ProtectedRoute exact path="/admin/accountOverview" component={AccountOverview} adminOnly={true}></ProtectedRoute>
+            <ProtectedRoute exact path="/admin/registration" component={AdminRegistration} adminOnly={true}></ProtectedRoute>
 
             <Route component={NotFound} />
         </Switch>

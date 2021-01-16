@@ -40,6 +40,7 @@ class QuizPlay extends React.Component {
                 if (this.state.currentQuestion < (this.state.maxQuestions)) {
                     // Wait a short while before loading the next question
                     setTimeout(() => this.setState({ currentQuestion: this.state.currentQuestion + 1 }), 2000);
+
                 } else if (!inProduction) {
                     let newFIQ = JSON.parse(sessionStorage.getItem("user")).FIQ + this.state.totalPoints;
 
@@ -69,9 +70,11 @@ class QuizPlay extends React.Component {
                 }
             });
         } else {
+
             if (this.state.currentQuestion < (this.state.maxQuestions)) {
                 // Wait a short while before loading the next question
                 setTimeout(() => this.setState({ currentQuestion: this.state.currentQuestion + 1 }), 2000);
+
             } else if (!inProduction) {
                 let newFIQ = JSON.parse(sessionStorage.getItem("user")).FIQ + this.state.totalPoints;
 
@@ -93,12 +96,57 @@ class QuizPlay extends React.Component {
                         // Wait a short while before loading the results screen
                         setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000)
                     });
+
             } else {
                 // Wait a short while before loading the results screen
                 setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000)
             }
         }
+
+        // if (this.state.currentQuestion < (this.state.maxQuestions)) {
+
+        //     if (answer) {
+        //         this.setState({ score: this.state.score + 1, totalPoints: this.state.totalPoints + points }, () => {
+        //             // Wait a short while before loading the next question
+        //             setTimeout(() => this.setState({ currentQuestion: this.state.currentQuestion + 1 }), 2000);
+        //         });
+        //     } else {
+        //         setTimeout(() => this.setState({ currentQuestion: this.state.currentQuestion + 1 }), 2000);
+        //     }
+
+        // } else {
+
+        //     if (answer) {
+        //         this.setState({ score: this.state.score + 1, totalPoints: this.state.totalPoints + points }, () => {
+        //             this.updateFIQ();
+
+        //             // Wait a short while before loading the results screen
+        //             setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000);
+        //         });
+        //     } else {
+        //         this.updateFIQ();
+        //         setTimeout(() => this.setState({ isPlaying: false, isFinished: true }), 2000);
+        //     }
+        // }
     };
+
+    // updateFIQ() {
+    //     if (!inProduction) {
+    //         let user = JSON.parse(sessionStorage.getItem("user"));
+    //         let newFIQ = user.FIQ + this.state.totalPoints;
+
+    //         // Update the user's FIQ 
+    //         axios.patch(`${host}/fiq/${user.id}`, { FIQ: newFIQ })
+    //             .then(() => {
+    //                 user.FIQ = newFIQ;
+    //                 sessionStorage.setItem("user", JSON.stringify(user));
+
+    //             })
+    //             .catch((error) => {
+    //                 console.log(error);
+    //             });
+    //     }
+    // }
 
     componentDidMount() {
         // props will be undefined if the user navigates to this component directly via the URL

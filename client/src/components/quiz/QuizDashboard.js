@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Button, Segment, Grid, Label, Input, Select, Message, Accordion } from 'semantic-ui-react';
-import { containerStyle, adminAccountType } from '../../common.js';
+import { containerStyle, inProduction, defaultAccountType, adminAccountType } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import retrieveItems from './retrieveItems.js';
 import QuizDelete from './QuizDelete.js';
@@ -25,7 +25,7 @@ class QuizDashboard extends React.Component {
                 { key: 'name', text: 'Quiz Title', value: 'name' },
                 { key: 'category', text: 'Category', value: 'category' },
             ],
-            accountType: JSON.parse(sessionStorage.getItem("user")).accountType ? JSON.parse(sessionStorage.getItem("user")).accountType : adminAccountType
+            accountType: !inProduction ? JSON.parse(sessionStorage.getItem("user")).accountType ? JSON.parse(sessionStorage.getItem("user")).accountType : defaultAccountType : adminAccountType,
         };
     }
 
@@ -131,11 +131,13 @@ class QuizDashboard extends React.Component {
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <h1>All Quizzes</h1>
-                        <Link to={{ pathname: 'quizzes/creation' }}>
-                            <button className="ui primary button">
-                                Create New<i className="right wrench icon"></i>
-                            </button>
-                        </Link>
+                        {this.state.accountType === adminAccountType ? (
+                            <Link to={{ pathname: 'quizzes/creation' }}>
+                                <button className="ui primary button">
+                                    Create New<i className="right wrench icon"></i>
+                                </button>
+                            </Link>
+                        ) : ''}
                     </div>
                     <div className="ui stacked segment">
                         <Form>
@@ -166,7 +168,6 @@ class QuizDashboard extends React.Component {
                                                             quiz={value}
                                                         />
                                                     </Grid.Column>
-
                                                 ) : ''}
                                                 {this.state.accountType === adminAccountType ? (
                                                     this.state.functions.map((button, index2) => {

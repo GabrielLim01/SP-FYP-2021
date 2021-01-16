@@ -14,8 +14,7 @@ class QuizDelete extends React.Component {
         }
     }
 
-    handleSubmit = (event) => {
-
+    handleSubmit = () => {
         axios.delete(host + `/quiz/${this.state.quiz.quizId}`)
             .then((response) => {
                 if (response.status === 204) {

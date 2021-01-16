@@ -3,7 +3,6 @@ import { Link, Redirect } from 'react-router-dom';
 import { Segment, Grid, Form, Button } from 'semantic-ui-react';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import verifyLogin from '../verifyLogin.js';
 import retrieveItems from './retrieveItems.js';
 import QuizDelete from './QuizDelete.js'
 
@@ -64,8 +63,6 @@ class QuizSelection extends React.Component {
     render() {
         if (this.state.redirect) {
             return <Redirect push to={this.state.redirect} />
-        } else if (!verifyLogin()) {
-            return <h1>403 Forbidden</h1>;
         } else if (!this.state.hasItems) {
             return (
                 <div className="container">

@@ -5,7 +5,6 @@ import { Redirect } from 'react-router';
 // import { Form, Button } from "semantic-ui-react";
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import verifyLogin from '../verifyLogin.js';
 import validateCat from './validation.js';
 import { host } from '../../common.js';
 import retrieveItems from '../quiz/retrieveItems.js';
@@ -102,8 +101,6 @@ class CategoryUpdate extends React.Component {
     render() {
         if (this.state.redirect) {
             return <Redirect to={this.state.redirect} />;
-        } else if (!verifyLogin()) {
-            return <h1>403 Forbidden</h1>;
         } else if (this.state.category !== undefined) {
             const { errors } = this.state;
             return (

@@ -4,7 +4,6 @@ import { Redirect } from 'react-router-dom';
 // import { Form, Button } from "semantic-ui-react";
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import verifyLogin from '../verifyLogin.js';
 import retrieveItems from '../quiz/retrieveItems';
 import Modal from './deleteModal.js';
 
