@@ -38,6 +38,8 @@ class Login extends React.Component {
                     let user = {
                         id: userData.insertId,
                         username: userData.name,
+                        ageGroupId: userData.ageGroupId,
+                        hobby: userData.hobby,
                         FIQ: userData.FIQ,
                         accountType: userData.accountType
                     }

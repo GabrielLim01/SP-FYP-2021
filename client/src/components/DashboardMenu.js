@@ -127,7 +127,6 @@ export default class DashboardMenu extends React.Component {
                                     text="Account"
                                     name="account"
                                     onClick={this.handleItemClick}
-                                    disabled={inProduction}
                                 ></Dropdown.Item>
                                 <Dropdown.Item
                                     icon="info"

@@ -25,7 +25,7 @@ class QuizDashboard extends React.Component {
                 { key: 'name', text: 'Quiz Title', value: 'name' },
                 { key: 'category', text: 'Category', value: 'category' },
             ],
-            accountType: !inProduction ? JSON.parse(sessionStorage.getItem("user")).accountType ? JSON.parse(sessionStorage.getItem("user")).accountType : defaultAccountType : adminAccountType,
+            accountType: !inProduction ? JSON.parse(sessionStorage.getItem("user")).accountType ? JSON.parse(sessionStorage.getItem("user")).accountType : defaultAccountType : adminAccountType
         };
     }
 

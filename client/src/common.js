@@ -9,8 +9,8 @@ module.exports.inProduction = false;
 
 // If the application is in production (i.e. set to true), the following features are available:
 // -Prevents the need to login
-// -Account status will be set to Admin, user will be able to access the Account Management Console
-// -FIQ will be set to 0, user can still earn FIQ as per normal but FIQ will not be saved after logging out/closing the application
+// -Account status will be set to Admin (i.e. user will be able to access the Account Management Console)
+// -FIQ will be set to 0, user can still earn FIQ (e.g. from quizzes) as per normal but FIQ gain will not be tracked
 
 // Used in most components
 module.exports.containerStyle = {
