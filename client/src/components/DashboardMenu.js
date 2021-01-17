@@ -47,21 +47,19 @@ export default class DashboardMenu extends React.Component {
     calculateLevelDifference() {
         let currentLevel = this.state.currentLevel;
         let levelIncrease = 0;
-        let fiqToNextLevel = 0;
+        let fiqToNextLevel = this.state.fiqToNextLevel;
 
-        do {
-            fiqToNextLevel = this.calculateFIQToNextLevel(currentLevel);
+        while (this.state.currentFIQ >= fiqToNextLevel) {
             currentLevel++;
             levelIncrease++;
-        } while (this.state.currentFIQ >= fiqToNextLevel)
-
+            fiqToNextLevel = this.calculateFIQToNextLevel(currentLevel);
+        }
 
         if ((this.state.currentLevel + levelIncrease) >= this.state.maxLevel) {
             this.setState({ currentLevel: this.state.maxLevel, isMaxLevel: true });
         } else {
             this.setState({ currentLevel: this.state.currentLevel + levelIncrease }, () => {
-                let currentLevel = this.state.currentLevel;
-                this.setState({ fiqToNextLevel: this.calculateFIQToNextLevel(currentLevel) })
+                this.setState({ fiqToNextLevel: this.calculateFIQToNextLevel(this.state.currentLevel) })
             });
         }
     }
@@ -70,7 +68,9 @@ export default class DashboardMenu extends React.Component {
         if (!inProduction) {
             if (!this.state.isLoggingOut) {
                 if (this.state.currentFIQ !== JSON.parse(sessionStorage.getItem("user")).FIQ) {
-                    this.calculateLevelDifference();
+                    this.setState({ currentFIQ: JSON.parse(sessionStorage.getItem("user")).FIQ }, () => {
+                        this.calculateLevelDifference();
+                    });
                 }
             }
         }
