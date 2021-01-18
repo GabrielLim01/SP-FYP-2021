@@ -15,6 +15,7 @@ import QuizCreation from './quiz/QuizCreation.js';
 // Quest
 import QuestDashboard from './quest/questDashboard.js';
 import QuestCreation from './quest/questCreation.js';
+import QuestUpdate from './quest/questUpdate.js';
 
 const Routes = () => {
     return (
@@ -29,6 +30,7 @@ const Routes = () => {
 
             <Route exact path="/quests" component={QuestDashboard}></Route>
             <Route exact path="/quests/creation" component={QuestCreation}></Route>
+            <Route exact path="/quests/update/:id" component={QuestUpdate}></Route>
 
             <Route component={NotFound} />
         </Switch>

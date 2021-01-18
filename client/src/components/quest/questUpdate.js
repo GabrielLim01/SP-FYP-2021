@@ -133,7 +133,63 @@ class QuestUpdate extends React.Component {
     }
 
     componentDidMount() {
-        this.generateItems();
+        if (this.props.location.quest !== undefined) {
+            this.generateItems();
+            retrieveItems(`quests/${this.props.location.quest.insertId}`).then((data) => {
+                let scenarios = [];
+
+                data.forEach((element) => {
+                    scenarios.push({
+                        scenarioId: element.scenarioId,
+                        options: JSON.parse(element.options),
+                    });
+                });
+
+                // Since data returned by the back-end has quiz-specific data appended to the front of every question
+                // and we only need to reference that data once, simply remove the question and quizQuestionId from the
+                // first element of the data array and store the quiz-specific data in another variable
+                delete data[0].question;
+                delete data[0].quizQuestionId;
+                let quiz = data[0];
+
+                this.setState(
+                    {
+                        quizId: quiz.quizId,
+                        quizTitle: quiz.quizName,
+                        quizDesc: quiz.quizDesc,
+                        quizCategory: quiz.categoryId,
+                        quizPoints: quiz.pointsPerQuestion,
+                        quizTime: quiz.timePerQuestion,
+                        //questions: questions,
+                    },
+                    () => {
+                        // Initialize the default state of all questions and their related properties
+                        // If this is not done, all question-related input fields will not have their values stored in state
+                        // despite defaultValue displaying the correct values
+                        for (let i = 1; i < this.state.questions.length + 1; i++) {
+                            let question = this.state.questions[i - 1].question;
+
+                            this.setState({
+                                ['question' + i + 'name']: question.name,
+                                ['question' + i + 'points']: question.points,
+                                ['question' + i + 'time']: question.time,
+                                ['question' + i + 'explanation']: question.explanation,
+                                ['question' + i + 'name']: question.name,
+                            });
+
+                            for (let j = 1; j < this.state.options + 1; j++) {
+                                this.setState({
+                                    ['option-' + i + '-' + j]: question.options[j - 1].name,
+                                    ['isCorrect-' + i + '-' + j]: question.options[j - 1].isCorrect,
+                                });
+                            }
+                        }
+                    },
+                );
+            });
+        } else {
+            this.setState({ redirect: '/quests' });
+        }
     }
 
     render() {
