@@ -37,7 +37,7 @@ class QuizQuestionPlay extends React.Component {
         this.pause = this.pause.bind(this);
     }
 
-    handleAnswer(answer) {
+    handleAnswer(option, isCorrect) {
         // setState triggers a re-render and resets the remainingTime back to the default time value,
         // so we want to store the remainingTime value in a temporaryTime property so that the player
         // does not abruptly see the timer reset back to the default time value in the QuizTimer component
@@ -48,7 +48,7 @@ class QuizQuestionPlay extends React.Component {
 
         let points = 0;
 
-        if (answer) {
+        if (isCorrect) {
             let basePoints = 0;
             let baseTime = 0;
 
@@ -69,7 +69,7 @@ class QuizQuestionPlay extends React.Component {
             // Formula to determine FIQ points awarded per correct answer
             points = Math.floor(basePoints * (this.remainingTime / baseTime))
         }
-        this.props.onQuestionAnswered(answer, points)
+        this.props.onQuestionAnswered(option, isCorrect, points)
     }
 
     pause() {
@@ -115,7 +115,7 @@ class QuizQuestionPlay extends React.Component {
                         time={this.state.hasAnswered ? this.state.temporaryTime : question.time ? question.time : this.state.globalTimePerQuestion}
                         hasAnswered={this.state.hasAnswered}
                         onTick={(remainingTime) => { this.remainingTime = remainingTime }}
-                        onCountdownComplete={() => this.handleAnswer(false)}
+                        onCountdownComplete={() => this.handleAnswer(null, false)}
                         refCallback={this.setClockRef}
                     >
                     </QuizTimer>
@@ -123,7 +123,7 @@ class QuizQuestionPlay extends React.Component {
                 <Grid.Row style={{ height: '50%' }}>
                     <Segment raised inverted color='teal' style={{ width: '100%', margin: '0px 20px' }}>
                         <h1>Question {number}</h1>
-                        <h2 style={{ maxWidth: '50%', margin: 'auto', overflowWrap: 'break-word' }}>{question.name}</h2>
+                        <h2 style={{ maxWidth: '80%', margin: 'auto' }}>{question.name}</h2>
                     </Segment>
                 </Grid.Row>
                 <Grid.Row columns={2} style={{ height: '35%', margin: '0px 5px' }}>
@@ -132,9 +132,9 @@ class QuizQuestionPlay extends React.Component {
                             <Grid.Column stretched key={index + 1}>
                                 <Button color={this.state.hasAnswered ? element.isCorrect ? 'green' : 'red' : 'teal'}
                                     name={`options-${index}`}
-                                    style={this.state.hasAnswered ? { margin: '5px 0px' } : { margin: '5px 0px' }}
-                                    onClick={() => this.handleAnswer(element.isCorrect)}
-                                    disabled={this.state.hasAnswered}>
+                                    style={this.state.hasAnswered ? { margin: '5px 0px', pointerEvents: 'none' } : { margin: '5px 0px' }}
+                                    onClick={() => this.handleAnswer(element.name, element.isCorrect)}
+                                >
                                     <h3>{element.name}</h3>
                                 </Button>
                             </Grid.Column>

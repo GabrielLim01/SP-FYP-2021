@@ -1,9 +1,0 @@
-/* Stores styling mainly for the QuizTimer timer bar animation, 
-since React Components don't allow <style></style> tags for some reason */
-
-@keyframes timer {
-  to {
-    /* More performant than animating `width` */
-    transform: scaleX(0);
-  }
-}

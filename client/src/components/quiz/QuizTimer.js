@@ -1,6 +1,6 @@
 import React from 'react';
 import Countdown from 'react-countdown';
-import './styles.css'
+import './animations.css'
 
 class QuizTimer extends React.Component {
     constructor(props) {
