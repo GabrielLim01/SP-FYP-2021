@@ -547,7 +547,22 @@ class DbService {
         }
     }
 
-    async getDefaultUsers(accountTypeId) {
+    async getAllUsers() {
+        try {
+            return new Promise((resolve, reject) => {
+                const query = 'SELECT * FROM users ORDER BY FIQ desc';
+
+                connection.query(query, (err, result) => {
+                    if (err) return reject(err.message);
+                    resolve(result);
+                });
+            });
+        } catch (e) {
+            throw e.message;
+        }
+    }
+
+    async getUsersByAccountType(accountTypeId) {
         try {
             return new Promise((resolve, reject) => {
                 const query = 'SELECT * FROM users WHERE accountType = ?;';

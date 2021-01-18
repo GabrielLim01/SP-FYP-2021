@@ -7,6 +7,7 @@ import Login from './Login.js';
 import Registration from './Registration.js';
 import Dashboard from './Dashboard.js';
 import NotFound from './NotFound.js';
+import Leaderboard from './Leaderboard.js'
 
 // Categories
 import CategoryDashboard from './category/categoryDashboard.js';
@@ -33,6 +34,7 @@ const Routes = () => {
             <Route exact path="/" component={Login}></Route>
             <Route exact path="/register" component={Registration}></Route>
             <ProtectedRoute path="/dashboard" component={Dashboard}></ProtectedRoute>
+            <ProtectedRoute path="/leaderboard" component={Leaderboard}></ProtectedRoute>
 
             <ProtectedRoute exact path="/category" component={CategoryDashboard} adminOnly={true}></ProtectedRoute>
             <ProtectedRoute exact path="/category/create" component={CategoryCreate} adminOnly={true}></ProtectedRoute>

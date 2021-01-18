@@ -709,12 +709,24 @@ app.get('/roles', async (request, response) => {
         .catch((err) => response.status(400).send(`${err}`));
 });
 
+app.get('/user', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.getAllUsers();
+
+    result
+        .then((data) => {
+            response.json(data);
+        })
+        .catch((err) => response.status(400).send(`${err}`));
+});
+
 app.get('/user/:accountTypeId', async (request, response) => {
     const db = dbService.getDbServiceInstance();
     let isValid = validateID(request.params.accountTypeId);
 
     if (isValid) {
-        const result = db.getDefaultUsers(request.params.accountTypeId);
+        const result = db.getUsersByAccountType(request.params.accountTypeId);
 
         result
             .then((data) => {

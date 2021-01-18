@@ -129,6 +129,12 @@ export default class DashboardMenu extends React.Component {
                                     onClick={this.handleItemClick}
                                 ></Dropdown.Item>
                                 <Dropdown.Item
+                                    icon="trophy"
+                                    text="Leaderboard"
+                                    name="leaderboard"
+                                    onClick={this.handleItemClick}
+                                ></Dropdown.Item>
+                                <Dropdown.Item
                                     icon="info"
                                     text="About"
                                     name="about"
