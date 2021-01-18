@@ -27,7 +27,7 @@ class QuestUpdate extends React.Component {
     };
     renderRedirect = () => {
         if (this.state.redirect) {
-            return <Redirect push to="/quests" />;
+            return <Redirect to="/quests" />;
         }
     };
 
@@ -74,13 +74,13 @@ class QuestUpdate extends React.Component {
             counter++;
         } while (counter < this.state.scenario + 1);
 
-        let questObj = {
-            title: this.state.questTitle,
-            desc: this.state.questDesc,
-            categoryId: this.state.questCategory,
-            fiqPoints: this.state.questPoints,
-            scenarios: scenario,
-        };
+        // let questObj = {
+        //     title: this.state.questTitle,
+        //     desc: this.state.questDesc,
+        //     categoryId: this.state.questCategory,
+        //     fiqPoints: this.state.questPoints,
+        //     scenarios: scenario,
+        // };
 
         // const result = axios.post(`${host}/quests/createNew`, { quest: questObj });
         // result
@@ -137,53 +137,53 @@ class QuestUpdate extends React.Component {
             this.generateItems();
             retrieveItems(`quests/${this.props.location.quest.insertId}`).then((data) => {
                 let scenarios = [];
+                let counter = 1;
 
-                data.forEach((element) => {
+                let quest = data.data[0];
+
+                data.data.forEach((element) => {
                     scenarios.push({
                         scenarioId: element.scenarioId,
-                        options: JSON.parse(element.options),
+                        scenario: JSON.parse(element.options),
                     });
                 });
 
-                // Since data returned by the back-end has quiz-specific data appended to the front of every question
-                // and we only need to reference that data once, simply remove the question and quizQuestionId from the
-                // first element of the data array and store the quiz-specific data in another variable
-                delete data[0].question;
-                delete data[0].quizQuestionId;
-                let quiz = data[0];
-
                 this.setState(
                     {
-                        quizId: quiz.quizId,
-                        quizTitle: quiz.quizName,
-                        quizDesc: quiz.quizDesc,
-                        quizCategory: quiz.categoryId,
-                        quizPoints: quiz.pointsPerQuestion,
-                        quizTime: quiz.timePerQuestion,
-                        //questions: questions,
+                        questId: quest.insertId,
+                        questTitle: quest.title,
+                        questDesc: quest.description,
+                        questCategory: quest.categoryId,
+                        questPoints: quest.fiqPoint,
+                        options: scenarios,
                     },
                     () => {
                         // Initialize the default state of all questions and their related properties
                         // If this is not done, all question-related input fields will not have their values stored in state
                         // despite defaultValue displaying the correct values
-                        for (let i = 1; i < this.state.questions.length + 1; i++) {
-                            let question = this.state.questions[i - 1].question;
-
-                            this.setState({
-                                ['question' + i + 'name']: question.name,
-                                ['question' + i + 'points']: question.points,
-                                ['question' + i + 'time']: question.time,
-                                ['question' + i + 'explanation']: question.explanation,
-                                ['question' + i + 'name']: question.name,
-                            });
-
-                            for (let j = 1; j < this.state.options + 1; j++) {
-                                this.setState({
-                                    ['option-' + i + '-' + j]: question.options[j - 1].name,
-                                    ['isCorrect-' + i + '-' + j]: question.options[j - 1].isCorrect,
-                                });
+                        // for (let i = 1; i < this.state.questions.length + 1; i++) {
+                        //     let question = this.state.options[i - 1];
+                        //     this.setState({
+                        //         ['question' + i + 'name']: question.name,
+                        //         ['question' + i + 'points']: question.points,
+                        //         ['question' + i + 'time']: question.time,
+                        //         ['question' + i + 'explanation']: question.explanation,
+                        //         ['question' + i + 'name']: question.name,
+                        //     });
+                        //     for (let j = 1; j < this.state.options + 1; j++) {
+                        //         this.setState({
+                        //             ['option-' + i + '-' + j]: question.options[j - 1].name,
+                        //         });
+                        //     }
+                        // }
+                        do {
+                            for (let i = 1; i < this.state.options + 1; i++) {
+                                let option = this.state.options;
+                                console.log('this is option', option);
                             }
-                        }
+
+                            counter++;
+                        } while (counter < this.state.scenario + 1);
                     },
                 );
             });
@@ -232,6 +232,7 @@ class QuestUpdate extends React.Component {
                                             name="questTitle"
                                             placeholder="Title"
                                             onChange={this.handleChange}
+                                            defaultValue={this.state.questTitle}
                                         />
                                     </Grid.Column>
                                     <Grid.Column>
@@ -240,6 +241,7 @@ class QuestUpdate extends React.Component {
                                             name="questDesc"
                                             placeholder="Description"
                                             onChange={this.handleChange}
+                                            defaultValue={this.state.questDesc}
                                         />
                                     </Grid.Column>
                                 </Grid.Row>
@@ -253,6 +255,7 @@ class QuestUpdate extends React.Component {
                                             selection
                                             options={categoryItems}
                                             onChange={this.handleDropdownChange}
+                                            defaultValue={this.state.questCategory}
                                         />
                                     </Grid.Column>
                                     <Grid.Column>
@@ -262,6 +265,7 @@ class QuestUpdate extends React.Component {
                                             name="questPoints"
                                             placeholder="Points"
                                             onChange={this.handleChange}
+                                            defaultValue={this.state.questPoints}
                                         />
                                     </Grid.Column>
                                 </Grid.Row>
@@ -282,7 +286,7 @@ class QuestUpdate extends React.Component {
                             Add Scenarios
                         </Button>
                         <Button className="blue" name="createQuest" onClick={this.handleSubmit}>
-                            Create Quest
+                            Update Quest
                         </Button>
                     </div>
                 </div>
