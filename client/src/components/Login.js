@@ -1,28 +1,20 @@
 import React from 'react';
 import axios from 'axios';
-import { Link } from "react-router-dom";
-import { host, containerStyle } from '../common.js';
-import verifyLogin from './verifyLogin.js'
-import GuruOrGoonduIcon from '../GuruOrGoonduIcon.jpg'
+import { Link, Redirect } from 'react-router-dom';
+import { Form, Button } from 'semantic-ui-react';
+import { host, appName, containerStyle } from '../common.js';
+import verifyLogin from './verifyLogin.js';
 
-
-
-// MISSING FEATURES
+// TO-DO
 // 1. Input validation
-// 2. RBAC logic not implemented
-
-// POSSIBLE ISSUES
-// 1. Break down mutable 'user' object into immutable data types, e.g. 'username'and 'userLoggedIn'
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            username: null,
             password: null,
-            user: {
-                name: null,
-                isLoggedIn: false
-            }
+            redirect: null,
         };
     }
 
@@ -30,90 +22,86 @@ class Login extends React.Component {
         let nam = event.target.name;
         let val = event.target.value;
         this.setState({ [nam]: val });
-    }
+    };
 
     handleSubmit = (event) => {
         event.preventDefault();
 
-        console.log(this.state.password)
-
         axios.post(host + '/authenticate', {
-            username: this.state.name,
-            password: this.state.password
+            username: this.state.username,
+            password: this.state.password,
         })
             .then((response) => {
+                if (response.data.token === 'Congrats') {
+                    let userData = response.data.user[0];
 
-                // If response.data.data has an access token string, it means the user is authenticated
-                // Otherwise, response.data.data will contain an error string instead, and the user will be left on the login page
-                // This is a temporary workaround for authentication and will need to be modified for RBAC logic later (e.g. regular users, admins)
-                if (response.data.data === 'Congrats') {
+                    let user = {
+                        id: userData.insertId,
+                        username: userData.name,
+                        ageGroupId: userData.ageGroupId,
+                        hobby: userData.hobby,
+                        FIQ: userData.FIQ,
+                        accountType: userData.accountType
+                    }
 
-                    // this.setState under the handleChange() does not permanently save the state of the this.state.name value,
-                    // so it has to be re-set here
-                    let user = { user: { isLoggedIn: true, name: this.state.name } }
-
-                    // sessionStorage can only save strings, so convert the JSON object into strings first
                     sessionStorage.setItem("user", JSON.stringify(user));
-
-                    // Redirect the user to dashboard when successful
-                    window.location.href = '/dashboard';
+                    this.setState({ redirect: "/dashboard" });
                 } else {
-                    alert("Error: " + response.data.data)
+                    alert('Error: ' + response.data);
                 }
             })
             .catch((error) => {
                 alert(error);
             });
-    }
+    };
 
     render() {
-        // If user is already logged in, redirect them immediately, otherwise they have to fill in the login form first
-        if (verifyLogin()) {
+        if (this.state.redirect) {
+            return <Redirect push to={this.state.redirect} />
+        } else if (verifyLogin()) {
             return (
-                window.location.href = '/dashboard'
+                <Redirect push to='/dashboard' />
             )
         } else {
             return (
                 <div className="container" style={containerStyle}>
-                    <div className="ui middle aligned center aligned grid">
-                        <div className="column" style={{ maxWidth: '450px' }}>
-                            <h2 className="ui blue image header">
-                                
-                                 <div className="AppIcon">
-                                 <img src={GuruOrGoonduIcon} alt="AppIcon"/>
-                                 </div>
-
-                                <div className="content" >
-                                    Guru or Goondu
-                        </div>
-                            </h2>
-                            <form className="ui large form">
-                                <div className="ui stacked segment">
-                                    <div className="field">
-                                        <div className="ui left icon input">
-                                            <i className="user icon"></i>
-                                            <input type="text" name="name" placeholder="Username" onChange={this.handleChange} />
-                                        </div>
-                                    </div>
-                                    <div className="field">
-                                        <div className="ui left icon input">
-                                            <i className="lock icon"></i>
-                                            <input type="password" name="password" placeholder="Password" onChange={this.handleChange} />
-                                        </div>
-                                    </div>
-                                    <div className="ui fluid large teal submit button" onClick={this.handleSubmit}>Login</div>
+                    <h1 className="ui teal image header">{appName}</h1>
+                    <div className="ui stacked segment">
+                        <Form>
+                            <div className="field">
+                                <div className="ui left icon input">
+                                    <i className="user icon"></i>
+                                    <input
+                                        type="text"
+                                        name="username"
+                                        placeholder="Username"
+                                        onChange={this.handleChange}
+                                    />
                                 </div>
-                            </form>
-                            <div className="ui message">
-                                New to us? <Link to="/register">Sign up</Link>
                             </div>
-                        </div>
+                            <div className="field">
+                                <div className="ui left icon input">
+                                    <i className="lock icon"></i>
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        placeholder="Password"
+                                        onChange={this.handleChange}
+                                    />
+                                </div>
+                            </div>
+                            <Button className="fluid large teal" onClick={this.handleSubmit}>
+                                Login
+                            </Button>
+                        </Form>
+                    </div>
+                    <div className="ui message">
+                        New to us? <Link to="/register">Sign up</Link>
                     </div>
                 </div>
             );
         }
     }
 }
-
 
 export default Login;

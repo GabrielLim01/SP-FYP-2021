@@ -1,13 +1,14 @@
-const express = require("express");
+const express = require('express');
 
 const app = express();
 
-const bcrypt = require("bcrypt");
-const cors = require("cors");
-const dotenv = require("dotenv");
+const bcrypt = require('bcrypt');
+const cors = require('cors');
+const dotenv = require('dotenv');
 dotenv.config();
 
-const dbService = require("./db");
+const dbService = require('./db');
+const { response } = require('express');
 
 app.use(cors());
 app.use(express.json());
@@ -17,230 +18,751 @@ const port = 9000;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
 
-var quizObject = {
-  quizTitle: "Hello",
-  quizCategoryId: 1,
-  quizDesc: "",
-  totalPoints: 100,
-  questions: [
-    {
-      questionTitle: "Question 1",
-      questionDesc: "",
-      fiqPoints: 50,
-      timeLimit: 30,
-      options: [
-        {
-          option: "Option 1",
-          optionDesc: "",
-          isCorrect: true,
-        },
-        {
-          option: "Option 2",
-          optionDesc: "",
-          isCorrect: false,
-        },
-      ],
-    },
-    {
-      questionTitle: "Question 2",
-      questionDesc: "",
-      fiqPoints: 50,
-      timeLimit: 30,
-      options: [
-        {
-          option: "Option 1",
-          optionDesc: "",
-          isCorrect: true,
-        },
-        {
-          option: "Option 2",
-          optionDesc: "",
-          isCorrect: false,
-        },
-      ],
-    },
-  ],
-};
+// UTILITY FUNCTIONS ===========================================================================================================
 
-// read
-app.get("/quizDashboard", (request, response) => {
-  const db = dbService.getDbServiceInstance();
+function validateID(x) {
+    let regex = new RegExp('^[0-9]+$');
+    let result = regex.test(x);
+    return result;
+}
 
-  const result = db.getAllQuizzes();
+function validateString(x) {
+    let regex = new RegExp('^[ A-Za-z0-9_@./#&+-^]*$');
+    let result = regex.test(x);
+    return result;
+}
 
-  result
-    .then((data) => {
-      console.log("Process was a success!");
-      response.json({ data: data });
-    })
-    .catch((err) => console.log(err));
-});
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+}
 
-app.get("/quiz/:id", (request, response) => {
-  const { id } = request.params;
-  const db = dbService.getDbServiceInstance();
+function isBlank(str) {
+    return !str || 0 === str.length;
+}
 
-  const result = db.getQuizById(id);
+function validateID(x) {
+    let regex = new RegExp('^[0-9]+$');
+    let result = regex.test(x);
+    return result;
+}
 
-  result
-    .then((data) => {
-      console.log("Process was a success!");
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+}
 
-      quizObject = JSON.parse(JSON.stringify(data));
-      quizObject.forEach((question) => {
-        questionObject = JSON.parse(question.questionObject);
-      });
-      return response.json({ data: data });
-    })
-    .catch((err) => {
-      // return response.status(500).send(err);
-      console.log(err);
-    });
-});
+function isBlank(str) {
+    return !str || 0 === str.length;
+}
 
-// create
-app.post("/createNew", (request, response) => {
-  const title = quizObject.quizTitle;
-  const categoryId = quizObject.quizCategoryId;
-  const quizDesc = quizObject.quizDesc;
-  const totalPoints = quizObject.totalPoints;
-
-  const db = dbService.getDbServiceInstance();
-  const createQuiz_result = db.createQuiz(
-    title,
-    quizDesc,
-    totalPoints,
-    categoryId
-  );
-
-  createQuiz_result
-    .then((data) => {
-      response.json({
-        insertId: data.insertId,
-        categoryid: categoryId,
-        name: title,
-        description: quizDesc,
-        totalPoints: totalPoints,
-      });
-      console.log("Quiz Created");
-      const quizId = data.insertId;
-      var createQuizResult = new Promise((resolve, reject) => {});
-
-      const questionObject = quizObject.questions;
-      console.log(typeof questionObject);
-      questionObject.forEach((question) => {
-        createQuizResult = db.createQuizQuestion(
-          quizId,
-          JSON.stringify(question)
-        );
-      });
-      createQuizResult.catch((err) => console.log("Some Caught Error:", err));
-    })
-
-    .catch((err) => {
-      // Please addon to this list if you encountered something new
-      console.log("Some Caught Error:", err);
-    });
-});
-
-// update
-app.patch("/update/:id", (request, response) => {
-  const { id } = request.params;
-
-  const title = request.body.title;
-  const desc = request.body.desc;
-  const totalPoints = request.body.totalPoints;
-  const categoryId = request.body.categoryId;
-  const quizQuestionObject = request.body.quizQuestion;
-  console.log(quizQuestionObject);
-
-  const db = dbService.getDbServiceInstance();
-
-  const result = db.updateQuizDetailsById(
-    id,
-    title,
-    desc,
-    totalPoints,
-    categoryId
-  );
-
-  result
-    .then((data) => {
-      console.log("Process was a success!");
-      response.json({ data: data });
-
-      // phase 2
-      var updateQuestionsResult = new Promise((resolve, reject) => {});
-      quizQuestionObject.forEach((question) => {
-        updateQuestionsResult = db.updateQuestionDetailsById(
-          id,
-          JSON.stringify(question)
-        );
-      });
-      updateQuestionsResult.catch((err) =>
-        console.log("Some Caught Error:", err)
-      );
-    })
-    .catch((err) => console.log(err));
-});
-
-// delete
-app.delete("/delete/:id", (request, response) => {
-  const { id } = request.params;
-
-  const db = dbService.getDbServiceInstance();
-
-  const result = db.deleteQuizById(id);
-
-  result
-    .then((data) => {
-      console.log("Process was a success!");
-      response.json({ data: data });
-    })
-    .catch((err) => console.log(err));
-});
+// LOGIN AND REGISTRATION ======================================================================================================
 
 // POST /register
-app.post("/register", async (req, res) => {
-  try {
-    const name = req.body.name;
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hashSync(req.body.password, salt);
+app.post('/register', async (request, respond) => {
+    const name = request.body.name;
+    const password = request.body.password;
 
-    const db = dbService.getDbServiceInstance();
+    if (!isBlank(name) && !isBlank(password)) {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hashSync(password, salt);
 
-    const result = db.insertNewUser(name, hashedPassword);
+        const db = dbService.getDbServiceInstance();
 
-    result.then((data) => res.json({ data: data }));
-  } catch (error) {
-    console.log(error);
-    res.status(500).send();
-  }
+        const result = db.insertNewUser(name, hashedPassword);
+
+        result
+            .then((data) => respond.json({ data: data }))
+            .catch((err) =>
+                response.status(400).send(`Registering of user where username equals to ${name} has failed.`, err),
+            );
+    } else response.status(400).send(`Name / Password is(are) empty.`);
+});
+
+app.post('/admin/register', async (request, respond) => {
+    const name = request.body.name;
+    const password = request.body.password;
+    const role = request.body.role;
+
+    if (!isBlank(name) && !isBlank(password) && !isBlank(role)) {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hashSync(password, salt);
+
+        const db = dbService.getDbServiceInstance();
+
+        const result = db.insertNewUserwRole(name, hashedPassword, role);
+
+        result
+            .then((data) => respond.json({ data: data }))
+            .catch((err) =>
+                response.status(400).send(`Registering of user where username equals to ${name} has failed.`, err),
+            );
+    } else response.status(400).send(`Name / Password is(are) empty.`);
 });
 
 // POST /authenticate
-app.post("/authenticate", (req, res) => {
-  try {
-    const username = req.body.username;
-    const password = req.body.password;
+app.post('/authenticate', (request, response) => {
+    const username = request.body.username;
+    const password = request.body.password;
 
+    if (!isBlank(username) && !isBlank(password)) {
+        const db = dbService.getDbServiceInstance();
+
+        const result = db.authenticate(username, password);
+
+        result
+            .then((data) => {
+                response.json(data);
+                //response.status(200).send(`User is authenticated`);
+            })
+            .catch((err) => {
+                response
+                    .status(400)
+                    .send(`Authentication of user where username equals to ${username} has failed. ${err}`);
+            });
+    } else response.status(400).send(`Username / Password is(are) empty.`);
+});
+
+// CATEGORY ===================================================================================================================
+
+//create
+app.post('/category', async (request, response) => {
+    const category = request.body.category;
+    const categoryName = category.name;
+    const categoryDesc = category.description;
+    let isValid = validateString(categoryName);
+    const db = dbService.getDbServiceInstance();
+    if (isValid && !isBlank(categoryName)) {
+        let result = db.createCategory(categoryName, categoryDesc);
+
+        result
+            .then((data) => {
+                response.json({ data: data });
+            })
+            .catch((err) => {
+                response.status(500).send(`Error creating category: ${categoryName}`, err);
+            });
+    } else response.status(400).send(`${categoryName} contained illegal characters or is empty. Please check again.`);
+});
+
+//read
+app.get('/category', async (request, response) => {
     const db = dbService.getDbServiceInstance();
 
-    // const result is a Promise, not raw JSON data
-    const result = db.authenticate(username, password);
+    const result = db.getAllCategories();
 
-    // In order to access the data of the Promise, you have to do a .then((data => console.log(data))),
-    // then use res.json to send the data back to the front-end (axios.POST)
     result
-      .then((data) => {
-        res.json({ data: data });
-      })
-      // should not be invoked normally
-      .catch((err) => {
-        console.log("Server.js error: " + err);
-        //res.json(Boom.notFound("Invalid Request"));
-      });
-  } catch (err) {
-    //res.json(Boom.notFound("Invalid Request"));
-  }
+        .then((data) => {
+            response.json(data);
+        })
+        .catch((err) => response.status(400).send(`${err}`));
+});
+
+// Get by ID
+app.get('/category/:id', (request, response) => {
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const db = dbService.getDbServiceInstance();
+        const result = db.getCategoryDetailsById(request.params.id);
+        result
+            .then((data) => {
+                response.json(data);
+            })
+            .catch((err) => response.status(400).send(`${err}`));
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+//update
+app.patch('/category/:id', (request, response) => {
+    const category = request.body.category;
+    const categoryName = category.name;
+    const categoryDesc = category.description;
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const result = db.updateCategoryById(request.params.id, categoryName, categoryDesc);
+        result
+            .then((data) => {
+                response.status(200).send(` Updating category of id: ${request.params.id} was a success!`);
+            })
+            .catch((err) => response.status(400).send(`${err}, updating of ${request.params.id} failed`));
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+//delete
+app.delete('/category/:id', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const result = db.deleteCategoryById(request.params.id);
+        result
+            .then((data) => {
+                response.status(200).send(` Deletion of category of id: ${request.params.id} was a success!`);
+            })
+            .catch((err) => {
+                if (err.includes('ER_ROW_IS_REFERENCED'))
+                    response
+                        .status(400)
+                        .send(`Category with id: ${request.params.id} is being referenced by quiz(zes).`);
+            });
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+// QUIZZES ===================================================================================================================
+
+// read
+app.get('/quiz', (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    const result = db.getAllQuizzes();
+    result
+        .then((data) => {
+            response.json(data);
+        })
+        .catch((err) => response.status(400).send(`Fetching of data failed. ${err}`));
+});
+
+app.get('/quiz/:id', (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const result = db.getQuizById(request.params.id);
+        result
+            .then((data) => {
+                if (!isEmpty(data)) {
+                    const quizObject = JSON.parse(JSON.stringify(data));
+                    response.json(quizObject);
+                } else response.status(400).send(`Quiz of id: ${request.params.id} is not present.`);
+            })
+            .catch((err) => {
+                response.status(400).send(`Unable to retrieve specified quiz of id: ${request.params.id}. ${err}`);
+            });
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+// get quiz by category
+app.get('/quiz/category/:id', (request, response) => {
+    // URL to change to however you want it to be
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const result = db.getQuizByCategoryId(request.params.id);
+        result
+            .then((data) => {
+                if (!isEmpty(data)) {
+                    const quizObject = JSON.parse(JSON.stringify(data));
+                    response.json(quizObject);
+                } else response.status(200).send(`Category of id: ${request.params.id} is not present.`);
+            })
+            .catch((err) => {
+                response.status(400).send(`Unable to retrieve specified category of id: ${request.params.id}.`, err);
+            });
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+// POST /quiz
+app.post('/quiz', (request, response) => {
+    const quiz = request.body.quiz;
+    const name = quiz.title;
+    const desc = quiz.description;
+    const category = quiz.category;
+    const points = quiz.points;
+    const time = quiz.time;
+
+    if (!isBlank(name) && !isBlank(category) && !isBlank(points) && !isBlank(time)) {
+        const db = dbService.getDbServiceInstance();
+        const createQuizResult = db.createQuiz(name, desc, category, points, time);
+
+        createQuizResult
+            .then((data) => {
+                // response.json({
+                //   insertId: data.insertId,
+                //   categoryid: category,
+                //   name: name,
+                //   description: desc,
+                //   points: points,
+                //   time: time
+                // });
+
+                const quizId = data.insertId;
+                // let createQuestionResult = new Promise((resolve, reject) => { });
+                // createQuestionResult = db.createQuizQuestion(
+                //   quizId,
+                //   quiz.questions
+                // );
+                let createQuestionResult = new Promise((resolve, reject) => { });
+
+                const questions = quiz.questions;
+                questions.forEach((question) => {
+                    createQuestionResult = db.createQuizQuestion(quizId, JSON.stringify(question));
+                });
+
+                createQuestionResult.catch((err) => response.send(`Creation of questions failed. ${err}`));
+            })
+            .catch((err) => {
+                // Please addon to this list if you encountered something new
+                response.send(`Creation of quiz failed. ${err}`);
+            });
+    } else response.send(`Category / Name / Description / Points/Time Per Question cannot be empty!`);
+});
+
+// Wei Xian's API
+//   app.post('/quiz', (request, response) => {
+//     const quiz = request.body.quiz;
+//     const name = quiz.name;
+//     const desc = quiz.description;
+//     const category = quiz.category;
+//     const points = quiz.points;
+//     const time = quiz.time;
+
+//     if (!isBlank(name) && !isBlank(category) && !isBlank(points)) {
+//         const db = dbService.getDbServiceInstance();
+//         const createQuizResult = db.createQuiz(name, desc, category, points, time);
+
+//         createQuizResult
+//             .then((data) => {
+//                 response.json({
+//                     insertId: data.insertId,
+//                     categoryid: category,
+//                     name: name,
+//                     description: desc,
+//                     points: points,
+//                     time: time,
+//                 });
+
+//                 const quizId = data.insertId;
+//                 let createQuestionResult = new Promise((resolve, reject) => { });
+//                 createQuestionResult = db.createQuizQuestion(quizId, quiz.questions);
+//                 createQuestionResult.catch((err) => response.status(400).send(`Creation of questions failed. ${err}`));
+//             })
+//             .catch((err) => {
+//                 // Please addon to this list if you encountered something new
+//                 response.status(400).send(`Creation of quiz failed. ${err}`);
+//             });
+//     } else response.status(400).send(`Category / Name / Description / Points/Time Per Question cannot be empty!`);
+// });
+
+// update
+app.patch('/quiz/:id', (request, response) => {
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const quiz = request.body.quiz;
+        const title = quiz.title;
+        const desc = quiz.description;
+        const category = quiz.category;
+        const points = quiz.points;
+        const time = quiz.time;
+        const questions = quiz.questions;
+
+        const db = dbService.getDbServiceInstance();
+        const result = db.updateQuizDetailsById(request.params.id, title, desc, category, points, time);
+
+        result
+            .then((data) => {
+                response.json({ data: data });
+
+                let updateQuestionsResult = new Promise((resolve, reject) => { });
+
+                questions.forEach((question) => {
+                    updateQuestionsResult = db.updateQuestionDetailsById(question);
+                });
+
+                updateQuestionsResult.catch((err) =>
+                    response
+                        //.status(400)
+                        .send(`Updating of questions where quiz id equals to ${request.params.id} has failed. ${err}`),
+                );
+            })
+            .catch((err) =>
+                response
+                    //.status(400)
+                    .send(`Updating of quiz where id equals to ${request.params.id} has failed. ${err}`),
+            );
+    } else {
+        response
+            //.status(400)
+            .send(`${request.params.id} contained illegal characters. Please check again.`);
+    }
+});
+
+// delete
+app.delete('/quiz/:id', (request, response) => {
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const db = dbService.getDbServiceInstance();
+
+        const result = db.deleteQuizById(request.params.id);
+
+        result
+            .then(() => {
+                response.sendStatus(204);
+            })
+            .catch((err) =>
+                response.status(400).send(`Deletion of quiz where id equals to ${request.params.id} has failed.`),
+            );
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+// QUESTS =====================================================================================================================
+
+/////////////////////////////////////////
+/*
+1. Declare mock object
+2. Create
+3. Read
+4. Update
+5. Delete
+*/
+const obj = {
+    questTitle: 'dvzdvc',
+    questCategoryId: 1,
+    questDesc: '',
+    questObjective: '',
+    fiqPoints: 100,
+    questions: [
+        {
+            scenarioId: 5,
+            sub_questTitle: 'Scenario A',
+            sub_questDesc: '',
+            options: [
+                {
+                    option: 'Option 1',
+                    optionDesc: '',
+                    pros: '',
+                    cons: '',
+                },
+                {
+                    option: 'Option 2',
+                    optionDesc: '',
+                    pros: '',
+                    cons: '',
+                },
+            ],
+        },
+        {
+            scenarioId: 6,
+            sub_questTitle: 'Scenario B',
+            sub_questDesc: '',
+            options: [
+                {
+                    option: 'Option 1',
+                    optionDesc: '',
+                    pros: '',
+                    cons: '',
+                },
+                {
+                    option: 'Option 2',
+                    optionDesc: '',
+                    pros: '',
+                    cons: '',
+                },
+            ],
+        },
+    ],
+};
+
+//create
+app.post('/quest/createNew', async (request, response) => {
+    //syntaxes to change during integration
+    const title = obj.questTitle;
+    const desc = obj.questDesc;
+    const objective = obj.questObjective;
+    const categoryId = obj.questCategoryId;
+    const fiqPoints = obj.fiqPoints;
+    const scenarioObj = obj.questions;
+    let isValid = validateString(title);
+    const db = dbService.getDbServiceInstance();
+    if (isValid) {
+        let result = db.createQuest(title, desc, objective, categoryId, fiqPoints);
+        result
+            .then((data) => {
+                response.json({ data: data.insertId });
+
+                let createQuestScenarioResult = db.createQuestScenario(data.insertId, scenarioObj);
+                createQuestScenarioResult.catch((err) => console.log(`Creation of scenario(s) failed. ${err}`));
+            })
+            .catch((err) => {
+                response.status(500).send(`Error creating quest: ${title}, ${err}`);
+            });
+    } else response.status(400).send(`${title} contained illegal characters. Please check again.`);
+});
+
+app.get('/quest/:id', (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const result = db.getQuestById(request.params.id);
+        result
+            .then((data) => {
+                if (!isEmpty(data)) {
+                    const questObject = JSON.parse(JSON.stringify(data));
+                    response.json({ data: questObject });
+                } else response.status(400).send(`Quest of id: ${request.params.id} is not present.`);
+            })
+            .catch((err) => {
+                response.status(400).send(`Unable to retrieve specified quest of id: ${request.params.id}.`, err);
+            });
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+//create
+app.post('/quest/createNew', async (request, response) => {
+    //syntaxes to change during integration
+    const title = obj.questTitle;
+    const desc = obj.questDesc;
+    const objective = obj.questObjective;
+    const categoryId = obj.questCategoryId;
+    const fiqPoints = obj.fiqPoints;
+    const scenarioObj = obj.questions;
+    let isValid = validateString(title);
+    const db = dbService.getDbServiceInstance();
+    if (isValid) {
+        let result = db.createQuest(title, desc, objective, categoryId, fiqPoints);
+        result
+            .then((data) => {
+                response.json({ data: data.insertId });
+
+                let createQuestScenarioResult = db.createQuestScenario(data.insertId, scenarioObj);
+                createQuestScenarioResult.catch((err) => console.log(`Creation of scenario(s) failed. ${err}`));
+            })
+            .catch((err) => {
+                response.status(500).send(`Error creating quest: ${title}, ${err}`);
+            });
+    } else response.status(400).send(`${title} contained illegal characters. Please check again.`);
+});
+
+app.get('/quest/:id', (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const result = db.getQuestById(request.params.id);
+        result
+            .then((data) => {
+                if (!isEmpty(data)) {
+                    const questObject = JSON.parse(JSON.stringify(data));
+                    response.json({ data: questObject });
+                } else response.status(400).send(`Quest of id: ${request.params.id} is not present.`);
+            })
+            .catch((err) => {
+                response.status(400).send(`Unable to retrieve specified quest of id: ${request.params.id}.`, err);
+            });
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+app.patch('/quest/:id', (request, response) => {
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const title = obj.questTitle;
+        const desc = obj.questDesc;
+        const objective = obj.questObjective;
+        const categoryId = obj.questCategoryId;
+        const fiqPoint = obj.fiqPoints;
+        const scenearioObj = obj.questions;
+
+        const db = dbService.getDbServiceInstance();
+        const result = db.updateQuestDetailsById(request.params.id, title, desc, objective, categoryId, fiqPoint);
+
+        result
+            .then((data) => {
+                response.json({ data: data });
+
+                let updateScenarioResult = new Promise((resolve, reject) => { });
+                scenearioObj.forEach((scenario) => {
+                    updateScenarioResult = db.updateScenarioDetailsById(
+                        request.params.id,
+                        scenario.scenarioId,
+                        scenario.sub_questTitle,
+                        scenario.sub_questDesc,
+                        JSON.stringify(scenario.options),
+                    );
+                });
+                updateScenarioResult.catch((err) =>
+                    response
+                        .status(400)
+                        .send(`Updating of questions where questId equals to ${request.params.id} has failed. ${err}`),
+                );
+            })
+            .catch((err) => {
+                response
+                    //.status(400)
+                    .send(`Updating of quiz where id equals to ${request.params.id} has failed. ${err}`);
+            });
+    }
+});
+
+app.delete('/quest/:id', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const result = db.deleteQuestById(request.params.id);
+        result
+            .then((data) => {
+                response.status(200).send(` Deletion of quest of id: ${request.params.id} was a success!`);
+            })
+            .catch((err) => {
+                if (err.includes('ER_ROW_IS_REFERENCED'))
+                    response
+                        .status(400)
+                        .send(`Category with id: ${request.params.id} is being referenced by quiz(zes).`);
+            });
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+// PROFILE =====================================================================================================================
+
+app.get('/profile/:id', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const result = db.getProfileById(request.params.id);
+
+        result
+            .then((data) => {
+                response.json(data);
+            })
+            .catch((err) => response.status(400).send(`${err}`));
+    }
+});
+
+//update profile
+app.patch('/profile/:id', (request, response) => {
+    let hobbyStr = '';
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const detail = request.body.detail;
+
+        const ageGroupId = detail.ageGroup;
+        const hobby = detail.hobby;
+        Object.values(hobby).forEach((hobbyId) => {
+            hobbyStr += hobbyId;
+        });
+
+        const result = db.updateProfileById(request.params.id, ageGroupId, hobbyStr);
+        result
+            .then((data) => {
+                response.status(200).send(` Updating profile of id: ${request.params.id} was a success!`);
+            })
+            .catch((err) => response.status(400).send(`${err}, updating of ${request.params.id} failed`));
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+app.get('/agegroup', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.getAgeGroups();
+
+    result
+        .then((data) => {
+            response.json(data);
+        })
+        .catch((err) => response.status(400).send(`${err}`));
+});
+
+app.get('/hobby', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.getHobbies();
+
+    result
+        .then((data) => {
+            response.json(data);
+        })
+        .catch((err) => response.status(400).send(`${err}`));
+});
+
+app.get('/profile/hobby/:id', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+
+    if (isValid) {
+        const result = db.getAssociatedHobbyById(request.params.id);
+        result
+            .then((data) => {
+                response.json(data);
+            })
+            .catch((err) => response.status(400).send(`${err}`));
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+//update user FIQ
+app.patch('/fiq/:id', (request, response) => {
+    const FIQ = request.body.FIQ;
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const result = db.updateFIQ(request.params.id, FIQ);
+        result
+            .then((data) => {
+                response.status(200).send(` Updating FIQ of id: ${request.params.id} was a success!`);
+            })
+            .catch((err) => response.status(400).send(`${err}, updating of ${request.params.id} failed`));
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+app.get('/roles', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.getRoles();
+
+    result
+        .then((data) => {
+            response.json(data);
+        })
+        .catch((err) => response.status(400).send(`${err}`));
+});
+
+app.get('/user', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.getAllUsers();
+
+    result
+        .then((data) => {
+            response.json(data);
+        })
+        .catch((err) => response.status(400).send(`${err}`));
+});
+
+app.get('/user/:accountTypeId', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.accountTypeId);
+
+    if (isValid) {
+        const result = db.getUsersByAccountType(request.params.accountTypeId);
+
+        result
+            .then((data) => {
+                response.json(data);
+            })
+            .catch((err) => response.status(400).send(`${err}`));
+    } else
+        response.status(400).send(`${request.params.accountTypeId} contained illegal characters. Please check again.`);
+});
+
+app.patch('/user/:accountId', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.accountId);
+    if (isValid) {
+        const action = request.body.action;
+        const result = db.updateAccountType(request.params.accountId, action);
+        result
+            .then((data) => {
+                response.json(data);
+            })
+            .catch((err) => response.status(400).send(`${err}`));
+    } else
+        response.status(400).send(`${request.params.accountTypeId} contained illegal characters. Please check again.`);
+});
+
+app.delete('/user/:accountId', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.accountId);
+
+    if (isValid) {
+        const result = db.deleteUserById(request.params.accountId);
+
+        result
+            .then((data) => {
+                response.json(data);
+            })
+            .catch((err) => response.status(400).send(`${err}`));
+    } else response.status(400).send(`${request.params.accountId} contained illegal characters. Please check again.`);
 });

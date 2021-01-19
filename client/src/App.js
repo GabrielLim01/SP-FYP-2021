@@ -1,10 +1,10 @@
 import './App.css';
-import Main from './components/Main.js';
+import Routes from './components/Routes.js';
 
 function App() {
   return (
     <div className="App">
-        <Main />
+      <Routes />
     </div>
   );
 }

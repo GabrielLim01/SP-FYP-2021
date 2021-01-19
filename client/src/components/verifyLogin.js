@@ -1,7 +1,5 @@
 import { inProduction } from '../common.js';
 
-// Function to check if user is already logged in or not
-
 export default function verifyLogin() {
     let loginStatus = false;
 
@@ -9,8 +7,8 @@ export default function verifyLogin() {
         loginStatus = true;
     }
     else if (sessionStorage.getItem("user") !== null) {
-        loginStatus = JSON.parse(sessionStorage.getItem("user")).user.isLoggedIn;
-    }           
+        loginStatus = true;
+    }
 
     return loginStatus;
 }
