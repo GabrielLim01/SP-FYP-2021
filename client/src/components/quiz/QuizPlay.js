@@ -100,6 +100,9 @@ class QuizPlay extends React.Component {
 
     // Currently only displays the first correct answer found if the player answered incorrectly
     // No support for displaying multiple correct answers yet
+
+    // BUG - Crashes the application if NO correct answers were set during quiz creation
+    // Implement input validation on quiz creation to ensure that at least one correct answer is set per question during quiz creation
     renderExplanation() {
         let index = this.state.explanationActiveItem;
 
