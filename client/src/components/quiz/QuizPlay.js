@@ -98,6 +98,8 @@ class QuizPlay extends React.Component {
         }
     }
 
+    // Currently only displays the first correct answer found if the player answered incorrectly
+    // No support for display multiple correct answers yet
     renderExplanation() {
         let index = this.state.explanationActiveItem;
 

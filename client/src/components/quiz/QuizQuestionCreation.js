@@ -2,21 +2,8 @@ import React from 'react';
 import { Segment, Form, Grid, Divider, Popup, TextArea, Dropdown, Checkbox } from 'semantic-ui-react'
 
 class QuizQuestionCreation extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            checked: {}
-        };
-    }
 
     onSelectedChange = (event, index) => {
-        this.setState(previousState => ({
-            checked: {
-                ...previousState.checked,
-                [index]: !previousState.checked[index]
-            }
-        }));
-
         // Depending on which part of the checkbox the user clicks, event.target will return either
         // <label>..</label> if the label of the checkbox was clicked, or...
         // <div class="ui toggle checkbox" if the exterior of the checkbox was clicked
@@ -55,11 +42,6 @@ class QuizQuestionCreation extends React.Component {
             let value = 5 * i
             timeOptions.push({ text: value, value: value });
         };
-
-        // Prevents more than 1 checkbox from being checked at any point in time (customisable)
-        const { checked } = this.state;
-        const checkedCount = Object.keys(checked).filter(key => checked[key]).length;
-        const disabled = checkedCount > 0;
 
         return (
             <div className="container" style={{ padding: '25px 0px' }}>
@@ -113,8 +95,6 @@ class QuizQuestionCreation extends React.Component {
                                                     name={"isCorrect-" + number + "-" + value}
                                                     style={{ padding: '20px 0px' }}
                                                     onClick={(event) => this.onSelectedChange(event, index)}
-                                                    checked={checked[index] || false}
-                                                    disabled={!checked[index] && disabled}
                                                 />
                                             </div>
                                         </Grid.Column>

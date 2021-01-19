@@ -69,10 +69,12 @@ class QuizCreation extends React.Component {
             const options = [];
 
             for (let j = 1; j < this.state.options + 1; j++) {
-                options.push({
-                    name: this.state['option-' + i + '-' + j],
-                    isCorrect: this.state['isCorrect-' + i + '-' + j] || false,
-                });
+                if (this.state['option-' + i + '-' + j] !== undefined && this.state['option-' + i + '-' + j] !== "") {
+                    options.push({
+                        name: this.state['option-' + i + '-' + j],
+                        isCorrect: this.state['isCorrect-' + i + '-' + j] || false,
+                    });
+                }
             }
 
             questions.push({
@@ -81,7 +83,7 @@ class QuizCreation extends React.Component {
                     points: this.state['question' + i + 'points'],
                     time: this.state['question' + i + 'time'],
                     explanation: this.state['question' + i + 'explanation'],
-                    options,
+                    options
                 },
             });
         }
@@ -98,7 +100,6 @@ class QuizCreation extends React.Component {
 
         //console.log(JSON.stringify(quiz));
 
-        // Send quiz object to the back-end via axios
         axios.post(host + '/quiz', { quiz: quiz })
             .then(
                 new Noty({
