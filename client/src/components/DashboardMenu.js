@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { Dropdown, Input, Menu } from 'semantic-ui-react';
+import { Dropdown, Menu } from 'semantic-ui-react';
 import { appName, inProduction, defaultAccountType, adminAccountType } from '../common.js';
 
 export default class DashboardMenu extends React.Component {
