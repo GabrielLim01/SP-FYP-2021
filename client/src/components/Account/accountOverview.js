@@ -130,9 +130,20 @@ class AccountOverview extends React.Component {
                     <Checkbox
                         toggle
                         name="toggle"
+                        label="Switch View"
                         defaultChecked={this.state.isChecked}
                         onChange={this.handleChecked}
                     />
+                    <div className="field" style={{ display: 'flex', flexDirection: 'row-reverse' }}>
+                        <Link to={{ pathname: '/admin/registration' }}>
+                            <button type="submit" className="ui primary button">
+                                Create Account<i aria-hidden="true" className="right pencil icon"></i>
+                            </button>
+                        </Link>
+                        <button type="button" className="ui button" onClick={this.redirectHandler}>
+                            Back {this.renderRedirect()}
+                        </button>
+                    </div>
                     <div className="ui stacked segment">
                         {filteredContent.length > 0 ? (
                             <Table celled>
@@ -187,17 +198,6 @@ class AccountOverview extends React.Component {
                         ) : (
                                 <h2>No Results..</h2>
                             )}
-                        <div className="field" style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                            <Link to={{ pathname: '/admin/registration' }}>
-                                <button type="submit" className="ui primary button">
-                                    Create Account<i aria-hidden="true" className="right pencil icon"></i>
-                                </button>
-                            </Link>
-
-                            <button type="button" className="ui button" onClick={this.redirectHandler}>
-                                Back {this.renderRedirect()}
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>

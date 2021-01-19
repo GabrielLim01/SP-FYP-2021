@@ -22,7 +22,7 @@ class QuizPlay extends React.Component {
             score: 0,
             totalPoints: 0,
             explanationActiveItem: 0,
-            transitionDuration: 5, // The amount of time, in seconds, the player has to read the question prior to it being loaded
+            transitionDuration: 4, // The amount of time, in seconds, the player has to read the question prior to it being loaded
             afterAnsweringDelay: 2, // The amount of time, in seconds, the player has to see the correct/incorrect answers after answering, before it transitions
             redirect: null,
         };
@@ -125,9 +125,9 @@ class QuizPlay extends React.Component {
                     return (
                         <div>
                             <h1>{question.name}</h1>
-                            <h2>You answered: {answers[index] ? answers[index].name !== null ? `${answers[index].name}, which was ${answers[index].isCorrect ? 'correct' : 'incorrect'}!` : 'Nothing...' : 'Nothing...'}</h2>
-                            {!this.state.answers[index].isCorrect ? question.options.find(element => element.isCorrect).name ? <h2>The correct answer was: {question.options.find(element => element.isCorrect).name}</h2> : "" : ""}
-                            <h2>{question.explanation ? `Explanation: ${question.explanation}` : "No explanation available..."}</h2>
+                            <h3>You answered: {answers[index] ? answers[index].name !== null ? `${answers[index].name}, which was ${answers[index].isCorrect ? 'correct' : 'incorrect'}!` : 'Nothing...' : 'Nothing...'}</h3>
+                            {!this.state.answers[index].isCorrect ? question.options.find(element => element.isCorrect).name ? <h3>The correct answer was: {question.options.find(element => element.isCorrect).name}</h3> : "" : ""}
+                            <h3>{question.explanation ? `Explanation: ${question.explanation}` : "No explanation available..."}</h3>
                         </div>
                     )
                 } else {

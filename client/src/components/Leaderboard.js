@@ -1,6 +1,5 @@
 import React from 'react';
 import { Table, Icon } from 'semantic-ui-react';
-import { containerStyle } from '../common.js';
 import DashboardMenu from './DashboardMenu.js';
 import retrieveItems from './quiz/retrieveItems';
 import Noty from 'noty';
@@ -65,7 +64,7 @@ class Leaderboard extends React.Component {
             return (
                 <div className="container" style={{ textAlign: 'left' }}>
                     <DashboardMenu></DashboardMenu>
-                    <div className="subContainer" style={containerStyle}>
+                    <div className="subContainer" style={{ maxWidth: '70%', margin: 'auto' }}>
                         <h1>Global Leaderboard</h1>
                         <div className="ui stacked segment">
                             {this.state.users.length > 0 ?
