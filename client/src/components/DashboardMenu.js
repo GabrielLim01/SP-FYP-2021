@@ -9,17 +9,25 @@ export default class DashboardMenu extends React.Component {
         menuItems: [
             { name: 'home', path: 'dashboard' },
             { name: 'quizzes', path: 'quizzes' },
-            { name: 'quests', path: 'quests' }
+            { name: 'quests', path: 'quests' },
         ],
-        currentFIQ: !inProduction ? JSON.parse(sessionStorage.getItem("user")).FIQ ? JSON.parse(sessionStorage.getItem("user")).FIQ : 0 : 0,
-        accountType: !inProduction ? JSON.parse(sessionStorage.getItem("user")).accountType ? JSON.parse(sessionStorage.getItem("user")).accountType : defaultAccountType : adminAccountType,
+        currentFIQ: !inProduction
+            ? JSON.parse(sessionStorage.getItem('user')).FIQ
+                ? JSON.parse(sessionStorage.getItem('user')).FIQ
+                : 0
+            : 0,
+        accountType: !inProduction
+            ? JSON.parse(sessionStorage.getItem('user')).accountType
+                ? JSON.parse(sessionStorage.getItem('user')).accountType
+                : defaultAccountType
+            : adminAccountType,
         currentLevel: 1,
         fiqToNextLevel: 100,
         maxLevel: 99,
         isMaxLevel: false,
         isLoggingOut: false,
-        redirect: null
-    }
+        redirect: null,
+    };
 
     handleItemClick = (event, { name }) => {
         // Prevents menu from disappearing when double-clicked on
@@ -36,12 +44,12 @@ export default class DashboardMenu extends React.Component {
         this.setState({ isLoggingOut: true }, () => {
             if (!inProduction) sessionStorage.removeItem('user');
             this.setState({ redirect: '/' });
-        })
-    }
+        });
+    };
 
     calculateFIQToNextLevel(currentLevel) {
         // Formula to calculate FIQ to next level
-        return (currentLevel * (currentLevel * 250) + ((currentLevel + 1) * 500));
+        return currentLevel * (currentLevel * 250) + (currentLevel + 1) * 500;
     }
 
     calculateLevelDifference() {
@@ -55,11 +63,11 @@ export default class DashboardMenu extends React.Component {
             fiqToNextLevel = this.calculateFIQToNextLevel(currentLevel);
         }
 
-        if ((this.state.currentLevel + levelIncrease) >= this.state.maxLevel) {
+        if (this.state.currentLevel + levelIncrease >= this.state.maxLevel) {
             this.setState({ currentLevel: this.state.maxLevel, isMaxLevel: true });
         } else {
             this.setState({ currentLevel: this.state.currentLevel + levelIncrease }, () => {
-                this.setState({ fiqToNextLevel: this.calculateFIQToNextLevel(this.state.currentLevel) })
+                this.setState({ fiqToNextLevel: this.calculateFIQToNextLevel(this.state.currentLevel) });
             });
         }
     }
@@ -67,8 +75,8 @@ export default class DashboardMenu extends React.Component {
     componentDidUpdate() {
         if (!inProduction) {
             if (!this.state.isLoggingOut) {
-                if (this.state.currentFIQ !== JSON.parse(sessionStorage.getItem("user")).FIQ) {
-                    this.setState({ currentFIQ: JSON.parse(sessionStorage.getItem("user")).FIQ }, () => {
+                if (this.state.currentFIQ !== JSON.parse(sessionStorage.getItem('user')).FIQ) {
+                    this.setState({ currentFIQ: JSON.parse(sessionStorage.getItem('user')).FIQ }, () => {
                         this.calculateLevelDifference();
                     });
                 }
@@ -88,22 +96,28 @@ export default class DashboardMenu extends React.Component {
             if (this.state.currentFIQ >= this.state.fiqToNextLevel) {
                 this.calculateLevelDifference();
             }
-        })
+        });
     }
 
     render() {
         const { activeItem } = this.state;
 
         if (this.state.redirect) {
-            return <Redirect push to={this.state.redirect} />
+            return <Redirect push to={this.state.redirect} />;
         } else {
             return (
                 <Menu inverted>
+                    <Menu.Item name={appName} />
                     <Menu.Item
-                        name={appName}
-                    />
-                    <Menu.Item
-                        content={!this.state.isMaxLevel ? `Level ${this.state.currentLevel}: ` + this.state.currentFIQ + '/' + this.state.fiqToNextLevel + " FIQ" : `Level ${this.state.currentLevel}: Max level reached!`}
+                        content={
+                            !this.state.isMaxLevel
+                                ? `Level ${this.state.currentLevel}: ` +
+                                  this.state.currentFIQ +
+                                  '/' +
+                                  this.state.fiqToNextLevel +
+                                  ' FIQ'
+                                : `Level ${this.state.currentLevel}: Max level reached!`
+                        }
                     />
                     {this.state.menuItems.map((value, index) => {
                         return (
@@ -116,10 +130,6 @@ export default class DashboardMenu extends React.Component {
                         );
                     })}
                     <Menu.Menu position="right">
-                        <Menu.Item>
-                            <Input icon="search" placeholder="Search..." />
-                        </Menu.Item>
-
                         <Dropdown item text="Profile" className="icon">
                             <Dropdown.Menu>
                                 <Dropdown.Item
