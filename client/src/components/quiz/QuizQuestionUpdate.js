@@ -5,35 +5,29 @@ class QuizQuestionUpdate extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            checked: {},
             question: props.question,
             number: props.questionNumber
         };
     }
 
     onSelectedChange = (event, index) => {
-        this.setState(previousState => ({
-            checked: { [index]: !previousState.checked[index] }
-        }));
+        // Depending on which part of the checkbox the user clicks, event.target will return either
+        // <label>..</label> if the label of the checkbox was clicked, or...
+        // <div class="ui toggle checkbox" if the exterior of the checkbox was clicked
+        //
+        // The input element we need to pass back to handleCheckboxChange, "hidden", is sandwiched between these two elements
+        // <div class="ui toggle checkbox">
+        //   <input class="hidden" name="isCorrect-1-1" readonly="" tabindex="0" type="checkbox" value=""> 
+        //   <label>..</label>
+        //
+        // For now, in order to ensure that we pass the correct element back, we have to "hardcode" the logic for event.target
+        // by attaching .previousElementSibling or .firstElementChild properties to navigate up or down the DOM hierarchy 
+        // if the event.target clicked is <label> or <div class="ui toggle checkbox"> respectively
 
-        // event.target retrieves the label element instead of the checkbox element
-        // the checkbox element is directly before the label element in the DOM hierarchy, 
-        // so attach .previousElementSibling to access it
-        if (event !== null) {
-            let checkbox = event.target.previousElementSibling;
-            this.props.handleCheckboxChange(checkbox)
-        }
+        let checkbox = event.target.tagName === "LABEL" ? event.target.previousElementSibling : event.target.firstElementChild;
+        // console.log(checkbox)
+        this.props.handleCheckboxChange(checkbox);
     };
-
-    componentDidMount() {
-        let options = this.state.question.question.options
-        for (let i = 0; i < options.length; i++) {
-            if (options[i].isCorrect) {
-                // Call this function once to disable all checkboxes with isCorrect: false property
-                this.onSelectedChange(null, i)
-            }
-        }
-    }
 
     render() {
         const { question } = this.state.question;
@@ -50,11 +44,6 @@ class QuizQuestionUpdate extends React.Component {
             let value = 5 * i
             timeOptions.push({ text: value, value: value });
         };
-
-        // Prevents more than 1 checkbox from being checked at any point in time (customisable)
-        const { checked } = this.state;
-        const checkedCount = Object.keys(checked).filter(key => checked[key]).length;
-        const disabled = checkedCount > 0;
 
         return (
             <div className="container" style={{ padding: '25px 0px' }}>
@@ -114,15 +103,14 @@ class QuizQuestionUpdate extends React.Component {
                                                     name={"option-" + number + "-" + questionIndex}
                                                     placeholder={"Option " + questionIndex}
                                                     onChange={this.props.handleChange}
-                                                    defaultValue={element.name}
+                                                    defaultValue={element.name ? element.name : ""}
                                                 />
                                                 <Checkbox
                                                     label='Correct Answer?'
                                                     name={"isCorrect-" + number + "-" + questionIndex}
                                                     style={{ padding: '20px 0px' }}
-                                                    onChange={(event) => this.onSelectedChange(event, index)}
-                                                    defaultChecked={element.isCorrect}
-                                                    disabled={!checked[index] && disabled}
+                                                    onClick={(event) => this.onSelectedChange(event, index)}
+                                                    defaultChecked={element.isCorrect ? element.isCorrect : false}
                                                 />
                                             </div>
                                         </Grid.Column>

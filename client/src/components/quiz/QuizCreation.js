@@ -14,10 +14,6 @@ import '../../../node_modules/noty/lib/themes/semanticui.css';
 // 1. Input validation (especially for checkboxes)
 // 2. Unify change handlers if possible
 
-// BUG
-// 1. Clicking slightly above the "Correct Answer?" checkbox sets the option text input to "true" instead of the checkbox
-// as there is a hidden checkbox field above the actual checkbox field
-
 class QuizCreation extends React.Component {
     constructor(props) {
         super(props);

@@ -15,10 +15,6 @@ import '../../../node_modules/noty/lib/themes/semanticui.css';
 // 2. Unify change handlers if possible
 // 3. Implement functionality to handle addition/deletion of questions
 
-// BUG
-// 1. Clicking slightly above the "Correct Answer?" checkbox sets the option text input to "true" instead of the checkbox
-// as there is a hidden checkbox field above the actual checkbox field
-
 class QuizCreation extends React.Component {
     constructor(props) {
         super(props);
@@ -71,10 +67,12 @@ class QuizCreation extends React.Component {
             const options = [];
 
             for (let j = 1; j < (this.state.options + 1); j++) {
-                options.push({
-                    name: this.state['option-' + i + '-' + j],
-                    isCorrect: this.state['isCorrect-' + i + '-' + j] || false
-                })
+                if (this.state['option-' + i + '-' + j] !== undefined && this.state['option-' + i + '-' + j] !== "") {
+                    options.push({
+                        name: this.state['option-' + i + '-' + j],
+                        isCorrect: this.state['isCorrect-' + i + '-' + j] || false
+                    })
+                }
             }
 
             questions.push({
@@ -175,10 +173,12 @@ class QuizCreation extends React.Component {
                             })
 
                             for (let j = 1; j < (this.state.options + 1); j++) {
-                                this.setState({
-                                    ['option-' + i + '-' + j]: question.options[j - 1].name,
-                                    ['isCorrect-' + i + '-' + j]: question.options[j - 1].isCorrect
-                                })
+                                if (this.state['option-' + i + '-' + j] !== undefined && this.state['option-' + i + '-' + j] !== "") {
+                                    this.setState({
+                                        ['option-' + i + '-' + j]: question.options[j - 1].name,
+                                        ['isCorrect-' + i + '-' + j]: question.options[j - 1].isCorrect
+                                    })
+                                }
                             }
                         }
                     });
