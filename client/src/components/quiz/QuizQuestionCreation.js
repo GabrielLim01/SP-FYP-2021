@@ -31,7 +31,7 @@ class QuizQuestionCreation extends React.Component {
         // if the event.target clicked is <label> or <div class="ui toggle checkbox"> respectively
 
         let checkbox = event.target.tagName === "LABEL" ? event.target.previousElementSibling : event.target.firstElementChild;
-        console.log(checkbox)
+        // console.log(checkbox)
         this.props.handleCheckboxChange(checkbox);
     };
 
