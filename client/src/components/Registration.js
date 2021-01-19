@@ -31,6 +31,7 @@ class Registration extends React.Component {
                 confirmPassword: '',
             },
         };
+        this._isMounted = false;
     }
 
     handleChange = (event) => {
@@ -80,7 +81,7 @@ class Registration extends React.Component {
                     }).show();
 
                     setTimeout(() => {
-                        this.setState({ redirect: '/' });
+                        if (this._isMounted) this.setState({ redirect: '/' });
                     }, 1500);
                 } else {
                     new Noty({
@@ -98,6 +99,14 @@ class Registration extends React.Component {
                 }).show();
             });
     };
+
+    componentDidMount() {
+        this._isMounted = true;
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
 
     render() {
         const { errors } = this.state;
