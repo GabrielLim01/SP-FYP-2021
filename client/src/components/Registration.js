@@ -71,16 +71,24 @@ class Registration extends React.Component {
                 name: this.state.username,
                 password: this.state.password,
             })
-            .then(() => {
-                new Noty({
-                    text: `${this.state.username} Created!`,
-                    type: 'success',
-                    theme: 'semanticui',
-                }).show();
+            .then((response) => {
+                if (response.status === 200) {
+                    new Noty({
+                        text: `${this.state.username} created!`,
+                        type: 'success',
+                        theme: 'semanticui',
+                    }).show();
 
-                setTimeout(() => {
-                    this.setState({ redirect: '/' });
-                }, 1500);
+                    setTimeout(() => {
+                        this.setState({ redirect: '/' });
+                    }, 1500);
+                } else {
+                    new Noty({
+                        text: 'Something went wrong.',
+                        type: 'error',
+                        theme: 'semanticui',
+                    }).show();
+                }
             })
             .catch((error) => {
                 new Noty({
