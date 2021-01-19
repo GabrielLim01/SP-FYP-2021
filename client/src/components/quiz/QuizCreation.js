@@ -41,6 +41,7 @@ class QuizCreation extends React.Component {
     };
 
     handleChange = (event) => {
+        //console.log(event.target.name + " " + event.target.value);
         this.setState({
             [event.target.name]: event.target.value,
         });
@@ -53,6 +54,7 @@ class QuizCreation extends React.Component {
     };
 
     handleCheckboxChange = (checkbox) => {
+        //console.log(checkbox.name + " " + !checkbox.checked);
         this.setState({
             [checkbox.name]: !checkbox.checked,
         });

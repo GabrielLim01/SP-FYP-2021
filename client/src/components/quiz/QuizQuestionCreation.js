@@ -17,11 +17,22 @@ class QuizQuestionCreation extends React.Component {
             }
         }));
 
-        // event.target retrieves the label element instead of the checkbox element
-        // the checkbox element is directly before the label element in the DOM hierarchy, 
-        // so attach .previousElementSibling to access it
-        let checkbox = event.target.previousElementSibling;
-        this.props.handleCheckboxChange(checkbox)
+        // Depending on which part of the checkbox the user clicks, event.target will return either
+        // <label>..</label> if the label of the checkbox was clicked, or...
+        // <div class="ui toggle checkbox" if the exterior of the checkbox was clicked
+        //
+        // The input element we need to pass back to handleCheckboxChange, "hidden", is sandwiched between these two elements
+        // <div class="ui toggle checkbox">
+        //   <input class="hidden" name="isCorrect-1-1" readonly="" tabindex="0" type="checkbox" value=""> 
+        //   <label>..</label>
+        //
+        // For now, in order to ensure that we pass the correct element back, we have to "hardcode" the logic for event.target
+        // by attaching .previousElementSibling or .firstElementChild properties to navigate up or down the DOM hierarchy 
+        // if the event.target clicked is <label> or <div class="ui toggle checkbox"> respectively
+
+        let checkbox = event.target.tagName === "LABEL" ? event.target.previousElementSibling : event.target.firstElementChild;
+        console.log(checkbox)
+        this.props.handleCheckboxChange(checkbox);
     };
 
     render() {
@@ -97,10 +108,11 @@ class QuizQuestionCreation extends React.Component {
                                             <div className="field">
                                                 <input type="text" name={"option-" + number + "-" + value} placeholder={"Option " + value} onChange={this.props.handleChange} />
                                                 <Checkbox
+                                                    toggle
                                                     label='Correct Answer?'
                                                     name={"isCorrect-" + number + "-" + value}
                                                     style={{ padding: '20px 0px' }}
-                                                    onChange={(event) => this.onSelectedChange(event, index)}
+                                                    onClick={(event) => this.onSelectedChange(event, index)}
                                                     checked={checked[index] || false}
                                                     disabled={!checked[index] && disabled}
                                                 />
