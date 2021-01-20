@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from 'semantic-ui-react'
 import DashboardMenu from '../DashboardMenu.js'
-import verifyLogin from '../verifyLogin.js';
 
 // TO-DO - Make component more dynamic by appending the name of the previous button clicked before the /categories
 // E.g. if 'quizzes' was clicked, URL should be /quizzes/categories
@@ -31,37 +30,31 @@ class QuestCategorySelection extends React.Component {
         // TO-DO - Front-end logic to populate categories array dynamically
         // axios.get{ ... }
 
-        if (!verifyLogin()) {
-            return (
-                <h1>403 Forbidden</h1>
-            )
-        } else {
-            return (
-                <div className="container">
-                    <DashboardMenu page='quests'></DashboardMenu>
-                    <div className="ui middle aligned center aligned grid">
-                        <div className="column" style={{ maxWidth: '450px', paddingTop: '100px' }}>
-                            <h1 className="ui header">
-                                <div className="content">
-                                    Select a category!
+        return (
+            <div className="container">
+                <DashboardMenu page='quests'></DashboardMenu>
+                <div className="ui middle aligned center aligned grid">
+                    <div className="column" style={{ maxWidth: '450px', paddingTop: '100px' }}>
+                        <h1 className="ui header">
+                            <div className="content">
+                                Select a category!
                         </div>
-                            </h1>
-                            <form className="ui large form">
-                                <div className="ui stacked segment">
-                                    {categories.map((value, index) => {
-                                        return (
-                                            <div className="field" key={index}>
-                                                <Button icon labelPosition='left' className='fluid large teal' name={value} onClick={this.handleClick}>{value}</Button>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            </form>
-                        </div>
+                        </h1>
+                        <form className="ui large form">
+                            <div className="ui stacked segment">
+                                {categories.map((value, index) => {
+                                    return (
+                                        <div className="field" key={index}>
+                                            <Button icon labelPosition='left' className='fluid large teal' name={value} onClick={this.handleClick}>{value}</Button>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </form>
                     </div>
                 </div>
-            );
-        }
+            </div>
+        );
     }
 }
 
