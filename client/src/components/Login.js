@@ -7,7 +7,6 @@ import verifyLogin from './verifyLogin.js';
 
 // TO-DO
 // 1. Input validation
-// 2. Implement RBAC logic
 
 class Login extends React.Component {
     constructor(props) {
@@ -15,8 +14,7 @@ class Login extends React.Component {
         this.state = {
             username: null,
             password: null,
-            isLoggedIn: false,
-            redirect: null
+            redirect: null,
         };
     }
 
@@ -24,35 +22,45 @@ class Login extends React.Component {
         let nam = event.target.name;
         let val = event.target.value;
         this.setState({ [nam]: val });
-    }
+    };
 
     handleSubmit = (event) => {
         event.preventDefault();
 
         axios.post(host + '/authenticate', {
             username: this.state.username,
-            password: this.state.password
+            password: this.state.password,
         })
             .then((response) => {
-                if (response.data === 'Congrats') {
-                    let user = { username: this.state.username, isLoggedIn: true }
+                if (response.data.token === 'Congrats') {
+                    let userData = response.data.user[0];
+
+                    let user = {
+                        id: userData.insertId,
+                        username: userData.name,
+                        ageGroupId: userData.ageGroupId,
+                        hobby: userData.hobby,
+                        FIQ: userData.FIQ,
+                        accountType: userData.accountType
+                    }
+
                     sessionStorage.setItem("user", JSON.stringify(user));
                     this.setState({ redirect: "/dashboard" });
                 } else {
-                    alert("Error: " + response.data);
+                    alert('Error: ' + response.data);
                 }
             })
             .catch((error) => {
                 alert(error);
             });
-    }
+    };
 
     render() {
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirect} />
+            return <Redirect push to={this.state.redirect} />
         } else if (verifyLogin()) {
             return (
-                <Redirect to='/dashboard' />
+                <Redirect push to='/dashboard' />
             )
         } else {
             return (
@@ -63,16 +71,28 @@ class Login extends React.Component {
                             <div className="field">
                                 <div className="ui left icon input">
                                     <i className="user icon"></i>
-                                    <input type="text" name="username" placeholder="Username" onChange={this.handleChange} />
+                                    <input
+                                        type="text"
+                                        name="username"
+                                        placeholder="Username"
+                                        onChange={this.handleChange}
+                                    />
                                 </div>
                             </div>
                             <div className="field">
                                 <div className="ui left icon input">
                                     <i className="lock icon"></i>
-                                    <input type="password" name="password" placeholder="Password" onChange={this.handleChange} />
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        placeholder="Password"
+                                        onChange={this.handleChange}
+                                    />
                                 </div>
                             </div>
-                            <Button className="fluid large teal" onClick={this.handleSubmit}>Login</Button>
+                            <Button className="fluid large teal" onClick={this.handleSubmit}>
+                                Login
+                            </Button>
                         </Form>
                     </div>
                     <div className="ui message">
