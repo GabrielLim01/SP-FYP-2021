@@ -21,9 +21,12 @@ import QuizPlay from './quiz/QuizPlay.js';
 import QuizUpdate from './quiz/QuizUpdate.js';
 
 // Quests
-import QuestCategorySelection from './quest/QuestCategorySelection.js';
-import QuestSelection from './quest/QuestSelection.js';
-import StartQuest from './quest/StartQuest.js';
+// import QuestCategorySelection from './quest/QuestCategorySelection.js';
+// import QuestSelection from './quest/QuestSelection.js';
+// import StartQuest from './quest/StartQuest.js';
+import QuestDashboard from './quest/questDashboard.js';
+import QuestCreation from './quest/questCreation.js';
+import QuestUpdate from './quest/questUpdate.js';
 
 // Profile
 import Profile from './profile/Profile.js';
@@ -50,14 +53,14 @@ const Routes = () => {
             <ProtectedRoute exact path="/quizzes/play/:id" component={QuizPlay}></ProtectedRoute>
             <ProtectedRoute exact path="/quizzes/update/:id" component={QuizUpdate} adminOnly={true}></ProtectedRoute>
 
-            <ProtectedRoute exact path="/quests" component={QuestCategorySelection}></ProtectedRoute>
+            {/* <ProtectedRoute exact path="/quests" component={QuestCategorySelection}></ProtectedRoute>
             <ProtectedRoute exact path="/quests/play" component={StartQuest}></ProtectedRoute>
-            <ProtectedRoute exact path="/quests/:category" component={QuestSelection}></ProtectedRoute>
+            <ProtectedRoute exact path="/quests/:category" component={QuestSelection}></ProtectedRoute> */}
 
-            {/* <ProtectedRoute exact path="/quests" component={QuestDashboard}></ProtectedRoute>
+            <ProtectedRoute exact path="/quests" component={QuestDashboard}></ProtectedRoute>
             <ProtectedRoute exact path="/quests/creation" component={QuestCreation} adminOnly={true}></ProtectedRoute>
-            <ProtectedRoute exact path="/quests/play/:id" component={QuestPlay}></ProtectedRoute>
-            <ProtectedRoute exact path="/quests/update/:id" component={QuestUpdate} adminOnly={true}></ProtectedRoute> */}
+            {/* <ProtectedRoute exact path="/quests/play/:id" component={QuestPlay}></ProtectedRoute> */}
+            <ProtectedRoute exact path="/quests/update/:id" component={QuestUpdate} adminOnly={true}></ProtectedRoute>
 
             <ProtectedRoute exact path="/account" component={Profile}></ProtectedRoute>
             <ProtectedRoute exact path="/about" component={About}></ProtectedRoute>
