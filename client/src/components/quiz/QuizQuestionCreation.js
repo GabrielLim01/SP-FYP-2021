@@ -3,7 +3,7 @@ import { Segment, Form, Grid, Divider, Popup, TextArea, Dropdown, Checkbox } fro
 
 class QuizQuestionCreation extends React.Component {
 
-    onSelectedChange = (event, index) => {
+    onSelectedChange = (event) => {
         // Depending on which part of the checkbox the user clicks, event.target will return either
         // <label>..</label> if the label of the checkbox was clicked, or...
         // <div class="ui toggle checkbox" if the exterior of the checkbox was clicked
@@ -94,7 +94,7 @@ class QuizQuestionCreation extends React.Component {
                                                     label='Correct Answer?'
                                                     name={"isCorrect-" + number + "-" + value}
                                                     style={{ padding: '20px 0px' }}
-                                                    onClick={(event) => this.onSelectedChange(event, index)}
+                                                    onClick={(event) => this.onSelectedChange(event)}
                                                 />
                                             </div>
                                         </Grid.Column>

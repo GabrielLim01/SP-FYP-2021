@@ -5,7 +5,7 @@ import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import verifyLogin from '../verifyLogin.js';
 import retrieveItems from '../quiz/retrieveItems.js';
-import QuestDelete from './questDelete.js';
+import QuestDelete from './QuestDelete.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
@@ -196,8 +196,8 @@ class QuestDashboard extends React.Component {
                                         );
                                     })
                                 ) : (
-                                    <h2>No Results..</h2>
-                                )}
+                                        <h2>No Results..</h2>
+                                    )}
                             </Form>
                         </div>
                     </div>

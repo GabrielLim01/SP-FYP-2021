@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { Button, Dropdown, Icon, Segment, Form, Grid, TextArea } from 'semantic-ui-react';
 import DashboardMenu from '../DashboardMenu.js';
-import QuestScenarioCreation from './questScenarioCreation.js';
+import QuestScenarioCreation from './QuestScenarioCreation.js';
 import retrieveItems from '../quiz/retrieveItems.js';
 import axios from 'axios';
 import { host } from '../../common.js';
@@ -19,6 +19,8 @@ class QuestCreation extends React.Component {
             scenario: 1,
             maxScenario: 10,
             options: 3,
+            fiqOptionsRange: 5,
+            moodOptionsRange: 10
         };
     }
     redirectHandler = () => {
@@ -139,6 +141,8 @@ class QuestCreation extends React.Component {
     render() {
         const scenarios = [];
         const categoryItems = [];
+        const FIQoptions = [];
+        const moodOptions = [];
 
         for (let i = 0; i < this.state.items.length; i++) {
             let id = this.state.items[i].categoryId;
@@ -157,6 +161,17 @@ class QuestCreation extends React.Component {
                 />,
             );
         }
+
+        for (let i = 1; i < this.state.fiqOptionsRange; i++) {
+            let value = 25 * i;
+            FIQoptions.push({ text: value, value: value });
+        }
+
+        for (let i = 0; i < (this.state.moodOptionsRange + 1); i++) {
+            let value = 10 * i;
+            moodOptions.push({ text: value, value: value });
+        }
+
         return (
             <div className="container">
                 <DashboardMenu page="quests"></DashboardMenu>
@@ -187,7 +202,7 @@ class QuestCreation extends React.Component {
                                         />
                                     </Grid.Column>
                                 </Grid.Row>
-                                <Grid.Row columns={3}>
+                                <Grid.Row columns={2}>
                                     <Grid.Column>
                                         <h3>Category</h3>
                                         <Dropdown
@@ -201,14 +216,48 @@ class QuestCreation extends React.Component {
                                     </Grid.Column>
                                     <Grid.Column>
                                         <h3>Overall FIQ Points</h3>
-                                        <input
-                                            type="text"
+                                        <Dropdown
                                             name="questPoints"
-                                            placeholder="Points"
-                                            onChange={this.handleChange}
+                                            placeholder="Select FIQ per question"
+                                            fluid
+                                            selection
+                                            clearable
+                                            options={FIQoptions}
+                                            onChange={this.handleDropdownChange}
                                         />
                                     </Grid.Column>
                                 </Grid.Row>
+                                <Grid.Row columns={2}>
+                                    <Grid.Column>
+                                        <h3>Character Name</h3>
+                                        <input
+                                            type="text"
+                                            name="characterName"
+                                            placeholder="Character Name"
+                                            onChange={this.handleChange}
+                                        />
+                                    </Grid.Column>
+                                    <Grid.Column>
+                                        <h3>Character Starting Mood</h3>
+                                        <Dropdown
+                                            name="characterMood"
+                                            defaultValue={100}
+                                            fluid
+                                            selection
+                                            clearable
+                                            options={moodOptions}
+                                            onChange={this.handleDropdownChange}
+                                        />
+                                    </Grid.Column>
+                                </Grid.Row>
+                                <Grid.Column>
+                                    <h3>Quest Conclusion</h3>
+                                    <TextArea
+                                        name="questConc"
+                                        placeholder="Conclusion"
+                                        onChange={this.handleChange}
+                                    />
+                                </Grid.Column>
                             </Grid>
                         </Form>
                     </Segment>
@@ -223,7 +272,7 @@ class QuestCreation extends React.Component {
                             onClick={this.onAddScenario}
                         >
                             <Icon name="add" size="large" />
-                            Add Scenarios
+                            Add Scenario
                         </Button>
                         <Button className="blue" name="createQuest" onClick={this.handleSubmit}>
                             Create Quest

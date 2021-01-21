@@ -24,17 +24,17 @@ import QuizUpdate from './quiz/QuizUpdate.js';
 // import QuestCategorySelection from './quest/QuestCategorySelection.js';
 // import QuestSelection from './quest/QuestSelection.js';
 // import StartQuest from './quest/StartQuest.js';
-import QuestDashboard from './quest/questDashboard.js';
-import QuestCreation from './quest/questCreation.js';
-import QuestUpdate from './quest/questUpdate.js';
+import QuestDashboard from './quest/QuestDashboard.js';
+import QuestCreation from './quest/QuestCreation.js';
+import QuestUpdate from './quest/QuestUpdate.js';
 
 // Profile
 import Profile from './profile/Profile.js';
 import About from './profile/About.js';
 
 // Account
-import AccountOverview from './Account/accountOverview.js';
-import AdminRegistration from './Account/adminRegister.js';
+import AccountOverview from './account/AccountOverview.js';
+import AdminRegistration from './account/AdminRegister.js';
 
 const Routes = () => {
     return (
