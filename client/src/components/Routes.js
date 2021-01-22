@@ -26,6 +26,7 @@ import QuizUpdate from './quiz/QuizUpdate.js';
 // import StartQuest from './quest/StartQuest.js';
 import QuestDashboard from './quest/QuestDashboard.js';
 import QuestCreation from './quest/QuestCreation.js';
+import QuestPlay from './quest/QuestPlay.js';
 import QuestUpdate from './quest/QuestUpdate.js';
 
 // Profile
@@ -59,7 +60,7 @@ const Routes = () => {
 
             <ProtectedRoute exact path="/quests" component={QuestDashboard}></ProtectedRoute>
             <ProtectedRoute exact path="/quests/creation" component={QuestCreation} adminOnly={true}></ProtectedRoute>
-            {/* <ProtectedRoute exact path="/quests/play/:id" component={QuestPlay}></ProtectedRoute> */}
+            <ProtectedRoute exact path="/quests/play/:id" component={QuestPlay}></ProtectedRoute>
             <ProtectedRoute exact path="/quests/update/:id" component={QuestUpdate} adminOnly={true}></ProtectedRoute>
 
             <ProtectedRoute exact path="/account" component={Profile}></ProtectedRoute>

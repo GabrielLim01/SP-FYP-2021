@@ -295,6 +295,8 @@ app.post('/quiz', (request, response) => {
                 });
 
                 createQuestionResult.catch((err) => response.send(`Creation of questions failed. ${err}`));
+
+                response.status(201).send("Quiz created!");
             })
             .catch((err) => {
                 // Please addon to this list if you encountered something new
@@ -458,30 +460,56 @@ const obj = {
     ],
 };
 
-//create
-app.post('/quest/createNew', async (request, response) => {
-    //syntaxes to change during integration
-    const title = obj.questTitle;
-    const desc = obj.questDesc;
-    const objective = obj.questObjective;
-    const categoryId = obj.questCategoryId;
-    const fiqPoints = obj.fiqPoints;
-    const scenarioObj = obj.questions;
-    let isValid = validateString(title);
+// read
+app.get('/quest', (request, response) => {
     const db = dbService.getDbServiceInstance();
-    if (isValid) {
-        let result = db.createQuest(title, desc, objective, categoryId, fiqPoints);
-        result
-            .then((data) => {
-                response.json({ data: data.insertId });
+    const result = db.getAllQuests();
+    result
+        .then((data) => {
+            response.json(data);
+        })
+        .catch((err) => response.status(400).send(`Fetching of data failed. ${err}`));
+});
 
-                let createQuestScenarioResult = db.createQuestScenario(data.insertId, scenarioObj);
-                createQuestScenarioResult.catch((err) => console.log(`Creation of scenario(s) failed. ${err}`));
+//create
+app.post('/quest', async (request, response) => {
+    const quest = request.body.quest;
+    const category = quest.categoryId;
+    const title = quest.title;
+    const desc = quest.description;
+    const intro = quest.introduction;
+    const conc = quest.conclusion;
+    const characterName = quest.characterName;
+    const characterMood = quest.characterMood;
+    const points = quest.points;
+
+    if (!isBlank(title) && !isBlank(category) && !isBlank(points)) {
+        const db = dbService.getDbServiceInstance();
+
+        const createQuestResult = db.createQuest(category, title, desc, intro, conc, characterName, characterMood, points);
+
+        createQuestResult
+            .then((data) => {
+                const questId = data.insertId;
+
+                // let createQuestScenarioResult = db.createQuestScenario(data.insertId, scenarioObj);
+                // createQuestScenarioResult.catch((err) => console.log(`Creation of scenario(s) failed. ${err}`));
+
+                let createScenarioResult = new Promise((resolve, reject) => { });
+
+                const scenarios = quest.scenarios;
+                scenarios.forEach((scenario) => {
+                    createScenarioResult = db.createQuestScenario(questId, JSON.stringify(scenario));
+                });
+
+                createScenarioResult.catch((err) => response.send(`Creation of scenario failed. ${err}`));
+
+                response.status(201).send("Quest created!");
             })
             .catch((err) => {
-                response.status(500).send(`Error creating quest: ${title}, ${err}`);
+                response.send(`Error creating quest: ${err}`);
             });
-    } else response.status(400).send(`${title} contained illegal characters. Please check again.`);
+    } else response.send(`Category / Title / Points cannot be empty!`);
 });
 
 app.get('/quest/:id', (request, response) => {
@@ -493,7 +521,7 @@ app.get('/quest/:id', (request, response) => {
             .then((data) => {
                 if (!isEmpty(data)) {
                     const questObject = JSON.parse(JSON.stringify(data));
-                    response.json({ data: questObject });
+                    response.json(questObject);
                 } else response.status(400).send(`Quest of id: ${request.params.id} is not present.`);
             })
             .catch((err) => {

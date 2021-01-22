@@ -1,13 +1,13 @@
 import axios from 'axios';
 import React from 'react';
 // import { Link } from "react-router-dom";
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 // import { Form, Button } from "semantic-ui-react";
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import validateCat from './validation.js';
 import { host } from '../../common.js';
-import retrieveItems from '../quiz/retrieveItems.js';
+import retrieveItems from '../retrieveItems.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';

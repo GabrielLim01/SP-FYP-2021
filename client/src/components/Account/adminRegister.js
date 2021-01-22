@@ -3,10 +3,10 @@ import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 import { Form, Button, Dropdown } from 'semantic-ui-react';
 import { host, appName, containerStyle } from '../../common.js';
+import retrieveItems from '../retrieveItems';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
-import retrieveItems from '../quiz/retrieveItems';
 
 class AdminRegistration extends React.Component {
     constructor(props) {

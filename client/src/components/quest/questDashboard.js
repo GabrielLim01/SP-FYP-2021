@@ -3,8 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { Form, Button, Segment, Grid, Accordion, Label, Message, Input, Select } from 'semantic-ui-react';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import verifyLogin from '../verifyLogin.js';
-import retrieveItems from '../quiz/retrieveItems.js';
+import retrieveItems from '../retrieveItems.js';
 import QuestDelete from './QuestDelete.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
@@ -87,7 +86,7 @@ class QuestDashboard extends React.Component {
     }
 
     componentDidMount() {
-        retrieveItems('quests')
+        retrieveItems('quest')
             .then((data) => {
                 if (data.length <= 0) {
                     new Noty({
@@ -117,8 +116,6 @@ class QuestDashboard extends React.Component {
 
         if (this.state.redirect) {
             return <Redirect push to={this.state.redirect} />;
-        } else if (!verifyLogin()) {
-            return <h1>403 Forbidden</h1>;
         } else {
             return (
                 <div className="container" style={{ textAlign: 'left' }}>
@@ -174,11 +171,10 @@ class QuestDashboard extends React.Component {
                                                         return (
                                                             <Grid.Column key={index2} style={{ display: 'flex' }}>
                                                                 <Link
-                                                                    push
                                                                     to={{
                                                                         pathname: `${window.location.href
                                                                             .split('/')
-                                                                            .pop()}/${button.path}/${value.insertId}`,
+                                                                            .pop()}/${button.path}/${value.questId}`,
                                                                         quest: value,
                                                                     }}
                                                                 >

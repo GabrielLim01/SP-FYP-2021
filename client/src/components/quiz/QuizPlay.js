@@ -5,7 +5,7 @@ import { Button } from 'semantic-ui-react';
 import { host, inProduction } from '../../common.js';
 import QuizPlayContainer from './QuizPlayContainer.js';
 import QuizQuestionPlay from './QuizQuestionPlay.js';
-import retrieveItems from './retrieveItems.js';
+import retrieveItems from '../retrieveItems.js';
 import './animations.css'
 
 class QuizPlay extends React.Component {
@@ -161,6 +161,7 @@ class QuizPlay extends React.Component {
                 delete data[0].question;
 
                 this.setState({ quiz: data[0], questions: questions, maxQuestions: questions.length }, () => {
+                    console.log(this.state.quiz);
                     this.setState({ explanationActiveItem: questions.length });
                 });
             });

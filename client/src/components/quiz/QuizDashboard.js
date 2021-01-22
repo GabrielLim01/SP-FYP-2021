@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Form, Button, Segment, Grid, Label, Input, Select, Message, Accordion } from 'semantic-ui-react';
 import { containerStyle, inProduction, defaultAccountType, adminAccountType } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import retrieveItems from './retrieveItems.js';
+import retrieveItems from '../retrieveItems.js';
 import QuizDelete from './QuizDelete.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';

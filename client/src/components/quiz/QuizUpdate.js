@@ -4,8 +4,8 @@ import { Redirect } from 'react-router-dom'
 import { Segment, Form, Grid, TextArea, Dropdown, Button, Popup } from 'semantic-ui-react';
 import { host } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
+import retrieveItems from '../retrieveItems.js';
 import QuizQuestionUpdate from './QuizQuestionUpdate.js';
-import retrieveItems from './retrieveItems.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';

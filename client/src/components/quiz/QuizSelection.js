@@ -3,7 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { Segment, Grid, Form, Button } from 'semantic-ui-react';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import retrieveItems from './retrieveItems.js';
+import retrieveItems from '../retrieveItems.js';
 import QuizDelete from './QuizDelete.js'
 
 // No quizzes will be rendered (i.e. hasItems property will be set to false) under the following scenario:

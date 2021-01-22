@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import { Button, Dropdown, Icon, Segment, Form, Grid, TextArea } from 'semantic-ui-react';
 import DashboardMenu from '../DashboardMenu.js';
 import QuestScenarioUpdate from './QuestScenarioUpdate.js';
-import retrieveItems from '../quiz/retrieveItems.js';
+import retrieveItems from '../retrieveItems.js';
 // import axios from 'axios';
 // import { host } from '../../common.js';
 // import Noty from 'noty';

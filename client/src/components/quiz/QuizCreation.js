@@ -5,7 +5,7 @@ import { Segment, Form, Grid, TextArea, Dropdown, Button, Popup, Icon } from 'se
 import { host } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import QuizQuestionCreation from './QuizQuestionCreation.js';
-import retrieveItems from './retrieveItems.js';
+import retrieveItems from '../retrieveItems.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
@@ -65,7 +65,7 @@ class QuizCreation extends React.Component {
             const options = [];
 
             for (let j = 1; j < this.state.options + 1; j++) {
-                if (this.state['option-' + i + '-' + j] !== undefined && this.state['option-' + i + '-' + j] !== "") {
+                if (this.state[`option-${i}-${j}`] !== undefined && this.state[`option-${i}-${j}`] !== "") {
                     options.push({
                         name: this.state['option-' + i + '-' + j],
                         isCorrect: this.state['isCorrect-' + i + '-' + j] || false,

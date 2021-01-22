@@ -1,15 +1,14 @@
 import axios from 'axios';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { containerStyle } from '../../common.js';
+import { host, inProduction, defaultAccountType, adminAccountType, containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
-import retrieveItems from '../quiz/retrieveItems';
+import retrieveItems from '../retrieveItems';
 import { Button, Dropdown } from 'semantic-ui-react';
 //import userDetails from '../getUserInfo.js';
-import { host, inProduction, defaultAccountType, adminAccountType } from '../../common.js';
 
 class Profile extends React.Component {
     constructor(props) {

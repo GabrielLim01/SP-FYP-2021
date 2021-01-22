@@ -1,16 +1,14 @@
 import React from 'react';
-import { Redirect } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
+import { Grid, Table, Icon, Label, Input, Popup, Button, Checkbox } from 'semantic-ui-react';
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
+import retrieveItems from '../retrieveItems';
+import AccountUpdate from './AccountUpdate.js';
+import AccountDelete from './AccountDelete.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
-import retrieveItems from '../quiz/retrieveItems';
-
-import { Grid, Table, Icon, Label, Input, Popup, Button, Checkbox } from 'semantic-ui-react';
-import AccountUpdate from './AccountUpdate.js';
-import AccountDelete from './AccountDelete.js';
 
 class AccountOverview extends React.Component {
     constructor(props) {

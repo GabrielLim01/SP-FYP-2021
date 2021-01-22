@@ -27,7 +27,7 @@ const joinQuizTableQuery = 'SELECT * FROM quiz INNER JOIN quiz_question ON quiz.
 const retrieveQuizByCategoryIdQuery =
     'SELECT DISTINCT(quiz.quizId), quiz.quizName FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId';
 
-const joinQuestTableQuery = 'SELECT * FROM quest INNER JOIN quest_scenario ON quest.insertId = quest_scenario.questId';
+const joinQuestTableQuery = 'SELECT * FROM quest INNER JOIN quest_scenario ON quest.questId = quest_scenario.questId';
 
 class DbService {
     static getDbServiceInstance() {
@@ -354,10 +354,25 @@ class DbService {
 
     // QUESTS =====================================================================================================================
 
+    async getAllQuests() {
+        try {
+            return new Promise((resolve, reject) => {
+                const query = 'SELECT * FROM quest;';
+
+                connection.query(query, (err, result) => {
+                    if (err) return reject(err.message);
+                    resolve(result);
+                });
+            });
+        } catch (e) {
+            throw e.message;
+        }
+    }
+
     async getQuestById(id) {
         try {
             return new Promise((resolve, reject) => {
-                const query = `${joinQuestTableQuery} WHERE quest.insertId = ?;`;
+                const query = `${joinQuestTableQuery} WHERE quest.questId = ?;`;
 
                 connection.query(query, id, (err, result) => {
                     if (err) return reject(err.message);
@@ -370,35 +385,54 @@ class DbService {
     }
 
     //Create quest
-    async createQuest(title, description, objective, categoryId, fiqPoints) {
-        return new Promise((resolve, reject) => {
-            const query =
-                'INSERT INTO quest (title, description, objective, categoryId, fiqPoint) VALUES (?, ?, ?, ?, ?);';
-            connection.query(query, [title, description, objective, categoryId, fiqPoints], (err, result) => {
-                if (err) {
-                    console.log(err.message);
-                    reject(err.message);
-                }
-                resolve(result);
+    async createQuest(category, title, desc, intro, conc, characterName, characterMood, points) {
+        try {
+            return new Promise((resolve, reject) => {
+                let createdAt = new Date();
+                const query =
+                    'INSERT INTO quest (categoryId, title, description, introduction, conclusion, characterName, characterMood, points, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
+                connection.query(query, [category, title, desc, intro, conc, characterName, characterMood, points, createdAt], (err, result) => {
+                    if (err) {
+                        console.log(err.message);
+                        reject(err.message);
+                    }
+                    resolve(result);
+                });
             });
-        });
+        } catch (e) {
+            throw e.message;
+        }
     }
 
     //Create quest scenarios
-    async createQuestScenario(questId, obj) {
-        const array = [];
-        Object.keys(obj).forEach(function (item) {
-            array.push([questId, obj[item].sub_questTitle, obj[item].sub_questDesc, JSON.stringify(obj[item].options)]);
-        });
+    async createQuestScenario(questId, scenario) {
+        // const array = [];
+        // Object.keys(obj).forEach(function (item) {
+        //     array.push([questId, obj[item].sub_questTitle, obj[item].sub_questDesc, JSON.stringify(obj[item].options)]);
+        // });
 
-        const query = 'INSERT into quest_scenario (questId, sub_questTitle, sub_questDesc, options) values ?;';
-        connection.query(query, [array], (err, result) => {
-            if (err) return err.message;
-            else {
-                console.log('Scenario(s) created.');
-                return result;
-            }
-        });
+        // const query = 'INSERT into quest_scenario (questId, sub_questTitle, sub_questDesc, options) values ?;';
+        // connection.query(query, [array], (err, result) => {
+        //     if (err) return err.message;
+        //     else {
+        //         console.log('Scenario(s) created.');
+        //         return result;
+        //     }
+        // });
+        try {
+            return new Promise((resolve, reject) => {
+                const query = 'INSERT into quest_scenario (questId, scenario) values (?,?);';
+                connection.query(query, [questId, scenario], (err, result) => {
+                    if (err) reject(err.message);
+                    else {
+                        console.log('Scenario created. questScenarioId:', result.insertId);
+                        resolve(result);
+                    }
+                });
+            });
+        } catch (e) {
+            throw e.message;
+        }
     }
 
     async updateQuestDetailsById(id, title, desc, objective, categoryId, fiqPoint) {
