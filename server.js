@@ -63,7 +63,7 @@ app.post('/register', async (request, respond) => {
 
     if (!isBlank(name) && !isBlank(password)) {
         const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hashSync(password, salt);
+        const hashedPassword = bcrypt.hashSync(password, salt);
 
         const db = dbService.getDbServiceInstance();
 
@@ -71,9 +71,9 @@ app.post('/register', async (request, respond) => {
 
         result
             .then((data) => respond.json({ data: data }))
-            .catch((err) =>
-                response.status(400).send(`Registering of user where username equals to ${name} has failed.`, err),
-            );
+            .catch((err) => {
+                response.status(400).send(`Registering of user where username equals to ${name} has failed. ${err}`);
+            });
     } else response.status(400).send(`Name / Password is(are) empty.`);
 });
 
@@ -84,7 +84,7 @@ app.post('/admin/register', async (request, respond) => {
 
     if (!isBlank(name) && !isBlank(password) && !isBlank(role)) {
         const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hashSync(password, salt);
+        const hashedPassword = bcrypt.hashSync(password, salt);
 
         const db = dbService.getDbServiceInstance();
 
@@ -287,7 +287,7 @@ app.post('/quiz', (request, response) => {
                 //   quizId,
                 //   quiz.questions
                 // );
-                let createQuestionResult = new Promise((resolve, reject) => { });
+                let createQuestionResult = new Promise((resolve, reject) => {});
 
                 const questions = quiz.questions;
                 questions.forEach((question) => {
@@ -358,7 +358,7 @@ app.patch('/quiz/:id', (request, response) => {
             .then((data) => {
                 response.json({ data: data });
 
-                let updateQuestionsResult = new Promise((resolve, reject) => { });
+                let updateQuestionsResult = new Promise((resolve, reject) => {});
 
                 questions.forEach((question) => {
                     updateQuestionsResult = db.updateQuestionDetailsById(question);
@@ -563,7 +563,7 @@ app.patch('/quest/:id', (request, response) => {
             .then((data) => {
                 response.json({ data: data });
 
-                let updateScenarioResult = new Promise((resolve, reject) => { });
+                let updateScenarioResult = new Promise((resolve, reject) => {});
                 scenearioObj.forEach((scenario) => {
                     updateScenarioResult = db.updateScenarioDetailsById(
                         request.params.id,

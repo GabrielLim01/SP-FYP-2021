@@ -54,7 +54,7 @@ class DbService {
                 insertId: insertId,
             };
         } catch (error) {
-            console.log(error.message);
+            return error.message;
         }
     }
 
@@ -74,7 +74,7 @@ class DbService {
                 insertId: insertId,
             };
         } catch (error) {
-            console.log(error.message);
+            return error.message;
         }
     }
 

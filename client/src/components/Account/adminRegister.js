@@ -6,7 +6,8 @@ import { host, appName, containerStyle } from '../../common.js';
 import Noty from 'noty';
 import '../../../node_modules/noty/lib/noty.css';
 import '../../../node_modules/noty/lib/themes/semanticui.css';
-import retrieveItems from '../quiz/retrieveItems';
+import retrieveItems from '../quiz/retrieveItems.js';
+import Validate from '../validationFile.js';
 
 class AdminRegistration extends React.Component {
     constructor(props) {
@@ -65,22 +66,58 @@ class AdminRegistration extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
+        const selected = Validate.selected(this.state.role);
+        if (selected.length > 0) {
+            new Noty({
+                text: `Please select a role!`,
+                type: 'error',
+                theme: 'semanticui',
+            }).show();
+            return;
+        }
+
+        const isEmpty = Validate.validate([this.state.username, this.state.password, this.state.confirmPassword]);
+        if (isEmpty.length > 0) {
+            new Noty({
+                text: `Username, password and confirm password fields CANNOT be empty!`,
+                type: 'error',
+                theme: 'semanticui',
+            }).show();
+            return;
+        }
+
         axios
             .post(host + '/admin/register', {
                 name: this.state.username,
                 password: this.state.password,
                 role: this.state.role,
             })
-            .then(() => {
-                new Noty({
-                    text: `User Created!, ${this.state.username}`,
-                    type: 'success',
-                    theme: 'semanticui',
-                }).show();
+            .then((response) => {
+                if (JSON.stringify(response.data).includes('ER_DUP_ENTRY')) {
+                    new Noty({
+                        text: `There is already an existing account called ${this.state.username}. Please choose a different name.`,
+                        type: 'error',
+                        theme: 'semanticui',
+                    }).show();
+                } else {
+                    if (response.status === 200) {
+                        new Noty({
+                            text: `${this.state.username} created!`,
+                            type: 'success',
+                            theme: 'semanticui',
+                        }).show();
 
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                        setTimeout(() => {
+                            if (this._isMounted) this.setState({ redirect: '/' });
+                        }, 1500);
+                    } else {
+                        new Noty({
+                            text: 'Something went wrong.',
+                            type: 'error',
+                            theme: 'semanticui',
+                        }).show();
+                    }
+                }
             })
             .catch((error) => {
                 new Noty({
@@ -138,6 +175,9 @@ class AdminRegistration extends React.Component {
                                 options={roleItems}
                                 onChange={this.handleDropdownChange}
                             />
+                            {this.state.role === null ? (
+                                <span style={{ color: 'red' }}>'Please select a role type!'</span>
+                            ) : null}
                             {inputs.map((value, index) => {
                                 return (
                                     <div className="field" key={index}>
