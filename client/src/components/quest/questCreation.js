@@ -57,7 +57,6 @@ class QuestCreation extends React.Component {
 
         for (let i = 1; i < this.state.scenarios + 1; i++) {
             const choices = [];
-            const events = [];
 
             for (let j = 1; j < this.state.choices + 1; j++) {
 

@@ -3,23 +3,48 @@ import { Segment } from 'semantic-ui-react'
 import DashboardMenu from '../DashboardMenu.js';
 
 class QuestPlayContainer extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            characterMood: props.characterMood
+        };
+    }
+
+    componentDidUpdate(prevState) {
+        console.log(this.props.characterMood)
+        console.log(prevState.characterMood)
+        if (this.props.characterMood !== prevState.characterMood) {
+            console.log("Change in mood detected!");
+            this.setState({ characterMood: this.props.characterMood });
+        }
+    }
+
     render() {
         return (
-            <div className="container">
+            <div className="outerContainer">
                 <DashboardMenu page="quests"></DashboardMenu>
-                <Segment
-                    inverted
-                    raised
-                    style={{
+                <div className="innerContainer" style={{ height: '100%', maxWidth: '60%', margin: 'auto', }}>
+                    <div className="moodBar" style={{ float: 'right', paddingBottom: '10px' }}>
+                        <h2 style={{ paddingRight: '10px', display: 'table-cell' }}>{this.props.characterName}'s Mood</h2>
+                        <div style={{
+                            height: '30px',
+                            width: '250px',
+                            paddingRight: '20px',
+                            display: 'table-cell',
+                            border: '2px solid black',
+                            background: 'linear-gradient(to bottom, #33FF33, #00CC00, #009900)',
+                        }}></div>
+                        <h2 style={{ display: 'table-cell' }}>{this.state.characterMood} / 100</h2>
+                    </div>
+                    <Segment inverted raised style={{
                         height: '500px',
-                        maxWidth: '60%',
-                        margin: 'auto',
                         background: 'linear-gradient(to bottom, #0080FF, #0000FF, #7F00FF)',
-                    }}
-                >
-                    {this.props.children}
-                </Segment>
-            </div>
+                        clear: 'both',
+                    }}>
+                        {this.props.children}
+                    </Segment>
+                </div>
+            </div >
         )
     }
 }

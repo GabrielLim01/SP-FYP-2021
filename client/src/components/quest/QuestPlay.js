@@ -12,14 +12,16 @@ class QuestPlay extends React.Component {
         super(props);
         this.state = {
             state: 1,
-            stateTypes: { isStarting: 1, isTransitioning: 2, isPlaying: 3, isFinished: 4 },
+            stateTypes: { isStarting: 1, isLoadingScenario: 2, isLoadingChoices: 3, isLoadingExplanation: 4, isFinished: 5 },
             quest: {},
             scenarios: [],
-            responses: [],
+            //responses: [],
             currentScenario: 1,
             maxScenarios: 0,
-            score: 0,
-            totalPoints: 0,
+            currentChoice: {},
+            characterName: "Error",
+            characterMood: 0,
+            eventTriggered: false,
             //explanationActiveItem: 0,
             transitionDuration: 4, // The amount of time, in seconds, the player has to read the question prior to it being loaded
             afterAnsweringDelay: 2, // The amount of time, in seconds, the player has to see the correct/incorrect answers after answering, before it transitions
@@ -32,22 +34,70 @@ class QuestPlay extends React.Component {
         this._isMounted = false;
     }
 
-    handleStart = () => {
-        this.setState({ state: this.state.stateTypes.isTransitioning });
-    };
-
     handleRestart = () => {
-        this.setState({ state: this.state.stateTypes.isStarting, currentScenario: 1, answers: [], score: 0, totalPoints: 0 });
+        this.setState({ state: this.state.stateTypes.isStarting, currentScenario: 1, currentChoice: {}, eventTriggered: false, characterMood: this.state.quest.characterMood });
     };
 
-    transitionToNextQuestion() {
-        setTimeout(() => { if (this._isMounted) this.setState({ state: this.state.stateTypes.isPlaying }) }, (this.state.transitionDuration * 1000));
+    viewScenario = () => {
+        this.setState({ state: this.state.stateTypes.isLoadingScenario });
+    }
+
+    loadNextScenario = () => {
+        if (this.state.currentScenario < this.state.maxScenarios) {
+            this.setState({
+                state: this.state.stateTypes.isLoadingScenario,
+                currentScenario: this.state.currentScenario + 1,
+            });
+        } else {
+            this.updateFIQ();
+            this.setState({
+                state: this.state.stateTypes.isFinished
+            });
+        }
+    }
+
+    loadScenarioChoices = () => {
+        this.setState({ state: this.state.stateTypes.isLoadingChoices });
+    }
+
+    handleSelection = (choice) => {
+        let eventTriggered = false;
+        let characterMood = this.state.characterMood;
+
+        if (choice.event) {
+            let event = choice.event;
+            //console.log("Has Event!")
+
+            if (this.getRandomInt(10) <= (event.eventProcRate / 10)) {
+                //console.log("Event triggered!")
+                eventTriggered = true;
+
+                // 1 - positive change, 2 - negative change
+                if (event.moodChange === 1) {
+                    characterMood += event.moodChangeValue;
+                } else {
+                    characterMood -= event.moodChangeValue;
+                }
+            }
+        }
+
+        this.setState({
+            currentChoice: choice,
+            state: this.state.stateTypes.isLoadingExplanation,
+            eventTriggered: eventTriggered,
+            characterMood: characterMood
+        });
+    }
+
+    // Returns a random int between 1 (inclusive) and max (inclusive)
+    getRandomInt(max) {
+        return (Math.floor(Math.random() * Math.floor(max)) + 1);
     }
 
     updateFIQ() {
         if (!inProduction) {
             let user = JSON.parse(sessionStorage.getItem("user"));
-            let newFIQ = user.FIQ + this.state.totalPoints;
+            let newFIQ = user.FIQ + this.state.quest.points;
 
             axios.patch(`${host}/fiq/${user.id}`, { FIQ: newFIQ })
                 .then(() => {
@@ -74,8 +124,9 @@ class QuestPlay extends React.Component {
                 delete data[0].scenario;
 
                 this.setState({ quest: data[0], scenarios: scenarios, maxScenarios: scenarios.length }, () => {
-                    console.log(this.state.quest);
-                    console.log(this.state.scenarios);
+                    //console.log(this.state.quest);
+                    //console.log(this.state.scenarios);
+                    this.setState({ characterName: data[0].characterName, characterMood: data[0].characterMood });
                 });
             });
         } else {
@@ -99,53 +150,85 @@ class QuestPlay extends React.Component {
             switch (state) {
                 case stateTypes.isStarting:
                     return (
-                        <QuestPlayContainer>
-                            <div className="subContainer" style={{ paddingTop: '150px' }}>
-                                <h1>Welcome to {this.state.quest.title}!</h1>
-                                <Button color="teal" size="big" onClick={this.handleStart} disabled>
-                                    Start Quiz
+                        <QuestPlayContainer
+                            characterName={this.state.characterName}
+                            characterMood={this.state.characterMood}
+                        >
+                            <div className="subContainer" style={{ maxWidth: '70%', margin: 'auto', overflowWrap: 'break-word', paddingTop: '150px' }}>
+                                <h1>{this.state.quest.title}</h1>
+                                <h3>{this.state.quest.description}</h3>
+                                <Button color="teal" size="big" onClick={this.viewScenario}>
+                                    Begin Quest
                             </Button>
                             </div>
                         </QuestPlayContainer>
                     );
-                case stateTypes.isTransitioning:
+                case stateTypes.isLoadingScenario:
                     return (
-                        <QuestPlayContainer>
+                        <QuestPlayContainer
+                            characterName={this.state.characterName}
+                            characterMood={this.state.characterMood}
+                        >
                             <div className="subContainer" style={{
-                                paddingTop: '150px', maxWidth: '80%', margin: 'auto', animation: `fadeInAndOut ${this.state.transitionDuration}s linear`
+                                paddingTop: '150px', maxWidth: '80%', margin: 'auto'
                             }}>
-                                <h1>Question {this.state.currentScenario}</h1>
+                                <h1>Scenario {this.state.currentScenario}</h1>
                                 <h2>{JSON.parse(this.state.scenarios[this.state.currentScenario - 1]).description}</h2>
-                                {this.transitionToNextQuestion()}
+                                <Button color="teal" size="medium" onClick={this.loadScenarioChoices}>
+                                    Next
+                            </Button>
                             </div>
                         </QuestPlayContainer>
                     );
-                case stateTypes.isPlaying:
+                case stateTypes.isLoadingChoices:
                     return (
-                        <QuestPlayContainer>
-                            {/* <QuizQuestionPlay
-                                questionNumber={this.state.currentQuestion}
-                                question={this.state.questions[this.state.currentQuestion - 1]}
-                                globalPointsPerQuestion={this.state.quiz.pointsPerQuestion}
-                                globalTimePerQuestion={this.state.quiz.timePerQuestion}
+                        <QuestPlayContainer
+                            characterName={this.state.characterName}
+                            characterMood={this.state.characterMood}
+                        >
+                            <QuestScenarioPlay
+                                scenarioNumber={this.state.currentScenario}
+                                scenario={this.state.scenarios[this.state.currentScenario - 1]}
+                                characterName={this.state.characterName}
                                 onQuestionAnswered={this.onQuestionAnswered}
-                            ></QuizQuestionPlay> */}
+                                viewScenario={this.viewScenario}
+                                handleSelection={this.handleSelection}
+                            ></QuestScenarioPlay>
+                        </QuestPlayContainer>
+                    );
+                case stateTypes.isLoadingExplanation:
+                    return (
+                        <QuestPlayContainer
+                            characterName={this.state.characterName}
+                            characterMood={this.state.characterMood}
+                        >
+                            <div className="subContainer" style={{
+                                paddingTop: '150px', maxWidth: '80%', margin: 'auto'
+                            }}>
+                                <h1>{this.state.eventTriggered ? this.state.currentChoice.event.name : this.state.currentChoice.name}</h1>
+                                <h2>{this.state.eventTriggered ? this.state.currentChoice.event.description : this.state.currentChoice.description}</h2>
+                                <Button color="teal" size="medium" onClick={this.loadNextScenario}>
+                                    Next
+                            </Button>
+                            </div>
                         </QuestPlayContainer>
                     );
                 case stateTypes.isFinished:
                     return (
-                        <QuestPlayContainer style={{ height: '100%' }}>
-                            {/* {this.state.questions.map((value, index) => {
-                                return (
-                                    <Button key={index} circular color={index !== this.state.explanationActiveItem ? this.state.answers[index] ? this.state.answers[index].isCorrect ? 'green' : 'red' : 'red' : 'black'}
-                                        onClick={() => { this.setState({ explanationActiveItem: index }) }}>{index + 1}</Button>
-                                )
-                            })}
-                            <Button circular color={this.state.questions.length !== this.state.explanationActiveItem ? 'yellow' : 'black'}
-                                onClick={() => { this.setState({ explanationActiveItem: this.state.questions.length }) }}>End</Button>
+                        <QuestPlayContainer style={{ height: '100%' }}
+                            characterName={this.state.characterName}
+                            characterMood={this.state.characterMood}
+                        >
                             <div className="subContainer" style={{ paddingTop: '100px' }}>
-                                {this.renderExplanation()}
-                            </div> */}
+                                <div>
+                                    <h1>Quest Complete!</h1>
+                                    <h2>{this.state.quest.conclusion ? this.state.quest.conclusion : 'Thanks for playing!'}</h2>
+                                    <h2>You have earned {this.state.quest.points} FIQ!</h2>
+                                    <Button color="teal" size="big" onClick={this.handleRestart}>
+                                        Play Again?
+                            </Button>
+                                </div>
+                            </div>
                         </QuestPlayContainer>
                     );
                 default:
