@@ -197,6 +197,7 @@ class QuestPlay extends React.Component {
                         </QuestPlayContainer>
                     );
                 case stateTypes.isLoadingExplanation:
+                    const { currentChoice } = this.state;
                     return (
                         <QuestPlayContainer
                             characterName={this.state.characterName}
@@ -205,8 +206,8 @@ class QuestPlay extends React.Component {
                             <div className="subContainer" style={{
                                 paddingTop: '150px', maxWidth: '80%', margin: 'auto'
                             }}>
-                                <h1>{this.state.eventTriggered ? this.state.currentChoice.event.name : this.state.currentChoice.name}</h1>
-                                <h2>{this.state.eventTriggered ? this.state.currentChoice.event.description : this.state.currentChoice.description}</h2>
+                                <h1>{this.state.eventTriggered ? currentChoice.event.name : currentChoice.name}</h1>
+                                <h2>{this.state.eventTriggered ? currentChoice.event.description : currentChoice.description}</h2>
                                 <Button color="teal" size="medium" onClick={this.loadNextScenario}>
                                     Next
                             </Button>

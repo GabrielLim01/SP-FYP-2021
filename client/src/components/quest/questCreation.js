@@ -7,8 +7,8 @@ import DashboardMenu from '../DashboardMenu.js';
 import retrieveItems from '../retrieveItems.js';
 import QuestScenarioCreation from './QuestScenarioCreation.js';
 import Noty from 'noty';
-import '../../../node_modules/noty/lib/noty.css';
-import '../../../node_modules/noty/lib/themes/semanticui.css';
+import 'noty/lib/noty.css';
+import 'noty/lib/themes/semanticui.css';
 
 class QuestCreation extends React.Component {
     constructor(props) {

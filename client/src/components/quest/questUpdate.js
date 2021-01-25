@@ -7,8 +7,8 @@ import retrieveItems from '../retrieveItems.js';
 // import axios from 'axios';
 // import { host } from '../../common.js';
 // import Noty from 'noty';
-import '../../../node_modules/noty/lib/noty.css';
-import '../../../node_modules/noty/lib/themes/semanticui.css';
+import 'noty/lib/noty.css';
+import 'noty/lib/themes/semanticui.css';
 
 class QuestUpdate extends React.Component {
     constructor(props) {

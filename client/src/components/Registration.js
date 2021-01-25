@@ -5,8 +5,8 @@ import { Form, Button } from 'semantic-ui-react';
 import { host, appName, containerStyle } from '../common.js';
 import verifyLogin from './verifyLogin.js';
 import Noty from 'noty';
-import '../../node_modules/noty/lib/noty.css';
-import '../../node_modules/noty/lib/themes/semanticui.css';
+import 'noty/lib/noty.css';
+import 'noty/lib/themes/semanticui.css';
 
 // BUGS
 // 1. Registration may be successful even if the confirmPassword field is not filled in

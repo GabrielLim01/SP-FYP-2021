@@ -22,7 +22,7 @@ class QuizPlay extends React.Component {
             score: 0,
             totalPoints: 0,
             explanationActiveItem: 0,
-            transitionDuration: 4, // The amount of time, in seconds, the player has to read the question prior to it being loaded
+            transitionDuration: 5, // The amount of time, in seconds, the player has to read the question prior to it being loaded
             afterAnsweringDelay: 2, // The amount of time, in seconds, the player has to see the correct/incorrect answers after answering, before it transitions
             redirect: null,
         };

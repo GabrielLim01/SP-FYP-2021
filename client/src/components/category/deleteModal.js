@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { Button, Header, Icon, Modal } from 'semantic-ui-react';
 import { host } from '../../common.js';
 import Noty from 'noty';
-import '../../../node_modules/noty/lib/noty.css';
-import '../../../node_modules/noty/lib/themes/semanticui.css';
+import 'noty/lib/noty.css';
+import 'noty/lib/themes/semanticui.css';
 
 function DeleteModal(value) {
     const [open, setOpen] = useState(false);

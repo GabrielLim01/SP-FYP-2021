@@ -3,8 +3,8 @@ import { Table, Icon } from 'semantic-ui-react';
 import DashboardMenu from './DashboardMenu.js';
 import retrieveItems from './retrieveItems';
 import Noty from 'noty';
-import '../../node_modules/noty/lib/noty.css';
-import '../../node_modules/noty/lib/themes/semanticui.css';
+import 'noty/lib/noty.css';
+import 'noty/lib/themes/semanticui.css';
 
 class Leaderboard extends React.Component {
     constructor(props) {
