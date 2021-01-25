@@ -19,7 +19,7 @@ class QuestDelete extends React.Component {
         event.preventDefault();
 
         axios
-            .delete(host + `/quests/${this.state.quest.insertId}`)
+            .delete(host + `/quest/${this.state.quest.questId}`)
             .then((response) => {
                 if (response.status !== 400) {
                     new Noty({
@@ -44,6 +44,12 @@ class QuestDelete extends React.Component {
                 }).show();
             });
     };
+
+    componentDidUpdate(prevState) {
+        if (this.props.quest !== prevState.quest) {
+            this.setState({ quest: this.props.quest });
+        }
+    }
 
     componentDidMount() { }
 

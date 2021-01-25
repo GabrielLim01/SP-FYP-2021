@@ -475,7 +475,7 @@ class DbService {
     async deleteQuestById(id) {
         try {
             return new Promise((resolve, reject) => {
-                const query = 'DELETE FROM quest WHERE insertId = ?';
+                const query = 'DELETE FROM quest WHERE questId = ?';
 
                 connection.query(query, [id], (err, result) => {
                     if (err) return reject(err.message);
