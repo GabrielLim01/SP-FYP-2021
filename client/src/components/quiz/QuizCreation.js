@@ -9,6 +9,7 @@ import QuizQuestionCreation from './QuizQuestionCreation.js';
 import Noty from 'noty';
 import 'noty/lib/noty.css';
 import 'noty/lib/themes/semanticui.css';
+import Validation from '../validationFile.js';
 
 // TO-DO
 // 1. Input validation (especially for checkboxes)
@@ -25,6 +26,7 @@ class QuizCreation extends React.Component {
             fiqOptionsRange: 5,
             timeOptionsRange: 7,
             redirect: null,
+            errors: [],
         };
     }
 
@@ -79,7 +81,7 @@ class QuizCreation extends React.Component {
                     points: this.state['question' + i + 'points'],
                     time: this.state['question' + i + 'time'],
                     explanation: this.state['question' + i + 'explanation'],
-                    options
+                    options,
                 },
             });
         }
@@ -94,9 +96,19 @@ class QuizCreation extends React.Component {
             questions: questions,
         };
 
-        //console.log(JSON.stringify(quiz));
+        const isEmpty = Validation.validate([
+            this.state.quizTitle,
+            this.state.quizCategory,
+            this.state.quizPoints,
+            this.state.quizTime,
+        ]);
+        if (isEmpty.length > 0) {
+            this.setState({ errors: 'Quiz Title, Category, FIQ per question and Time per question CANNOT be empty.' });
+            return;
+        }
 
-        axios.post(host + '/quiz', { quiz: quiz })
+        axios
+            .post(host + '/quiz', { quiz: quiz })
             .then(
                 new Noty({
                     text: `Quiz Created: ${quiz.title}`,
@@ -170,9 +182,10 @@ class QuizCreation extends React.Component {
                 <div className="container">
                     <DashboardMenu page="quizzes"></DashboardMenu>
                     <h1 className="ui teal image header">Create your quiz!</h1>
+                    {this.state.errors.length > 0 ? <p style={{ color: 'red' }}>Error: {this.state.errors}</p> : null}
                     <div
                         className="subContainer"
-                        style={{ maxWidth: '60%', margin: 'auto', textAlign: 'left', paddingTop: '20px' }}
+                        style={{ maxWidth: '70%', margin: 'auto', textAlign: 'left', paddingTop: '20px' }}
                     >
                         <Segment>
                             <Form>
@@ -268,7 +281,7 @@ class QuizCreation extends React.Component {
                             </Button>
                         </div>
                     </div>
-                </div >
+                </div>
             );
         }
     }

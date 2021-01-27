@@ -63,7 +63,7 @@ app.post('/register', async (request, respond) => {
 
     if (!isBlank(name) && !isBlank(password)) {
         const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hashSync(password, salt);
+        const hashedPassword = bcrypt.hashSync(password, salt);
 
         const db = dbService.getDbServiceInstance();
 
@@ -71,9 +71,9 @@ app.post('/register', async (request, respond) => {
 
         result
             .then((data) => respond.json({ data: data }))
-            .catch((err) =>
-                response.status(400).send(`Registering of user where username equals to ${name} has failed.`, err),
-            );
+            .catch((err) => {
+                response.status(400).send(`Registering of user where username equals to ${name} has failed. ${err}`);
+            });
     } else response.status(400).send(`Name / Password is(are) empty.`);
 });
 
@@ -84,7 +84,7 @@ app.post('/admin/register', async (request, respond) => {
 
     if (!isBlank(name) && !isBlank(password) && !isBlank(role)) {
         const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hashSync(password, salt);
+        const hashedPassword = bcrypt.hashSync(password, salt);
 
         const db = dbService.getDbServiceInstance();
 
