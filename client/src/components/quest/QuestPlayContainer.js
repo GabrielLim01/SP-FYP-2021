@@ -11,10 +11,7 @@ class QuestPlayContainer extends React.Component {
     }
 
     componentDidUpdate(prevState) {
-        console.log(this.props.characterMood)
-        console.log(prevState.characterMood)
         if (this.props.characterMood !== prevState.characterMood) {
-            console.log("Change in mood detected!");
             this.setState({ characterMood: this.props.characterMood });
         }
     }

@@ -161,7 +161,6 @@ class QuizPlay extends React.Component {
                 delete data[0].question;
 
                 this.setState({ quiz: data[0], questions: questions, maxQuestions: questions.length }, () => {
-                    console.log(this.state.quiz);
                     this.setState({ explanationActiveItem: questions.length });
                 });
             });

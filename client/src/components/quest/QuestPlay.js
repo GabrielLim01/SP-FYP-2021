@@ -66,10 +66,8 @@ class QuestPlay extends React.Component {
 
         if (choice.event) {
             let event = choice.event;
-            //console.log("Has Event!")
 
             if (this.getRandomInt(10) <= (event.eventProcRate / 10)) {
-                //console.log("Event triggered!")
                 eventTriggered = true;
 
                 // 1 - positive change, 2 - negative change
@@ -124,8 +122,6 @@ class QuestPlay extends React.Component {
                 delete data[0].scenario;
 
                 this.setState({ quest: data[0], scenarios: scenarios, maxScenarios: scenarios.length }, () => {
-                    //console.log(this.state.quest);
-                    //console.log(this.state.scenarios);
                     this.setState({ characterName: data[0].characterName, characterMood: data[0].characterMood });
                 });
             });
