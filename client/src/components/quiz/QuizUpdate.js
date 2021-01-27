@@ -15,7 +15,7 @@ import 'noty/lib/themes/semanticui.css';
 // 2. Unify change handlers if possible
 // 3. Implement functionality to handle addition/deletion of questions
 
-class QuizCreation extends React.Component {
+class QuizUpdate extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -316,4 +316,4 @@ class QuizCreation extends React.Component {
     }
 }
 
-export default QuizCreation;
+export default QuizUpdate;

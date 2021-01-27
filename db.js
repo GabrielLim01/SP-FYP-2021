@@ -385,13 +385,13 @@ class DbService {
     }
 
     //Create quest
-    async createQuest(category, title, desc, intro, conc, characterName, characterMood, points) {
+    async createQuest(category, title, desc, conc, characterName, characterMood, points) {
         try {
             return new Promise((resolve, reject) => {
                 let createdAt = new Date();
                 const query =
-                    'INSERT INTO quest (categoryId, title, description, introduction, conclusion, characterName, characterMood, points, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
-                connection.query(query, [category, title, desc, intro, conc, characterName, characterMood, points, createdAt], (err, result) => {
+                    'INSERT INTO quest (categoryId, title, description, conclusion, characterName, characterMood, points, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
+                connection.query(query, [category, title, desc, conc, characterName, characterMood, points, createdAt], (err, result) => {
                     if (err) {
                         console.log(err.message);
                         reject(err.message);
@@ -435,37 +435,36 @@ class DbService {
         }
     }
 
-    async updateQuestDetailsById(id, title, desc, objective, categoryId, fiqPoint) {
-        return new Promise((resolve, reject) => {
-            const query =
-                'UPDATE quest SET title = ?, description = ?, objective = ?, categoryId = ?, fiqPoint = ?  WHERE insertId = ?;';
-            connection.query(query, [title, desc, objective, categoryId, fiqPoint, id], (err, result) => {
-                if (err) return reject(err.message);
-                resolve(result.affectedRows);
+    async updateQuest(id, category, title, desc, conc, characterName, characterMood, points) {
+        try {
+            return new Promise((resolve, reject) => {
+                const query =
+                    'UPDATE quest SET categoryId = ?, title = ?, description = ?, conclusion = ?, characterName = ?, characterMood = ?, points = ? WHERE questId = ?';
+                connection.query(query, [category, title, desc, conc, characterName, characterMood, points, id], (err, result) => {
+                    if (err) return reject(err.message);
+                    resolve(result.affectedRows);
+                });
             });
-        });
+        } catch (e) {
+            throw e.message;
+        }
     }
 
-    async updateQuestDetailsById(id, title, desc, objective, categoryId, fiqPoint) {
-        return new Promise((resolve, reject) => {
-            const query =
-                'UPDATE quest SET title = ?, description = ?, objective = ?, categoryId = ?, fiqPoint = ?  WHERE insertId = ?;';
-            connection.query(query, [title, desc, objective, categoryId, fiqPoint, id], (err, result) => {
-                if (err) return reject(err.message);
-                resolve(result.affectedRows);
-            });
-        });
-    }
+    async updateQuestScenario(scenario) {
+        console.log(scenario);
+        let questScenarioId = scenario.scenarioId;
 
-    async updateScenarioDetailsById(id, scenarioId, sub_questTitle, sub_questDesc, options) {
+        // Wrap the scenario properties back inside a scenario object that excludes questScenarioId, then stringify said object
+        let questScenario = JSON.stringify(scenario.scenario);
+
         return new Promise((resolve, reject) => {
             const query =
-                'UPDATE quest_scenario SET sub_questTitle = ?, sub_questDesc= ?, options = ? WHERE questId = ? and scenarioId = ?;';
-            console.log(query);
-            connection.query(query, [sub_questTitle, sub_questDesc, options, id, scenarioId], (err, result) => {
+                'UPDATE quest_scenario SET scenario = ? WHERE questScenarioId = ?;';
+
+            connection.query(query, [questScenario, questScenarioId], (err, result) => {
                 if (err) reject(err.message);
                 else {
-                    console.log('Updated scenario(s)', result);
+                    console.log(`Updated scenarios ${questScenarioId}. ${result}`);
                     resolve(result.affectedRows);
                 }
             });

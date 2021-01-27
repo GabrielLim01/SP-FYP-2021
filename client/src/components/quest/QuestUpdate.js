@@ -1,12 +1,12 @@
 import React from 'react';
+import axios from 'axios';
 import { Redirect } from 'react-router-dom';
-import { Button, Dropdown, Icon, Segment, Form, Grid, TextArea } from 'semantic-ui-react';
+import { Segment, Form, Grid, TextArea, Dropdown, Button, Popup, Icon } from 'semantic-ui-react';
+import { host } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import QuestScenarioUpdate from './QuestScenarioUpdate.js';
 import retrieveItems from '../retrieveItems.js';
-// import axios from 'axios';
-// import { host } from '../../common.js';
-// import Noty from 'noty';
+import QuestScenarioUpdate from './QuestScenarioUpdate.js';
+import Noty from 'noty';
 import 'noty/lib/noty.css';
 import 'noty/lib/themes/semanticui.css';
 
@@ -14,32 +14,24 @@ class QuestUpdate extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            redirect: false,
-            items: [],
-            scenario: 1,
-            maxScenario: 10,
-            options: 3,
+            categories: [],
+            scenarios: [],
+            //noOfScenarios: 1,
+            //maxScenarios: 10,
+            choices: 3,
+            fiqOptionsRange: 6,
+            moodOptionsRange: 10,
+            redirect: null
         };
     }
-    redirectHandler = () => {
-        this.setState({ redirect: true });
-        this.renderRedirect();
-    };
-    renderRedirect = () => {
-        if (this.state.redirect) {
-            return <Redirect to="/quests" />;
-        }
-    };
 
-    onAddScenario = () => {
-        if (this.state.scenario < this.state.maxScenario) {
-            this.setState({
-                scenario: this.state.scenario + 1,
-            });
-        } else {
-            alert('Maximum number of scenarios reached!');
-        }
-    };
+    // onAddScenario = () => {
+    //     if (this.state.scenarios < this.state.maxScenarios) {
+    //         this.setState({ scenarios: this.state.scenarios + 1 });
+    //     } else {
+    //         alert('Maximum number of scenarios reached!');
+    //     }
+    // };
 
     handleChange = (event) => {
         this.setState({
@@ -53,245 +45,355 @@ class QuestUpdate extends React.Component {
         });
     };
 
-    handleSubmit = (event) => {
-        event.preventDefault();
-        let counter = 1;
-        let scenario = [];
-
-        do {
-            const options = [];
-            for (let i = 1; i < this.state.options + 1; i++) {
-                options.push({
-                    name: this.state[`option-${counter}-${i}`],
-                    addOns: this.state[`desc-${counter}-${i}`],
-                });
-            }
-            scenario.push({
-                scenario: this.state[`scenario${counter}name`],
-                options,
-            });
-
-            counter++;
-        } while (counter < this.state.scenario + 1);
-
-        // let questObj = {
-        //     title: this.state.questTitle,
-        //     desc: this.state.questDesc,
-        //     categoryId: this.state.questCategory,
-        //     fiqPoints: this.state.questPoints,
-        //     scenarios: scenario,
-        // };
-
-        // const result = axios.post(`${host}/quests/createNew`, { quest: questObj });
-        // result
-        //     .then((response) => {
-        //         if (response.status === 200) {
-        //             new Noty({
-        //                 text: `Quest Created: ${this.state.questTitle}`,
-        //                 type: 'success',
-        //                 theme: 'semanticui',
-        //             }).show();
-
-        //             setTimeout(() => {
-        //                 window.location.reload();
-        //             }, 1000);
-        //         } else {
-        //             new Noty({
-        //                 text: 'Something went wrong.',
-        //                 type: 'error',
-        //                 theme: 'semanticui',
-        //             }).show();
-        //         }
-        //     })
-        //     .catch((err) => {
-        //         new Noty({
-        //             text: `${err}`,
-        //             type: 'error',
-        //             theme: 'semanticui',
-        //         }).show();
-        //     });
+    handleCheckboxChange = (checkbox) => {
+        this.setState({
+            [checkbox.name]: !checkbox.checked,
+        });
     };
 
-    generateItems() {
-        retrieveItems(`category`)
-            .then((data) => {
-                if (data !== undefined) {
-                    let category = [];
+    handleSubmit = (event) => {
+        event.preventDefault();
 
-                    data.forEach((element) => {
-                        category.push(element);
-                    });
+        let scenarios = [];
 
-                    this.setState({ items: category });
-                } else {
-                    this.setState({ hasItems: false });
+        for (let i = 1; i < this.state.scenarios.length + 1; i++) {
+            const choices = [];
+
+            for (let j = 1; j < this.state.choices + 1; j++) {
+
+                if (this.state[`choice-${i}-${j}`] !== undefined && this.state[`choice-${i}-${j}`] !== "") {
+                    if (this.state[`hasEvent-${i}-${j}`]) {
+                        choices.push({
+                            name: this.state[`choice-${i}-${j}`],
+                            description: this.state[`choiceDesc-${i}-${j}`],
+                            event: {
+                                name: this.state[`event-${i}-${j}`],
+                                description: this.state[`eventDesc-${i}-${j}`],
+                                eventProcRate: this.state[`eventProcRate-${i}-${j}`],
+                                moodChange: this.state[`moodChange-${i}-${j}`] ? this.state[`moodChange-${i}-${j}`] : 1,
+                                moodChangeValue: this.state[`moodChangeValue-${i}-${j}`] ? this.state[`moodChangeValue-${i}-${j}`] : 10
+                            }
+                        });
+                    } else {
+                        choices.push({
+                            name: this.state[`choice-${i}-${j}`],
+                            description: this.state[`choiceDesc-${i}-${j}`]
+                        });
+                    }
                 }
-            })
-            .catch((error) => {
-                alert(error);
+            }
+
+            scenarios.push({
+                scenarioId: this.state.scenarios[i - 1].scenarioId,
+                scenario: {
+                    description: this.state[`scenario-${i}-description`],
+                    choices
+                }
             });
+        }
+
+        let quest = {
+            categoryId: this.state.categoryId,
+            title: this.state.title,
+            description: this.state.description,
+            conclusion: this.state.conclusion,
+            characterName: this.state.characterName,
+            characterMood: this.state.characterMood ? this.state.characterMood : 100,
+            points: this.state.points,
+            scenarios: scenarios,
+        };
+
+        axios.patch(`${host}/quest/${this.state.questId}`, { quest: quest })
+            .then(
+                new Noty({
+                    text: `Quest Updated: ${quest.title}`,
+                    type: 'success',
+                    theme: 'semanticui',
+                }).show(),
+                this.setState({ redirect: "/quests" })
+            )
+            .catch((err) => {
+                new Noty({
+                    text: `${err}`,
+                    type: 'error',
+                    theme: 'semanticui',
+                }).show();
+            });
+    };
+
+    initializeStates(quest, scenarios) {
+        // Initialize quest details
+        this.setState({
+            categoryId: quest.categoryId,
+            questId: quest.questId,
+            title: quest.title,
+            description: quest.description,
+            conclusion: quest.conclusion,
+            characterName: quest.characterName,
+            characterMood: quest.characterMood,
+            points: quest.points,
+            scenarios: scenarios,
+        }, () => {
+            // Initialize scenarios
+            for (let i = 1; i < (this.state.scenarios.length + 1); i++) {
+                let scenario = this.state.scenarios[i - 1].scenario;
+
+                this.setState({
+                    [`scenario-${i}-description`]: scenario.description
+                })
+
+                if (scenario.choices) {
+                    for (let j = 1; j < (scenario.choices.length + 1); j++) {
+
+                        let choice = scenario.choices[j - 1];
+                        let event = choice.event;
+
+                        // Initialize scenario choices
+                        if (choice.name !== undefined && choice.name !== "") {
+                            this.setState({
+                                [`choice-${i}-${j}`]: choice.name,
+                                [`choiceDesc-${i}-${j}`]: choice.description
+                            })
+
+                            // Initialize event details, if any
+                            if (event !== undefined) {
+                                this.setState({
+                                    [`hasEvent-${i}-${j}`]: true,
+                                    [`event-${i}-${j}`]: event.name,
+                                    [`eventDesc-${i}-${j}`]: event.description,
+                                    [`eventProcRate-${i}-${j}`]: event.eventProcRate,
+                                    [`moodChange-${i}-${j}`]: event.moodChange,
+                                    [`moodChangeValue-${i}-${j}`]: event.moodChangeValue,
+                                })
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     componentDidMount() {
+        // props will be undefined if the user navigates to this component directly via the URL
         if (this.props.location.quest !== undefined) {
-            this.generateItems();
-            retrieveItems(`quests/${this.props.location.quest.insertId}`).then((data) => {
-                let scenarios = [];
-                let counter = 1;
+            retrieveItems('category')
+                .then((data) => {
+                    let categories = [];
 
-                let quest = data.data[0];
-
-                data.data.forEach((element) => {
-                    scenarios.push({
-                        scenarioId: element.scenarioId,
-                        scenario: JSON.parse(element.options),
+                    data.forEach((element) => {
+                        categories.push(element);
                     });
+
+                    this.setState({ categories: categories });
+                })
+                .catch((error) => {
+                    alert(error);
                 });
 
-                this.setState(
-                    {
-                        questId: quest.insertId,
-                        questTitle: quest.title,
-                        questDesc: quest.description,
-                        questCategory: quest.categoryId,
-                        questPoints: quest.fiqPoint,
-                        options: scenarios,
-                    },
-                    () => {
-                        // Initialize the default state of all questions and their related properties
-                        // If this is not done, all question-related input fields will not have their values stored in state
-                        // despite defaultValue displaying the correct values
-                        // for (let i = 1; i < this.state.questions.length + 1; i++) {
-                        //     let question = this.state.options[i - 1];
-                        //     this.setState({
-                        //         ['question' + i + 'name']: question.name,
-                        //         ['question' + i + 'points']: question.points,
-                        //         ['question' + i + 'time']: question.time,
-                        //         ['question' + i + 'explanation']: question.explanation,
-                        //         ['question' + i + 'name']: question.name,
-                        //     });
-                        //     for (let j = 1; j < this.state.options + 1; j++) {
-                        //         this.setState({
-                        //             ['option-' + i + '-' + j]: question.options[j - 1].name,
-                        //         });
-                        //     }
-                        // }
-                        do {
-                            for (let i = 1; i < this.state.options + 1; i++) {
-                                let option = this.state.options;
-                                console.log('this is option', option);
-                            }
+            retrieveItems(`quest/${this.props.location.quest.questId}`)
+                .then(data => {
+                    let scenarios = [];
 
-                            counter++;
-                        } while (counter < this.state.scenario + 1);
-                    },
-                );
-            });
+                    data.forEach(element => {
+                        scenarios.push({
+                            scenarioId: element.questScenarioId,
+                            scenario: JSON.parse(element.scenario)
+                        })
+                    });
+
+                    // Since data returned by the back-end has quiz-specific data appended to the front of every question
+                    // and we only need to reference that data once, simply remove the question and quizQuestionId from the 
+                    // first element of the data array and store the quiz-specific data in another variable
+                    delete data[0].scenario
+                    delete data[0].questScenarioId;
+                    let quest = data[0];
+
+                    this.initializeStates(quest, scenarios);
+                })
         } else {
-            this.setState({ redirect: '/quests' });
+            // Redirect users to /quests if they attempt to access this component directly via the URL
+            this.setState({ redirect: "/quests" });
         }
     }
 
     render() {
-        const scenarios = [];
-        const categoryItems = [];
+        const { scenarios } = this.state;
+        const categories = [];
+        const FIQoptions = [];
+        const moodOptions = [];
+        const displayScenarios = [];
 
-        for (let i = 0; i < this.state.items.length; i++) {
-            let id = this.state.items[i].categoryId;
-            let name = this.state.items[i].categoryName;
-            categoryItems.push({ text: name, value: id });
-        }
-
-        for (let i = 1; i < this.state.scenario + 1; i++) {
-            scenarios.push(
+        for (let i = 1; i < (scenarios.length + 1); i++) {
+            displayScenarios.push(
                 <QuestScenarioUpdate
                     key={'scenario' + i}
+                    scenario={scenarios[i - 1].scenario}
                     scenarioNumber={i}
-                    options={this.state.options}
+                    choices={this.state.choices}
                     handleChange={this.handleChange}
                     handleDropdownChange={this.handleDropdownChange}
-                />,
-            );
+                    handleCheckboxChange={this.handleCheckboxChange}
+                />);
+        };
+
+        for (let i = 0; i < this.state.categories.length; i++) {
+            let id = this.state.categories[i].categoryId;
+            let name = this.state.categories[i].categoryName;
+            categories.push({ text: name, value: id });
         }
-        return (
-            <div className="container">
-                <DashboardMenu page="quests"></DashboardMenu>
-                <h1 className="ui teal image header">Create your quest!</h1>
-                <div
-                    className="subContainer"
-                    style={{ maxWidth: '70%', margin: 'auto', textAlign: 'left', paddingTop: '20px' }}
-                >
-                    <Segment>
-                        <Form>
-                            <Grid columns="equal">
-                                <Grid.Row columns={2}>
-                                    <Grid.Column>
-                                        <h3>Quest Title</h3>
-                                        <input
-                                            type="text"
-                                            name="questTitle"
-                                            placeholder="Title"
-                                            onChange={this.handleChange}
-                                            defaultValue={this.state.questTitle}
-                                        />
-                                    </Grid.Column>
-                                    <Grid.Column>
-                                        <h3>Quest Description</h3>
-                                        <TextArea
-                                            name="questDesc"
-                                            placeholder="Description"
-                                            onChange={this.handleChange}
-                                            defaultValue={this.state.questDesc}
-                                        />
-                                    </Grid.Column>
-                                </Grid.Row>
-                                <Grid.Row columns={3}>
-                                    <Grid.Column>
-                                        <h3>Category</h3>
-                                        <Dropdown
-                                            name="questCategory"
-                                            placeholder="Select a Category"
-                                            fluid
-                                            selection
-                                            options={categoryItems}
-                                            onChange={this.handleDropdownChange}
-                                            defaultValue={this.state.questCategory}
-                                        />
-                                    </Grid.Column>
-                                    <Grid.Column>
-                                        <h3>Overall FIQ Points</h3>
-                                        <input
-                                            type="text"
-                                            name="questPoints"
-                                            placeholder="Points"
-                                            onChange={this.handleChange}
-                                            defaultValue={this.state.questPoints}
-                                        />
-                                    </Grid.Column>
-                                </Grid.Row>
-                            </Grid>
-                        </Form>
-                    </Segment>
-                    {scenarios}
-                    <div className="subContainer" style={{ padding: '25px 0px', textAlign: 'right' }}>
-                        <Button onClick={this.redirectHandler}>Back{this.renderRedirect()}</Button>
-                        <Button
-                            icon
-                            labelPosition="left"
-                            className="teal"
-                            name="addScenario"
-                            onClick={this.onAddScenario}
-                        >
-                            <Icon name="add" size="large" />
-                            Add Scenarios
+
+        for (let i = 5; i < this.state.fiqOptionsRange + 5; i++) {
+            let value = 100 * i;
+            FIQoptions.push({ text: value, value: value });
+        }
+
+        for (let i = 1; i < (this.state.moodOptionsRange + 1); i++) {
+            let value = 10 * i;
+            moodOptions.push({ text: value, value: value });
+        }
+
+        if (this.state.redirect) {
+            return <Redirect push to={this.state.redirect} />;
+
+        } else if (this.state.questId !== undefined) {
+            return (
+                <div className="container">
+                    <DashboardMenu page="quests"></DashboardMenu>
+                    <h1 className="ui teal image header">Create your quest!</h1>
+                    <div
+                        className="subContainer"
+                        style={{ maxWidth: '70%', margin: 'auto', textAlign: 'left', paddingTop: '20px' }}
+                    >
+                        <Segment>
+                            <Form>
+                                <Grid columns="equal">
+                                    <Grid.Row columns={2}>
+                                        <Grid.Column>
+                                            <Popup content="The name of your quest!" trigger={<h3>Quest Title</h3>} />
+                                            <input
+                                                type="text"
+                                                name="title"
+                                                placeholder="Title"
+                                                onChange={this.handleChange}
+                                                defaultValue={this.state.title}
+                                            />
+                                        </Grid.Column>
+                                        <Grid.Column>
+                                            <Popup
+                                                content="Tell us what your quest is about!"
+                                                trigger={<h3>Quest Description</h3>}
+                                            />
+                                            <TextArea
+                                                name="description"
+                                                placeholder="Description"
+                                                onChange={this.handleChange}
+                                                defaultValue={this.state.description}
+                                            />
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                    <Grid.Row columns={2}>
+                                        <Grid.Column>
+                                            <Popup
+                                                content="What category does your quest belong in?"
+                                                trigger={<h3>Category</h3>}
+                                            />
+                                            <Dropdown
+                                                name="categoryId"
+                                                placeholder="Select a Category"
+                                                fluid
+                                                selection
+                                                options={categories}
+                                                onChange={this.handleDropdownChange}
+                                                defaultValue={this.state.categoryId}
+                                            />
+                                        </Grid.Column>
+                                        <Grid.Column>
+                                            <Popup
+                                                content="How much FIQ (Financial IQ) points will the players earn upon completing the quest?"
+                                                trigger={<h3>Overall FIQ Points</h3>}
+                                            />
+                                            <Dropdown
+                                                name="points"
+                                                placeholder="Select overall FIQ awarded"
+                                                fluid
+                                                selection
+                                                clearable
+                                                options={FIQoptions}
+                                                onChange={this.handleDropdownChange}
+                                                defaultValue={this.state.points}
+                                            />
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                    <Grid.Row columns={2}>
+                                        <Grid.Column>
+                                            <Popup
+                                                content="The main star of your quest!"
+                                                trigger={<h3>Character Name</h3>}
+                                            />
+                                            <input
+                                                type="text"
+                                                name="characterName"
+                                                placeholder="Character Name"
+                                                onChange={this.handleChange}
+                                                defaultValue={this.state.characterName}
+                                            />
+                                        </Grid.Column>
+                                        <Grid.Column>
+                                            <Popup
+                                                content="How happy or sad will your character be at the start of the quest? (0 = Griefstricken, 100 = Happy)"
+                                                trigger={<h3>Character Starting Mood</h3>}
+                                            />
+                                            <Dropdown
+                                                name="characterMood"
+                                                fluid
+                                                selection
+                                                clearable
+                                                options={moodOptions}
+                                                onChange={this.handleDropdownChange}
+                                                defaultValue={this.state.characterMood}
+                                            />
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                    <Grid.Row>
+                                        <Grid.Column>
+                                            <Popup
+                                                content="How will your quest end?"
+                                                trigger={<h3>Quest Conclusion</h3>}
+                                            />
+                                            <TextArea
+                                                name="questConc"
+                                                placeholder="Conclusion"
+                                                onChange={this.handleChange}
+                                                defaultValue={this.state.conclusion}
+                                            />
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                </Grid>
+                            </Form>
+                        </Segment>
+                        {displayScenarios}
+                        <div className="subContainer" style={{ padding: '25px 0px', textAlign: 'right' }}>
+                            <Button onClick={() => this.setState({ redirect: '/quizzes' })}>Back</Button>
+                            <Button
+                                icon
+                                labelPosition="left"
+                                className="teal"
+                                name="addScenario"
+                                onClick={this.onAddScenario}
+                            >
+                                <Icon name="add" size="large" />
+                            Add Scenario
                         </Button>
-                        <Button className="blue" name="createQuest" onClick={this.handleSubmit}>
-                            Update Quest
+                            <Button className="blue" name="updateQuest" onClick={this.handleSubmit}>
+                                Update Quest
                         </Button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        );
+            )
+        } else {
+            return null
+        }
     }
 }
 

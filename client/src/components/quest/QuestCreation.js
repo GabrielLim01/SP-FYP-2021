@@ -70,7 +70,7 @@ class QuestCreation extends React.Component {
                                 description: this.state[`eventDesc-${i}-${j}`],
                                 eventProcRate: this.state[`eventProcRate-${i}-${j}`],
                                 moodChange: this.state[`moodChange-${i}-${j}`] ? this.state[`moodChange-${i}-${j}`] : 1,
-                                moodChangeValue: this.state[`moodChangeValue-${i}-${j}`]
+                                moodChangeValue: this.state[`moodChangeValue-${i}-${j}`] ? this.state[`moodChangeValue-${i}-${j}`] : 10
                             }
                         });
                     } else {
@@ -92,7 +92,6 @@ class QuestCreation extends React.Component {
             categoryId: this.state.questCategory,
             title: this.state.questTitle,
             description: this.state.questDesc,
-            introduction: this.state.questIntro,
             conclusion: this.state.questConc,
             characterName: this.state.characterName,
             characterMood: this.state.characterMood ? this.state.characterMood : 100,
@@ -100,11 +99,10 @@ class QuestCreation extends React.Component {
             scenarios: scenarios,
         };
 
-        console.log(quest)
+        //console.log(quest)
 
         axios.post(`${host}/quest`, { quest: quest })
             .then((response) => {
-                console.log(response);
                 if (response.status === 201) {
                     new Noty({
                         text: `Quest Created: ${this.state.questTitle}`,
@@ -175,7 +173,7 @@ class QuestCreation extends React.Component {
             FIQoptions.push({ text: value, value: value });
         }
 
-        for (let i = 0; i < (this.state.moodOptionsRange + 1); i++) {
+        for (let i = 1; i < (this.state.moodOptionsRange + 1); i++) {
             let value = 10 * i;
             moodOptions.push({ text: value, value: value });
         }
@@ -276,18 +274,7 @@ class QuestCreation extends React.Component {
                                             />
                                         </Grid.Column>
                                     </Grid.Row>
-                                    <Grid.Row columns={2}>
-                                        <Grid.Column>
-                                            <Popup
-                                                content="How will your quest begin?"
-                                                trigger={<h3>Quest Introduction</h3>}
-                                            />
-                                            <TextArea
-                                                name="questIntro"
-                                                placeholder="Introduction"
-                                                onChange={this.handleChange}
-                                            />
-                                        </Grid.Column>
+                                    <Grid.Row>
                                         <Grid.Column>
                                             <Popup
                                                 content="How will your quest end?"

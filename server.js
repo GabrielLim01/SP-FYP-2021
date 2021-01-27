@@ -358,15 +358,15 @@ app.patch('/quiz/:id', (request, response) => {
 
         result
             .then((data) => {
-                response.json({ data: data });
+                //response.json({ data: data });
 
-                let updateQuestionsResult = new Promise((resolve, reject) => { });
+                let updateQuestionResult = new Promise((resolve, reject) => { });
 
                 questions.forEach((question) => {
-                    updateQuestionsResult = db.updateQuestionDetailsById(question);
+                    updateQuestionResult = db.updateQuestionDetailsById(question);
                 });
 
-                updateQuestionsResult.catch((err) =>
+                updateQuestionResult.catch((err) =>
                     response
                         //.status(400)
                         .send(`Updating of questions where quiz id equals to ${request.params.id} has failed. ${err}`),
@@ -404,62 +404,6 @@ app.delete('/quiz/:id', (request, response) => {
 
 // QUESTS =====================================================================================================================
 
-/////////////////////////////////////////
-/*
-1. Declare mock object
-2. Create
-3. Read
-4. Update
-5. Delete
-*/
-const obj = {
-    questTitle: 'dvzdvc',
-    questCategoryId: 1,
-    questDesc: '',
-    questObjective: '',
-    fiqPoints: 100,
-    questions: [
-        {
-            scenarioId: 5,
-            sub_questTitle: 'Scenario A',
-            sub_questDesc: '',
-            options: [
-                {
-                    option: 'Option 1',
-                    optionDesc: '',
-                    pros: '',
-                    cons: '',
-                },
-                {
-                    option: 'Option 2',
-                    optionDesc: '',
-                    pros: '',
-                    cons: '',
-                },
-            ],
-        },
-        {
-            scenarioId: 6,
-            sub_questTitle: 'Scenario B',
-            sub_questDesc: '',
-            options: [
-                {
-                    option: 'Option 1',
-                    optionDesc: '',
-                    pros: '',
-                    cons: '',
-                },
-                {
-                    option: 'Option 2',
-                    optionDesc: '',
-                    pros: '',
-                    cons: '',
-                },
-            ],
-        },
-    ],
-};
-
 // read
 app.get('/quest', (request, response) => {
     const db = dbService.getDbServiceInstance();
@@ -471,13 +415,31 @@ app.get('/quest', (request, response) => {
         .catch((err) => response.status(400).send(`Fetching of data failed. ${err}`));
 });
 
+app.get('/quest/:id', (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const result = db.getQuestById(request.params.id);
+        result
+            .then((data) => {
+                if (!isEmpty(data)) {
+                    // const questObject = JSON.parse(JSON.stringify(data));
+                    // response.json(questObject);
+                    response.json(data);
+                } else response.status(400).send(`Quest of id: ${request.params.id} is not present.`);
+            })
+            .catch((err) => {
+                response.status(400).send(`Unable to retrieve specified quest of id: ${request.params.id}.`, err);
+            });
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
 //create
 app.post('/quest', async (request, response) => {
     const quest = request.body.quest;
     const category = quest.categoryId;
     const title = quest.title;
     const desc = quest.description;
-    const intro = quest.introduction;
     const conc = quest.conclusion;
     const characterName = quest.characterName;
     const characterMood = quest.characterMood;
@@ -486,7 +448,7 @@ app.post('/quest', async (request, response) => {
     if (!isBlank(title) && !isBlank(category) && !isBlank(points)) {
         const db = dbService.getDbServiceInstance();
 
-        const createQuestResult = db.createQuest(category, title, desc, intro, conc, characterName, characterMood, points);
+        const createQuestResult = db.createQuest(category, title, desc, conc, characterName, characterMood, points);
 
         createQuestResult
             .then((data) => {
@@ -512,105 +474,42 @@ app.post('/quest', async (request, response) => {
     } else response.send(`Category / Title / Points cannot be empty!`);
 });
 
-app.get('/quest/:id', (request, response) => {
-    const db = dbService.getDbServiceInstance();
-    let isValid = validateID(request.params.id);
-    if (isValid) {
-        const result = db.getQuestById(request.params.id);
-        result
-            .then((data) => {
-                if (!isEmpty(data)) {
-                    const questObject = JSON.parse(JSON.stringify(data));
-                    response.json(questObject);
-                } else response.status(400).send(`Quest of id: ${request.params.id} is not present.`);
-            })
-            .catch((err) => {
-                response.status(400).send(`Unable to retrieve specified quest of id: ${request.params.id}.`, err);
-            });
-    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
-});
-
-//create
-app.post('/quest/createNew', async (request, response) => {
-    //syntaxes to change during integration
-    const title = obj.questTitle;
-    const desc = obj.questDesc;
-    const objective = obj.questObjective;
-    const categoryId = obj.questCategoryId;
-    const fiqPoints = obj.fiqPoints;
-    const scenarioObj = obj.questions;
-    let isValid = validateString(title);
-    const db = dbService.getDbServiceInstance();
-    if (isValid) {
-        let result = db.createQuest(title, desc, objective, categoryId, fiqPoints);
-        result
-            .then((data) => {
-                response.json({ data: data.insertId });
-
-                let createQuestScenarioResult = db.createQuestScenario(data.insertId, scenarioObj);
-                createQuestScenarioResult.catch((err) => console.log(`Creation of scenario(s) failed. ${err}`));
-            })
-            .catch((err) => {
-                response.status(500).send(`Error creating quest: ${title}, ${err}`);
-            });
-    } else response.status(400).send(`${title} contained illegal characters. Please check again.`);
-});
-
-app.get('/quest/:id', (request, response) => {
-    const db = dbService.getDbServiceInstance();
-    let isValid = validateID(request.params.id);
-    if (isValid) {
-        const result = db.getQuestById(request.params.id);
-        result
-            .then((data) => {
-                if (!isEmpty(data)) {
-                    const questObject = JSON.parse(JSON.stringify(data));
-                    response.json({ data: questObject });
-                } else response.status(400).send(`Quest of id: ${request.params.id} is not present.`);
-            })
-            .catch((err) => {
-                response.status(400).send(`Unable to retrieve specified quest of id: ${request.params.id}.`, err);
-            });
-    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
-});
-
 app.patch('/quest/:id', (request, response) => {
     let isValid = validateID(request.params.id);
     if (isValid) {
-        const title = obj.questTitle;
-        const desc = obj.questDesc;
-        const objective = obj.questObjective;
-        const categoryId = obj.questCategoryId;
-        const fiqPoint = obj.fiqPoints;
-        const scenearioObj = obj.questions;
+        const quest = request.body.quest;
+        const category = quest.categoryId;
+        const title = quest.title;
+        const desc = quest.description;
+        const conc = quest.conclusion;
+        const characterName = quest.characterName;
+        const characterMood = quest.characterMood;
+        const points = quest.points;
+        const scenarios = quest.scenarios;
 
         const db = dbService.getDbServiceInstance();
-        const result = db.updateQuestDetailsById(request.params.id, title, desc, objective, categoryId, fiqPoint);
+        const result = db.updateQuest(request.params.id, category, title, desc, conc, characterName, characterMood, points);
 
         result
             .then((data) => {
                 response.json({ data: data });
 
                 let updateScenarioResult = new Promise((resolve, reject) => { });
-                scenearioObj.forEach((scenario) => {
-                    updateScenarioResult = db.updateScenarioDetailsById(
-                        request.params.id,
-                        scenario.scenarioId,
-                        scenario.sub_questTitle,
-                        scenario.sub_questDesc,
-                        JSON.stringify(scenario.options),
-                    );
+
+                scenarios.forEach((scenario) => {
+                    updateScenarioResult = db.updateQuestScenario(scenario);
                 });
+
                 updateScenarioResult.catch((err) =>
                     response
                         .status(400)
-                        .send(`Updating of questions where questId equals to ${request.params.id} has failed. ${err}`),
+                        .send(`Updating of scenario where questId equals to ${request.params.id} has failed. ${err}`),
                 );
             })
             .catch((err) => {
                 response
                     //.status(400)
-                    .send(`Updating of quiz where id equals to ${request.params.id} has failed. ${err}`);
+                    .send(`Updating of quest where id equals to ${request.params.id} has failed. ${err}`);
             });
     }
 });

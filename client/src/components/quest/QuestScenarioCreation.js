@@ -19,7 +19,7 @@ class QuestScenarioCreation extends React.Component {
         const moodChangeOptions = [{ text: "Increase", value: 1 }, { text: "Decrease", value: 2 },];
         const rateOptions = [];
 
-        for (let i = 0; i < this.state.rateOptionsRange + 1; i++) {
+        for (let i = 1; i < this.state.rateOptionsRange + 1; i++) {
             let value = 10 * i;
             rateOptions.push({ text: value, value: value });
         }
@@ -40,7 +40,7 @@ class QuestScenarioCreation extends React.Component {
                         <h3>Chance of event occurring</h3>
                         <Dropdown
                             name={`eventProcRate-${number}-${value}`}
-                            defaultValue={0}
+                            placeholder="Select chance of event occurring"
                             fluid
                             selection
                             clearable
@@ -54,6 +54,7 @@ class QuestScenarioCreation extends React.Component {
                         <h3 style={{ width: "15%" }}>Mood Change</h3>
                         <Dropdown
                             name={`moodChange-${number}-${value}`}
+                            placeholder="Select mood change type"
                             style={{ width: "20%" }}
                             defaultValue={1}
                             fluid
@@ -64,8 +65,9 @@ class QuestScenarioCreation extends React.Component {
                         />
                         <Dropdown
                             name={`moodChangeValue-${number}-${value}`}
+                            placeholder="Specify the amount to modify the mood by"
                             style={{ marginLeft: "20px", width: "20%" }}
-                            defaultValue={0}
+                            defaultValue={10}
                             fluid
                             selection
                             clearable
