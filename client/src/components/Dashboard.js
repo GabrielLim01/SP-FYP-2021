@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { Form, Button, Icon } from 'semantic-ui-react';
-import { containerStyle } from '../common.js';
+import { narrowContainerStyle } from '../common.js';
 import DashboardMenu from './DashboardMenu.js';
 
 class Dashboard extends React.Component {
@@ -25,7 +25,7 @@ class Dashboard extends React.Component {
             return (
                 <div className="container">
                     <DashboardMenu page="dashboard"></DashboardMenu>
-                    <div className="subContainer" style={containerStyle}>
+                    <div className="subContainer" style={narrowContainerStyle}>
                         <h1>Welcome, {this.state.username}!</h1>
                         <h2>What would you like to play today?</h2>
                         <div className="ui stacked segment">

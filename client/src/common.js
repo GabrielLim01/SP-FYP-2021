@@ -16,6 +16,14 @@ module.exports.inProduction = false;
 // -FIQ will be set to 0, user can still earn FIQ (e.g. from quizzes) as per normal but FIQ gain will not be tracked
 
 // Used in most components
+module.exports.narrowContainerStyle = {
+    maxWidth: '30%',
+    margin: 'auto',
+    paddingTop: '100px',
+};
+
+
+// Used in most components
 module.exports.containerStyle = {
     maxWidth: '70%',
     margin: 'auto',

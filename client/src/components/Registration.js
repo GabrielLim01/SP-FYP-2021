@@ -2,8 +2,9 @@ import React from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 import { Form, Button } from 'semantic-ui-react';
-import { host, appName, containerStyle } from '../common.js';
+import { host, appName, narrowContainerStyle } from '../common.js';
 import verifyLogin from './verifyLogin.js';
+import GuruOrGoonduIcon from '../GuruOrGoonduIcon.jpg'
 import Noty from 'noty';
 import 'noty/lib/noty.css';
 import 'noty/lib/themes/semanticui.css';
@@ -143,7 +144,10 @@ class Registration extends React.Component {
             return <Redirect push to="/dashboard" />;
         }
         return (
-            <div className="container" style={containerStyle}>
+            <div className="container" style={narrowContainerStyle}>
+                <div className="AppIcon">
+                    <img src={GuruOrGoonduIcon} alt="AppIcon" style={{ width: '100px' }} />
+                </div>
                 <h1 className="ui teal image header">{appName}</h1>
                 <div className="ui stacked segment">
                     <Form>
