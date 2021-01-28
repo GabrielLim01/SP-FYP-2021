@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
 import { Segment, Form, Grid, TextArea, Dropdown, Button, Popup } from 'semantic-ui-react';
 import { host } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
@@ -25,7 +25,7 @@ class QuizUpdate extends React.Component {
             options: 4,
             fiqOptionsRange: 5,
             timeOptionsRange: 7,
-            redirect: null
+            redirect: null,
         };
     }
 
@@ -41,37 +41,36 @@ class QuizUpdate extends React.Component {
 
     handleChange = (event) => {
         this.setState({
-            [event.target.name]: event.target.value
+            [event.target.name]: event.target.value,
         });
-    }
+    };
 
     handleDropdownChange = (event, data) => {
         this.setState({
-            [data.name]: data.value
+            [data.name]: data.value,
         });
-    }
+    };
 
     handleCheckboxChange = (checkbox) => {
         this.setState({
-            [checkbox.name]: !checkbox.checked
+            [checkbox.name]: !checkbox.checked,
         });
-    }
+    };
 
     handleSubmit = (event) => {
         event.preventDefault();
 
         let questions = [];
 
-        for (let i = 1; i < (this.state.questions.length + 1); i++) {
-
+        for (let i = 1; i < this.state.questions.length + 1; i++) {
             const options = [];
 
-            for (let j = 1; j < (this.state.options + 1); j++) {
-                if (this.state['option-' + i + '-' + j] !== undefined && this.state['option-' + i + '-' + j] !== "") {
+            for (let j = 1; j < this.state.options + 1; j++) {
+                if (this.state['option-' + i + '-' + j] !== undefined && this.state['option-' + i + '-' + j] !== '') {
                     options.push({
                         name: this.state['option-' + i + '-' + j],
-                        isCorrect: this.state['isCorrect-' + i + '-' + j] || false
-                    })
+                        isCorrect: this.state['isCorrect-' + i + '-' + j] || false,
+                    });
                 }
             }
 
@@ -83,7 +82,7 @@ class QuizUpdate extends React.Component {
                     time: this.state['question' + i + 'time'],
                     explanation: this.state['question' + i + 'explanation'],
                     options,
-                }
+                },
             });
         }
 
@@ -94,62 +93,63 @@ class QuizUpdate extends React.Component {
             category: this.state.quizCategory,
             points: this.state.quizPoints,
             time: this.state.quizTime,
-            questions: questions
+            questions: questions,
         };
 
         //console.log(JSON.stringify(quiz))
 
-        // Send quiz object to the back-end via axios 
-        axios.patch(`${host}/quiz/${this.state.quizId}`, { quiz: quiz })
+        // Send quiz object to the back-end via axios
+        axios
+            .patch(`${host}/quiz/${this.state.quizId}`, { quiz: quiz })
             .then(
                 new Noty({
                     text: `Quiz Updated: ${quiz.title}`,
                     type: 'success',
                     theme: 'semanticui',
                 }).show(),
-                this.setState({ redirect: "/quizzes" })
+                this.setState({ redirect: '/quizzes' }),
             )
             .catch((error) => {
                 alert(error);
             });
-    }
+    };
 
     componentDidMount() {
         // props will be undefined if the user navigates to this component directly via the URL
         if (this.props.location.quiz !== undefined) {
             retrieveItems('category')
-                .then(data => {
+                .then((data) => {
                     let categories = [];
 
-                    data.forEach(element => {
-                        categories.push(element)
+                    data.forEach((element) => {
+                        categories.push(element);
                     });
 
                     this.setState({ categories: categories });
                 })
                 .catch((error) => {
                     alert(error);
-                })
+                });
 
-            retrieveItems(`quiz/${this.props.location.quiz.quizId}`)
-                .then(data => {
-                    let questions = [];
+            retrieveItems(`quiz/${this.props.location.quiz.quizId}`).then((data) => {
+                let questions = [];
 
-                    data.forEach(element => {
-                        questions.push({
-                            quizQuestionId: element.quizQuestionId,
-                            question: JSON.parse(element.question).question
-                        })
+                data.forEach((element) => {
+                    questions.push({
+                        quizQuestionId: element.quizQuestionId,
+                        question: JSON.parse(element.question).question,
                     });
+                });
 
-                    // Since data returned by the back-end has quiz-specific data appended to the front of every question
-                    // and we only need to reference that data once, simply remove the question and quizQuestionId from the 
-                    // first element of the data array and store the quiz-specific data in another variable
-                    delete data[0].question
-                    delete data[0].quizQuestionId;
-                    let quiz = data[0];
+                // Since data returned by the back-end has quiz-specific data appended to the front of every question
+                // and we only need to reference that data once, simply remove the question and quizQuestionId from the
+                // first element of the data array and store the quiz-specific data in another variable
+                delete data[0].question;
+                delete data[0].quizQuestionId;
+                let quiz = data[0];
 
-                    this.setState({
+                this.setState(
+                    {
                         quizId: quiz.quizId,
                         quizTitle: quiz.quizName,
                         quizDesc: quiz.quizDesc,
@@ -157,11 +157,12 @@ class QuizUpdate extends React.Component {
                         quizPoints: quiz.pointsPerQuestion,
                         quizTime: quiz.timePerQuestion,
                         questions: questions,
-                    }, () => {
+                    },
+                    () => {
                         // Initialize the default state of all questions and their related properties
                         // If this is not done, all question-related input fields will not have their values stored in state
                         // despite defaultValue displaying the correct values
-                        for (let i = 1; i < (this.state.questions.length + 1); i++) {
+                        for (let i = 1; i < this.state.questions.length + 1; i++) {
                             let question = this.state.questions[i - 1].question;
 
                             this.setState({
@@ -169,32 +170,46 @@ class QuizUpdate extends React.Component {
                                 ['question' + i + 'points']: question.points,
                                 ['question' + i + 'time']: question.time,
                                 ['question' + i + 'explanation']: question.explanation,
-                                ['question' + i + 'name']: question.name
-                            })
+                                ['question' + i + 'name']: question.name,
+                            });
 
+<<<<<<< HEAD
                             for (let j = 1; j < (this.state.options + 1); j++) {
                                 this.setState({
                                     ['option-' + i + '-' + j]: question.options[j - 1].name,
                                     ['isCorrect-' + i + '-' + j]: question.options[j - 1].isCorrect
                                 })
+=======
+                            for (let j = 1; j < this.state.options + 1; j++) {
+                                if (
+                                    this.state['option-' + i + '-' + j] !== undefined &&
+                                    this.state['option-' + i + '-' + j] !== ''
+                                ) {
+                                    this.setState({
+                                        ['option-' + i + '-' + j]: question.options[j - 1].name,
+                                        ['isCorrect-' + i + '-' + j]: question.options[j - 1].isCorrect,
+                                    });
+                                }
+>>>>>>> main
                             }
                         }
-                    });
-                })
+                    },
+                );
+            });
         } else {
             // Redirect users to /quizzes if they attempt to access this component directly via the URL
-            this.setState({ redirect: "/quizzes" });
+            this.setState({ redirect: '/quizzes' });
         }
     }
 
     render() {
-        const { questions } = this.state
+        const { questions } = this.state;
         const categories = [];
         const FIQoptions = [];
         const timeOptions = [];
         const displayQuestions = [];
 
-        for (let i = 1; i < (questions.length + 1); i++) {
+        for (let i = 1; i < questions.length + 1; i++) {
             displayQuestions.push(
                 <QuizQuestionUpdate
                     key={'question' + i}
@@ -206,57 +221,77 @@ class QuizUpdate extends React.Component {
                     handleChange={this.handleChange}
                     handleDropdownChange={this.handleDropdownChange}
                     handleCheckboxChange={this.handleCheckboxChange}
-                />);
-        };
+                />,
+            );
+        }
 
         for (let i = 0; i < this.state.categories.length; i++) {
             let id = this.state.categories[i].categoryId;
             let name = this.state.categories[i].categoryName;
             categories.push({ text: name, value: id });
-        };
+        }
 
         for (let i = 1; i < this.state.fiqOptionsRange; i++) {
-            let value = 25 * i
+            let value = 25 * i;
             FIQoptions.push({ text: value, value: value });
-        };
+        }
 
         for (let i = 1; i < this.state.timeOptionsRange; i++) {
-            let value = 5 * i
+            let value = 5 * i;
             timeOptions.push({ text: value, value: value });
-        };
+        }
 
         if (this.state.redirect) {
-            return <Redirect push to={this.state.redirect} />
+            return <Redirect push to={this.state.redirect} />;
 
-            // Since quizId will be undefined on the initial render, 
+            // Since quizId will be undefined on the initial render,
             // when the component is mounted and the data is populated by the axios call,
             // the Dropdown components' defaultValue will NOT be updated since render() is called before componentDidMount().
             // This is a temporary fix to force the component not to initialize the defaultValue until AFTER the component has mounted.
         } else if (this.state.quizId !== undefined) {
             return (
                 <div className="container">
-                    <DashboardMenu page='quizzes'></DashboardMenu>
-                    <h1 className="ui teal image header">Create your quiz!</h1>
-                    <div className="subContainer" style={{ maxWidth: '60%', margin: 'auto', textAlign: 'left', paddingTop: '20px' }}>
+                    <DashboardMenu page="quizzes"></DashboardMenu>
+                    <h1 className="ui teal image header">Update your quiz!</h1>
+                    <div
+                        className="subContainer"
+                        style={{ maxWidth: '60%', margin: 'auto', textAlign: 'left', paddingTop: '20px' }}
+                    >
                         <Segment>
                             <Form>
-                                <Grid columns='equal'>
+                                <Grid columns="equal">
                                     <Grid.Row columns={2}>
                                         <Grid.Column>
-                                            <Popup content='The name of your quiz!' trigger={<h3>Quiz Title *</h3>} />
-                                            <input type="text" name="quizTitle" onChange={this.handleChange} defaultValue={this.state.quizTitle} />
+                                            <Popup content="The name of your quiz!" trigger={<h3>Quiz Title *</h3>} />
+                                            <input
+                                                type="text"
+                                                name="quizTitle"
+                                                onChange={this.handleChange}
+                                                defaultValue={this.state.quizTitle}
+                                            />
                                         </Grid.Column>
                                         <Grid.Column>
-                                            <Popup content='Tell us what your quiz is about!' trigger={<h3>Quiz Description</h3>} />
-                                            <TextArea name='quizDesc' placeholder='Description' onChange={this.handleChange} defaultValue={this.state.quizDesc} />
+                                            <Popup
+                                                content="Tell us what your quiz is about!"
+                                                trigger={<h3>Quiz Description</h3>}
+                                            />
+                                            <TextArea
+                                                name="quizDesc"
+                                                placeholder="Description"
+                                                onChange={this.handleChange}
+                                                defaultValue={this.state.quizDesc}
+                                            />
                                         </Grid.Column>
                                     </Grid.Row>
                                     <Grid.Row columns={3}>
                                         <Grid.Column>
-                                            <Popup content='What category does your quiz belong in?' trigger={<h3>Category *</h3>} />
+                                            <Popup
+                                                content="What category does your quiz belong in?"
+                                                trigger={<h3>Category *</h3>}
+                                            />
                                             <Dropdown
-                                                name='quizCategory'
-                                                placeholder='Select a Category'
+                                                name="quizCategory"
+                                                placeholder="Select a Category"
                                                 fluid
                                                 selection
                                                 clearable
@@ -266,10 +301,13 @@ class QuizUpdate extends React.Component {
                                             />
                                         </Grid.Column>
                                         <Grid.Column>
-                                            <Popup content='How much FIQ (Financial IQ) points should players earn upon correctly answering each question?' trigger={<h3>FIQ per question *</h3>} />
+                                            <Popup
+                                                content="How much FIQ (Financial IQ) points should players earn upon correctly answering each question?"
+                                                trigger={<h3>FIQ per question *</h3>}
+                                            />
                                             <Dropdown
-                                                name='quizPoints'
-                                                placeholder='Select FIQ per question'
+                                                name="quizPoints"
+                                                placeholder="Select FIQ per question"
                                                 fluid
                                                 selection
                                                 clearable
@@ -279,10 +317,13 @@ class QuizUpdate extends React.Component {
                                             />
                                         </Grid.Column>
                                         <Grid.Column>
-                                            <Popup content='How much time (in seconds) will the player have to answer each question?' trigger={<h3>Time per question *</h3>} />
+                                            <Popup
+                                                content="How much time (in seconds) will the player have to answer each question?"
+                                                trigger={<h3>Time per question *</h3>}
+                                            />
                                             <Dropdown
-                                                name='quizTime'
-                                                placeholder='Select time (seconds) per question'
+                                                name="quizTime"
+                                                placeholder="Select time (seconds) per question"
                                                 fluid
                                                 selection
                                                 clearable
@@ -294,22 +335,24 @@ class QuizUpdate extends React.Component {
                                         </Grid.Column>
                                     </Grid.Row>
                                 </Grid>
-                            </Form >
+                            </Form>
                         </Segment>
                         {displayQuestions}
                         <div className="subContainer" style={{ padding: '25px 0px', textAlign: 'right' }}>
                             {/* <Button icon labelPosition='left' className='teal' name='addQuestion' onClick={this.onAddQuestion}>
                                 <Icon name='add' size='large' />Add Question
                             </Button> */}
-                            <Button className='blue' name='updateQuiz' onClick={this.handleSubmit}>Update Quiz</Button>
+                            <Button className="blue" name="updateQuiz" onClick={this.handleSubmit}>
+                                Update Quiz
+                            </Button>
                         </div>
-                    </div >
-                </div >
-            )
+                    </div>
+                </div>
+            );
         } else {
             // Return null on the initial render in order to prevent a React application crash
             // User will never see this in practice
-            return null
+            return null;
         }
     }
 }

@@ -21,7 +21,7 @@ class QuestUpdate extends React.Component {
             choices: 3,
             fiqOptionsRange: 6,
             moodOptionsRange: 10,
-            redirect: null
+            redirect: null,
         };
     }
 
@@ -60,8 +60,7 @@ class QuestUpdate extends React.Component {
             const choices = [];
 
             for (let j = 1; j < this.state.choices + 1; j++) {
-
-                if (this.state[`choice-${i}-${j}`] !== undefined && this.state[`choice-${i}-${j}`] !== "") {
+                if (this.state[`choice-${i}-${j}`] !== undefined && this.state[`choice-${i}-${j}`] !== '') {
                     if (this.state[`hasEvent-${i}-${j}`]) {
                         choices.push({
                             name: this.state[`choice-${i}-${j}`],
@@ -71,13 +70,15 @@ class QuestUpdate extends React.Component {
                                 description: this.state[`eventDesc-${i}-${j}`],
                                 eventProcRate: this.state[`eventProcRate-${i}-${j}`],
                                 moodChange: this.state[`moodChange-${i}-${j}`] ? this.state[`moodChange-${i}-${j}`] : 1,
-                                moodChangeValue: this.state[`moodChangeValue-${i}-${j}`] ? this.state[`moodChangeValue-${i}-${j}`] : 10
-                            }
+                                moodChangeValue: this.state[`moodChangeValue-${i}-${j}`]
+                                    ? this.state[`moodChangeValue-${i}-${j}`]
+                                    : 10,
+                            },
                         });
                     } else {
                         choices.push({
                             name: this.state[`choice-${i}-${j}`],
-                            description: this.state[`choiceDesc-${i}-${j}`]
+                            description: this.state[`choiceDesc-${i}-${j}`],
                         });
                     }
                 }
@@ -87,8 +88,8 @@ class QuestUpdate extends React.Component {
                 scenarioId: this.state.scenarios[i - 1].scenarioId,
                 scenario: {
                     description: this.state[`scenario-${i}-description`],
-                    choices
-                }
+                    choices,
+                },
             });
         }
 
@@ -103,14 +104,15 @@ class QuestUpdate extends React.Component {
             scenarios: scenarios,
         };
 
-        axios.patch(`${host}/quest/${this.state.questId}`, { quest: quest })
+        axios
+            .patch(`${host}/quest/${this.state.questId}`, { quest: quest })
             .then(
                 new Noty({
                     text: `Quest Updated: ${quest.title}`,
                     type: 'success',
                     theme: 'semanticui',
                 }).show(),
-                this.setState({ redirect: "/quests" })
+                this.setState({ redirect: '/quests' }),
             )
             .catch((err) => {
                 new Noty({
@@ -123,54 +125,56 @@ class QuestUpdate extends React.Component {
 
     initializeStates(quest, scenarios) {
         // Initialize quest details
-        this.setState({
-            categoryId: quest.categoryId,
-            questId: quest.questId,
-            title: quest.title,
-            description: quest.description,
-            conclusion: quest.conclusion,
-            characterName: quest.characterName,
-            characterMood: quest.characterMood,
-            points: quest.points,
-            scenarios: scenarios,
-        }, () => {
-            // Initialize scenarios
-            for (let i = 1; i < (this.state.scenarios.length + 1); i++) {
-                let scenario = this.state.scenarios[i - 1].scenario;
+        this.setState(
+            {
+                categoryId: quest.categoryId,
+                questId: quest.questId,
+                title: quest.title,
+                description: quest.description,
+                conclusion: quest.conclusion,
+                characterName: quest.characterName,
+                characterMood: quest.characterMood,
+                points: quest.points,
+                scenarios: scenarios,
+            },
+            () => {
+                // Initialize scenarios
+                for (let i = 1; i < this.state.scenarios.length + 1; i++) {
+                    let scenario = this.state.scenarios[i - 1].scenario;
 
-                this.setState({
-                    [`scenario-${i}-description`]: scenario.description
-                })
+                    this.setState({
+                        [`scenario-${i}-description`]: scenario.description,
+                    });
 
-                if (scenario.choices) {
-                    for (let j = 1; j < (scenario.choices.length + 1); j++) {
+                    if (scenario.choices) {
+                        for (let j = 1; j < scenario.choices.length + 1; j++) {
+                            let choice = scenario.choices[j - 1];
+                            let event = choice.event;
 
-                        let choice = scenario.choices[j - 1];
-                        let event = choice.event;
-
-                        // Initialize scenario choices
-                        if (choice.name !== undefined && choice.name !== "") {
-                            this.setState({
-                                [`choice-${i}-${j}`]: choice.name,
-                                [`choiceDesc-${i}-${j}`]: choice.description
-                            })
-
-                            // Initialize event details, if any
-                            if (event !== undefined) {
+                            // Initialize scenario choices
+                            if (choice.name !== undefined && choice.name !== '') {
                                 this.setState({
-                                    [`hasEvent-${i}-${j}`]: true,
-                                    [`event-${i}-${j}`]: event.name,
-                                    [`eventDesc-${i}-${j}`]: event.description,
-                                    [`eventProcRate-${i}-${j}`]: event.eventProcRate,
-                                    [`moodChange-${i}-${j}`]: event.moodChange,
-                                    [`moodChangeValue-${i}-${j}`]: event.moodChangeValue,
-                                })
+                                    [`choice-${i}-${j}`]: choice.name,
+                                    [`choiceDesc-${i}-${j}`]: choice.description,
+                                });
+
+                                // Initialize event details, if any
+                                if (event !== undefined) {
+                                    this.setState({
+                                        [`hasEvent-${i}-${j}`]: true,
+                                        [`event-${i}-${j}`]: event.name,
+                                        [`eventDesc-${i}-${j}`]: event.description,
+                                        [`eventProcRate-${i}-${j}`]: event.eventProcRate,
+                                        [`moodChange-${i}-${j}`]: event.moodChange,
+                                        [`moodChangeValue-${i}-${j}`]: event.moodChangeValue,
+                                    });
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
+            },
+        );
     }
 
     componentDidMount() {
@@ -190,29 +194,28 @@ class QuestUpdate extends React.Component {
                     alert(error);
                 });
 
-            retrieveItems(`quest/${this.props.location.quest.questId}`)
-                .then(data => {
-                    let scenarios = [];
+            retrieveItems(`quest/${this.props.location.quest.questId}`).then((data) => {
+                let scenarios = [];
 
-                    data.forEach(element => {
-                        scenarios.push({
-                            scenarioId: element.questScenarioId,
-                            scenario: JSON.parse(element.scenario)
-                        })
+                data.forEach((element) => {
+                    scenarios.push({
+                        scenarioId: element.questScenarioId,
+                        scenario: JSON.parse(element.scenario),
                     });
+                });
 
-                    // Since data returned by the back-end has quiz-specific data appended to the front of every question
-                    // and we only need to reference that data once, simply remove the question and quizQuestionId from the 
-                    // first element of the data array and store the quiz-specific data in another variable
-                    delete data[0].scenario
-                    delete data[0].questScenarioId;
-                    let quest = data[0];
+                // Since data returned by the back-end has quiz-specific data appended to the front of every question
+                // and we only need to reference that data once, simply remove the question and quizQuestionId from the
+                // first element of the data array and store the quiz-specific data in another variable
+                delete data[0].scenario;
+                delete data[0].questScenarioId;
+                let quest = data[0];
 
-                    this.initializeStates(quest, scenarios);
-                })
+                this.initializeStates(quest, scenarios);
+            });
         } else {
             // Redirect users to /quests if they attempt to access this component directly via the URL
-            this.setState({ redirect: "/quests" });
+            this.setState({ redirect: '/quests' });
         }
     }
 
@@ -223,7 +226,7 @@ class QuestUpdate extends React.Component {
         const moodOptions = [];
         const displayScenarios = [];
 
-        for (let i = 1; i < (scenarios.length + 1); i++) {
+        for (let i = 1; i < scenarios.length + 1; i++) {
             displayScenarios.push(
                 <QuestScenarioUpdate
                     key={'scenario' + i}
@@ -233,8 +236,9 @@ class QuestUpdate extends React.Component {
                     handleChange={this.handleChange}
                     handleDropdownChange={this.handleDropdownChange}
                     handleCheckboxChange={this.handleCheckboxChange}
-                />);
-        };
+                />,
+            );
+        }
 
         for (let i = 0; i < this.state.categories.length; i++) {
             let id = this.state.categories[i].categoryId;
@@ -247,19 +251,18 @@ class QuestUpdate extends React.Component {
             FIQoptions.push({ text: value, value: value });
         }
 
-        for (let i = 1; i < (this.state.moodOptionsRange + 1); i++) {
+        for (let i = 1; i < this.state.moodOptionsRange + 1; i++) {
             let value = 10 * i;
             moodOptions.push({ text: value, value: value });
         }
 
         if (this.state.redirect) {
             return <Redirect push to={this.state.redirect} />;
-
         } else if (this.state.questId !== undefined) {
             return (
                 <div className="container">
                     <DashboardMenu page="quests"></DashboardMenu>
-                    <h1 className="ui teal image header">Create your quest!</h1>
+                    <h1 className="ui teal image header">Update your quest!</h1>
                     <div
                         className="subContainer"
                         style={{ maxWidth: '70%', margin: 'auto', textAlign: 'left', paddingTop: '20px' }}
@@ -373,7 +376,7 @@ class QuestUpdate extends React.Component {
                         </Segment>
                         {displayScenarios}
                         <div className="subContainer" style={{ padding: '25px 0px', textAlign: 'right' }}>
-                            <Button onClick={() => this.setState({ redirect: '/quizzes' })}>Back</Button>
+                            <Button onClick={() => this.setState({ redirect: '/quests' })}>Back</Button>
                             <Button
                                 icon
                                 labelPosition="left"
@@ -382,17 +385,17 @@ class QuestUpdate extends React.Component {
                                 onClick={this.onAddScenario}
                             >
                                 <Icon name="add" size="large" />
-                            Add Scenario
-                        </Button>
+                                Add Scenario
+                            </Button>
                             <Button className="blue" name="updateQuest" onClick={this.handleSubmit}>
                                 Update Quest
-                        </Button>
+                            </Button>
                         </div>
                     </div>
                 </div>
-            )
+            );
         } else {
-            return null
+            return null;
         }
     }
 }
