@@ -102,12 +102,13 @@ class QuizUpdate extends React.Component {
         axios
             .patch(`${host}/quiz/${this.state.quizId}`, { quiz: quiz })
             .then(
-                new Noty({
-                    text: `Quiz Updated: ${quiz.title}`,
-                    type: 'success',
-                    theme: 'semanticui',
-                }).show(),
-                this.setState({ redirect: '/quizzes' }),
+                // new Noty({
+                //     text: `Quiz Updated: ${quiz.title}`,
+                //     type: 'success',
+                //     theme: 'semanticui',
+                // }).show(),
+                //this.setState({ redirect: '/quizzes' }),
+                window.location.href = 'quizzes'
             )
             .catch((error) => {
                 alert(error);
@@ -174,10 +175,13 @@ class QuizUpdate extends React.Component {
                             });
 
                             for (let j = 1; j < (this.state.options + 1); j++) {
-                                this.setState({
-                                    ['option-' + i + '-' + j]: question.options[j - 1].name,
-                                    ['isCorrect-' + i + '-' + j]: question.options[j - 1].isCorrect
-                                })
+                                if (question.options[j - 1] !== undefined) {
+                                    console.log(question.options[j - 1].name);
+                                    this.setState({
+                                        ['option-' + i + '-' + j]: question.options[j - 1].name,
+                                        ['isCorrect-' + i + '-' + j]: question.options[j - 1].isCorrect
+                                    })
+                                }
                             }
                         }
                     },

@@ -23,9 +23,10 @@ class Leaderboard extends React.Component {
 
     calculateLevelDifference(FIQ) {
         let currentFIQ = FIQ
+        let baseLevel = 1;
         let currentLevel = 1;
         let levelIncrease = 0;
-        let fiqToNextLevel = this.calculateFIQToNextLevel(currentLevel);
+        let fiqToNextLevel = 100;
 
         while (currentFIQ >= fiqToNextLevel) {
             currentLevel++;
@@ -33,10 +34,10 @@ class Leaderboard extends React.Component {
             fiqToNextLevel = this.calculateFIQToNextLevel(currentLevel);
         }
 
-        if ((currentLevel + levelIncrease) >= this.state.maxLevel) {
+        if ((baseLevel + levelIncrease) >= this.state.maxLevel) {
             currentLevel = this.state.maxLevel;
         } else {
-            currentLevel = currentLevel + levelIncrease;
+            currentLevel = baseLevel + levelIncrease;
         }
 
         return (`Level ${currentLevel}: ${FIQ} FIQ`);
