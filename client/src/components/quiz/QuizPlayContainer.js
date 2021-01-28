@@ -11,7 +11,7 @@ class QuizPlayContainer extends React.Component {
                     inverted
                     raised
                     style={{
-                        height: '500px',
+                        height: '600px',
                         maxWidth: '60%',
                         margin: 'auto',
                         background: 'linear-gradient(to bottom, #0080FF, #0000FF, #7F00FF)',

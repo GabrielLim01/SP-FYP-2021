@@ -1,6 +1,7 @@
 import React from 'react';
 import { Segment, Grid, Button } from 'semantic-ui-react';
 import QuizTimer from './QuizTimer.js';
+import './animations.css';
 
 // This component handles loading of quiz questions 
 
@@ -24,7 +25,9 @@ class QuizQuestionPlay extends React.Component {
             globalPointsPerQuestion: props.globalPointsPerQuestion,
             globalTimePerQuestion: props.globalTimePerQuestion,
             hasAnswered: false,
-            temporaryTime: 0
+            temporaryTime: 0,
+            isAnimating: false,
+            animationDelay: 2
         };
 
         if (this.state.question.time) {
@@ -35,6 +38,7 @@ class QuizQuestionPlay extends React.Component {
 
         this.setClockRef = this.setClockRef.bind(this);
         this.pause = this.pause.bind(this);
+        this._isMounted = false;
     }
 
     handleAnswer(option, isCorrect) {
@@ -72,16 +76,6 @@ class QuizQuestionPlay extends React.Component {
         this.props.onQuestionAnswered(option, isCorrect, points)
     }
 
-    pause() {
-        this.clockRef.pause();
-    }
-
-    setClockRef(ref) {
-        // When the `Clock` (and subsequently `Countdown` mounts
-        // this will give us access to the API
-        this.clockRef = ref;
-    }
-
     componentDidUpdate(prevState) {
         let currentQuestion = this.props.question;
         let question = JSON.parse(this.props.question).question;
@@ -104,13 +98,47 @@ class QuizQuestionPlay extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this._isMounted = true;
+
+        // Pause the quiz timer while the animation is running
+        this.pause();
+        this.setState({ hasAnswered: true, isAnimating: true });
+
+        // Start the quiz timer after the animation finishes
+        setTimeout(() => {
+            if (this._isMounted) {
+                this.start();
+                this.setState({ hasAnswered: false, isAnimating: false })
+            }
+        }, (this.state.animationDelay * 1000));
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
+    setClockRef(ref) {
+        // When the `Clock` (and subsequently `Countdown` mounts
+        // this will give us access to the API
+        this.clockRef = ref;
+    }
+
+    pause() {
+        this.clockRef.pause();
+    }
+
+    start() {
+        this.clockRef.start();
+    }
+
     render() {
         const question = this.state.question;
         const number = this.state.questionNumber;
 
         return (
             <Grid key={number} style={{ height: '100%' }}>
-                <Grid.Row style={{ margin: '0px 20px' }}>
+                <Grid.Row style={{ margin: '0px 20px', opacity: '0', animation: `fadeIn 0.3s linear ${this.state.animationDelay}s forwards` }}>
                     <QuizTimer
                         time={this.state.hasAnswered ? this.state.temporaryTime : question.time ? question.time : this.state.globalTimePerQuestion}
                         hasAnswered={this.state.hasAnswered}
@@ -121,12 +149,12 @@ class QuizQuestionPlay extends React.Component {
                     </QuizTimer>
                 </Grid.Row>
                 <Grid.Row style={{ height: '50%' }}>
-                    <Segment raised inverted color='teal' style={{ width: '100%', margin: '0px 20px' }}>
+                    <Segment raised inverted color='teal' style={{ width: '100%', margin: '0px 20px', opacity: '0', animation: `fadeIn 0.3s linear forwards` }}>
                         <h1>Question {number}</h1>
                         <h2 style={{ maxWidth: '80%', margin: 'auto' }}>{question.name}</h2>
                     </Segment>
                 </Grid.Row>
-                <Grid.Row columns={2} style={{ height: '35%', margin: '0px 5px' }}>
+                <Grid.Row columns={2} style={{ height: '30%', margin: '0px 5px', opacity: '0', animation: `fadeIn 0.3s linear ${this.state.animationDelay}s forwards` }}>
                     {this.state.options.map((element, index) => {
                         return (
                             <Grid.Column stretched key={index + 1}>
@@ -140,6 +168,15 @@ class QuizQuestionPlay extends React.Component {
                             </Grid.Column>
                         )
                     })}
+                </Grid.Row>
+                <Grid.Row style={{ height: '10%' }}>
+                    <Grid.Column textAlign='right' >
+                        {this.state.hasAnswered && !this.state.isAnimating ? (
+                            <Button color="teal" size="big" onClick={() => this.props.loadNextQuestion()}>
+                                Next Question
+                            </Button>
+                        ) : ''}
+                    </Grid.Column>
                 </Grid.Row>
             </Grid>
         )

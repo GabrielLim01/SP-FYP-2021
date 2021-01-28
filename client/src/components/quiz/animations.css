@@ -1,6 +1,24 @@
 /* Stores styling mainly for animations, 
 since React Components don't allow <style></style> tags for some reason */
 
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    1000% {
+        opacity: 1;
+    }
+    0% {
+        opacity: 0;
+    }
+}
+
 @keyframes fadeInAndOut {
     0%,
     100% {

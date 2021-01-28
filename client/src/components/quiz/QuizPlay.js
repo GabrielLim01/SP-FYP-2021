@@ -21,10 +21,10 @@ class QuizPlay extends React.Component {
             maxQuestions: 0,
             score: 0,
             totalPoints: 0,
-            explanationActiveItem: 0,
-            transitionDuration: 5, // The amount of time, in seconds, the player has to read the question prior to it being loaded
-            afterAnsweringDelay: 2, // The amount of time, in seconds, the player has to see the correct/incorrect answers after answering, before it transitions
-            redirect: null,
+            explanationActiveItem: 0
+            // transitionDuration: 5, // The amount of time, in seconds, the player has to read the question prior to it being loaded
+            // afterAnsweringDelay: 2, // The amount of time, in seconds, the player has to see the correct/incorrect answers after answering, before it transitions
+            // redirect: null,
         };
 
         // Prevents the function inside setTimeout from being executed if the user abruptly leaves the quiz (i.e. component gets unmounted)
@@ -34,15 +34,28 @@ class QuizPlay extends React.Component {
     }
 
     handleStart = () => {
-        this.setState({ state: this.state.stateTypes.isTransitioning });
+        this.setState({ state: this.state.stateTypes.isPlaying });
     };
 
     handleRestart = () => {
         this.setState({ state: this.state.stateTypes.isStarting, currentQuestion: 1, answers: [], score: 0, totalPoints: 0 });
     };
 
-    transitionToNextQuestion() {
-        setTimeout(() => { if (this._isMounted) this.setState({ state: this.state.stateTypes.isPlaying }) }, (this.state.transitionDuration * 1000));
+    // transitionToNextQuestion() {
+    //     setTimeout(() => { if (this._isMounted) this.setState({ state: this.state.stateTypes.isPlaying }) }, (this.state.transitionDuration * 1000));
+    // }
+
+    loadNextQuestion = () => {
+        if (this.state.currentQuestion < (this.state.maxQuestions)) {
+            this.setState({
+                state: this.state.stateTypes.isPlaying,
+                currentQuestion: this.state.currentQuestion + 1
+            })
+        } else {
+            this.setState({
+                state: this.state.stateTypes.isFinished
+            });
+        }
     }
 
     onQuestionAnswered = (option, isCorrect, points) => {
@@ -50,16 +63,7 @@ class QuizPlay extends React.Component {
 
             if (isCorrect) this.setState({ score: this.state.score + 1, totalPoints: this.state.totalPoints + points });
 
-            // Wait a short while before loading the next question 
-            setTimeout(() => {
-                if (this._isMounted)
-                    this.setState({
-                        state: this.state.stateTypes.isTransitioning,
-                        currentQuestion: this.state.currentQuestion + 1,
-                        answers: [...this.state.answers, { "name": option, "isCorrect": isCorrect }]
-                    })
-            }, (this.state.afterAnsweringDelay * 1000));
-
+            this.setState({ answers: [...this.state.answers, { "name": option, "isCorrect": isCorrect }] });
         } else {
 
             if (isCorrect) {
@@ -70,15 +74,7 @@ class QuizPlay extends React.Component {
                 this.updateFIQ();
             }
 
-            // Wait a short while before loading the results screen
-            setTimeout(() => {
-                if (this._isMounted)
-                    this.setState({
-                        state: this.state.stateTypes.isFinished,
-                        answers: [...this.state.answers, { "name": option, "isCorrect": isCorrect }]
-                    })
-            },
-                (this.state.afterAnsweringDelay * 1000));
+            this.setState({ answers: [...this.state.answers, { "name": option, "isCorrect": isCorrect }] });
         }
     };
 
@@ -118,6 +114,10 @@ class QuizPlay extends React.Component {
                         <Button color="teal" size="big" onClick={this.handleRestart}>
                             Play Again?
                             </Button>
+                        <br /><br />
+                        <Button color="teal" size="medium" onClick={() => this.setState({ redirect: '/quizzes' })}>
+                            Return to Quizzes
+                            </Button>
                     </div>
                 )
             case index:
@@ -131,8 +131,14 @@ class QuizPlay extends React.Component {
                         <div>
                             <h1>{question.name}</h1>
                             <h3>You answered: {answers[index] ? answers[index].name !== null ? `${answers[index].name}, which was ${answers[index].isCorrect ? 'correct' : 'incorrect'}!` : 'Nothing...' : 'Nothing...'}</h3>
-                            {!this.state.answers[index].isCorrect ? question.options.find(element => element.isCorrect).name ? <h3>The correct answer was: {question.options.find(element => element.isCorrect).name}</h3> : "" : ""}
-                            <h3>{question.explanation ? `Explanation: ${question.explanation}` : "No explanation available..."}</h3>
+
+                            {/* If there are multiple correct answers, return multiple correct answers, otherwise return a single correct answer*/}
+                            {question.options.filter(element => element.isCorrect).map((element) => element.name).length > 1 ?
+                                <h3>Other correct answers: {question.options.filter(element => element.isCorrect).map((element, index) => { return (<div key={index}>{element.name}</div>) })}</h3>
+                                : !this.state.answers[index].isCorrect ? question.options.find(element => element.isCorrect).name ? <h3>The correct answer was: {question.options.find(element => element.isCorrect).name}</h3> : "" : ""
+                            }
+
+                            <h3 style={{ width: '90%', margin: 'auto', textAlign: 'justify' }}>{question.explanation ? `Explanation: ${question.explanation}` : "No explanation available..."}</h3>
                         </div>
                     )
                 } else {
@@ -186,7 +192,7 @@ class QuizPlay extends React.Component {
                 case stateTypes.isStarting:
                     return (
                         <QuizPlayContainer>
-                            <div className="subContainer" style={{ paddingTop: '150px' }}>
+                            <div className="subContainer" style={{ paddingTop: '200px', maxWidth: '80%', margin: 'auto' }}>
                                 <h1>Welcome to {this.state.quiz.quizName}!</h1>
                                 <Button color="teal" size="big" onClick={this.handleStart}>
                                     Start Quiz
@@ -194,18 +200,18 @@ class QuizPlay extends React.Component {
                             </div>
                         </QuizPlayContainer>
                     );
-                case stateTypes.isTransitioning:
-                    return (
-                        <QuizPlayContainer>
-                            <div className="subContainer" style={{
-                                paddingTop: '150px', maxWidth: '80%', margin: 'auto', animation: `fadeInAndOut ${this.state.transitionDuration}s linear`
-                            }}>
-                                <h1>Question {this.state.currentQuestion}</h1>
-                                <h2>{JSON.parse(this.state.questions[this.state.currentQuestion - 1]).question.name}</h2>
-                                {this.transitionToNextQuestion()}
-                            </div>
-                        </QuizPlayContainer>
-                    );
+                // case stateTypes.isTransitioning:
+                //     return (
+                //         <QuizPlayContainer>
+                //             <div className="subContainer" style={{
+                //                 paddingTop: '150px', maxWidth: '80%', margin: 'auto', animation: `fadeInAndOut ${this.state.transitionDuration}s linear`
+                //             }}>
+                //                 <h1>Question {this.state.currentQuestion}</h1>
+                //                 <h2>{JSON.parse(this.state.questions[this.state.currentQuestion - 1]).question.name}</h2>
+                //                 {this.transitionToNextQuestion()}
+                //             </div>
+                //         </QuizPlayContainer>
+                //     );
                 case stateTypes.isPlaying:
                     return (
                         <QuizPlayContainer>
@@ -215,6 +221,7 @@ class QuizPlay extends React.Component {
                                 globalPointsPerQuestion={this.state.quiz.pointsPerQuestion}
                                 globalTimePerQuestion={this.state.quiz.timePerQuestion}
                                 onQuestionAnswered={this.onQuestionAnswered}
+                                loadNextQuestion={this.loadNextQuestion}
                             ></QuizQuestionPlay>
                         </QuizPlayContainer>
                     );
@@ -229,7 +236,7 @@ class QuizPlay extends React.Component {
                             })}
                             <Button circular color={this.state.questions.length !== this.state.explanationActiveItem ? 'yellow' : 'black'}
                                 onClick={() => { this.setState({ explanationActiveItem: this.state.questions.length }) }}>End</Button>
-                            <div className="subContainer" style={{ paddingTop: '100px' }}>
+                            <div className="subContainer" style={{ paddingTop: '150px' }}>
                                 {this.renderExplanation()}
                             </div>
                         </QuizPlayContainer>
