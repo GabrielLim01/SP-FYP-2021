@@ -173,24 +173,11 @@ class QuizUpdate extends React.Component {
                                 ['question' + i + 'name']: question.name,
                             });
 
-<<<<<<< HEAD
                             for (let j = 1; j < (this.state.options + 1); j++) {
                                 this.setState({
                                     ['option-' + i + '-' + j]: question.options[j - 1].name,
                                     ['isCorrect-' + i + '-' + j]: question.options[j - 1].isCorrect
                                 })
-=======
-                            for (let j = 1; j < this.state.options + 1; j++) {
-                                if (
-                                    this.state['option-' + i + '-' + j] !== undefined &&
-                                    this.state['option-' + i + '-' + j] !== ''
-                                ) {
-                                    this.setState({
-                                        ['option-' + i + '-' + j]: question.options[j - 1].name,
-                                        ['isCorrect-' + i + '-' + j]: question.options[j - 1].isCorrect,
-                                    });
-                                }
->>>>>>> main
                             }
                         }
                     },
