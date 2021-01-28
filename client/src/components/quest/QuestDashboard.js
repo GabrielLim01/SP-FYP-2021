@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Form, Button, Segment, Grid, Accordion, Label, Message, Input, Select } from 'semantic-ui-react';
-import { containerStyle } from '../../common.js';
+import { containerStyle, inProduction, defaultAccountType, adminAccountType } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import retrieveItems from '../retrieveItems.js';
 import QuestDelete from './QuestDelete.js';
@@ -27,18 +27,9 @@ class QuestDashboard extends React.Component {
                 { key: 'name', text: 'Quest Title', value: 'name' },
                 { key: 'category', text: 'Category', value: 'category' },
             ],
+            accountType: !inProduction ? JSON.parse(sessionStorage.getItem("user")).accountType ? JSON.parse(sessionStorage.getItem("user")).accountType : defaultAccountType : adminAccountType
         };
     }
-
-    redirectHandler = () => {
-        this.setState({ redirect: '/quests/creation' });
-    };
-
-    // renderRedirect = () => {
-    //     if (this.state.redirect) {
-    //        return <Redirect to="/quests/creation" />
-    //     } else console.log(this.state.redirect);
-    // };
 
     handleChange = (event) => {
         this.setState({
@@ -83,6 +74,15 @@ class QuestDashboard extends React.Component {
                     theme: 'semanticui',
                 }).show();
             });
+    }
+
+    componentDidUpdate() {
+        retrieveItems('quest')
+            .then((data) => {
+                if (JSON.stringify(data) !== JSON.stringify(this.state.questItems)) {
+                    this.setState({ questItems: data });
+                }
+            })
     }
 
     componentDidMount() {
@@ -136,9 +136,13 @@ class QuestDashboard extends React.Component {
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <h1>All Quests</h1>
-                            <button className="ui primary button" onClick={this.redirectHandler}>
-                                Create New<i className="right wrench icon"></i>
-                            </button>
+                            {this.state.accountType === adminAccountType ? (
+                                <Link to={{ pathname: 'quests/creation' }}>
+                                    <button className="ui primary button">
+                                        Create New<i className="right wrench icon"></i>
+                                    </button>
+                                </Link>
+                            ) : ''}
                         </div>
                         <div className="ui stacked segment">
                             <Form>
@@ -161,32 +165,52 @@ class QuestDashboard extends React.Component {
                                                     </div>
                                                 </Grid.Row>
                                                 <Grid.Row style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                                                    <Grid.Column>
-                                                        <QuestDelete
-                                                            trigger={<Button circular icon="trash" color="red" />}
-                                                            quest={value}
-                                                        />
-                                                    </Grid.Column>
-                                                    {this.state.functions.map((button, index2) => {
-                                                        return (
-                                                            <Grid.Column key={index2} style={{ display: 'flex' }}>
+                                                    {this.state.accountType === adminAccountType ? (
+                                                        <Grid.Column>
+                                                            <QuestDelete
+                                                                trigger={<Button circular icon="trash" color="red" />}
+                                                                quest={value}
+                                                            />
+                                                        </Grid.Column>
+                                                    ) : ''}
+                                                    {this.state.accountType === adminAccountType ? (
+                                                        this.state.functions.map((button, index2) => {
+                                                            return (
+                                                                <Grid.Column key={index2} style={{ display: 'flex' }}>
+                                                                    <Link
+                                                                        to={{
+                                                                            pathname: `${window.location.href
+                                                                                .split('/')
+                                                                                .pop()}/${button.path}/${value.questId}`,
+                                                                            quest: value,
+                                                                        }}
+                                                                    >
+                                                                        <Button
+                                                                            circular
+                                                                            icon={button.icon}
+                                                                            color={button.color}
+                                                                        />
+                                                                    </Link>
+                                                                </Grid.Column>
+                                                            );
+                                                        })
+                                                    ) : (
+                                                            <Grid.Column style={{ display: 'flex' }}>
                                                                 <Link
                                                                     to={{
-                                                                        pathname: `${window.location.href
-                                                                            .split('/')
-                                                                            .pop()}/${button.path}/${value.questId}`,
-                                                                        quest: value,
+                                                                        // window.location.href.split("/").pop() gets the last part of the URL after the forward slash (e.g. 'quests')
+                                                                        pathname: `${window.location.href.split('/').pop()}/play/${value.questId}`,
+                                                                        quiz: value,
                                                                     }}
                                                                 >
                                                                     <Button
                                                                         circular
-                                                                        icon={button.icon}
-                                                                        color={button.color}
+                                                                        icon="play"
+                                                                        color="green"
                                                                     />
                                                                 </Link>
                                                             </Grid.Column>
-                                                        );
-                                                    })}
+                                                        )}
                                                 </Grid.Row>
                                             </Segment>
                                         );

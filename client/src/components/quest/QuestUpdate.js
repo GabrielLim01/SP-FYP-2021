@@ -112,7 +112,7 @@ class QuestUpdate extends React.Component {
                     type: 'success',
                     theme: 'semanticui',
                 }).show(),
-                this.setState({ redirect: '/quests' }),
+                window.location.href = 'quests'
             )
             .catch((err) => {
                 new Noty({
