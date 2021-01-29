@@ -28,16 +28,16 @@ class dbChatbotService {
         return instance;
     }
 
-    async uploadCustomerReview(ratingsArray) {
+    async uploadCustomerReview(ratingsArray, feedback) {
         const array = [];
         for (let i = 0; i < 5; i++) {
             array.push(ratingsArray[i]);
         }
         return new Promise((resolve, reject) => {
             const query =
-                "INSERT INTO stars(qns1,qns2,qns3,qns4,qns5) VALUES(?);";
+                "INSERT INTO stars(qns1,qns2,qns3,qns4,qns5, feedback) VALUES(?, ?);";
 
-            chatbotConnection.query(query, [array], (err, result) => {
+            chatbotConnection.query(query, [array, feedback], (err, result) => {
                 if (err) reject(new Error(err.message));
                 resolve(result);
             });

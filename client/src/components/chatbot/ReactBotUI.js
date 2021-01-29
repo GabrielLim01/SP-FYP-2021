@@ -93,7 +93,6 @@ export default class ReactBotUI extends Component {
       .catch((error) => {
         alert(error);
       });
-
   }
 
   handleSubmitText(userinput) {
@@ -173,7 +172,7 @@ export default class ReactBotUI extends Component {
               />
               <Inputs onSubmit={this.handleSubmitText} />
             </div>
-            <div label="Review" style={{ overflow: "hidden" }}>
+            <div label="Review" style={{ overflow: "hidden" ,height: '80%' }}>
               <StarRating />
             </div>
 

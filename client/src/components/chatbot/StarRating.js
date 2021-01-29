@@ -39,6 +39,10 @@ class StarRating extends React.Component {
         };
     }
 
+    handleChange = (event) => {
+        this.setState({ [event.target.name]: event.target.value });
+    };
+
     handleRatingChange(event, index) {
         this.setState({
             [`rating-${index + 1}`]: event.target.getAttribute("aria-posinset")
@@ -56,6 +60,7 @@ class StarRating extends React.Component {
 
         const result = axios.post(`${host}/ratings`, {
             ratings: array,
+            feedback: this.state.feedback
         });
 
         result
@@ -78,8 +83,8 @@ class StarRating extends React.Component {
 
     render() {
         return (
-            <Form style={{ backgroundColor: "white" }}>
-                <h1 style={{ textAlign: "center" }}>How was the question?</h1>
+            <Form style={{ backgroundColor: "white", height: "385px", overflow: "auto" }}>
+                {/* <h1 style={{ textAlign: "center" }}>How was the question?</h1> */}
                 <ul>
                     {this.state.questions.map((element, index) => {
                         return (
@@ -112,12 +117,14 @@ class StarRating extends React.Component {
                                 marginTop: "30px",
                             }}
                         >
-                            Open ended
+                            Any other feedback?
             </h3>
                         <TextArea
+                            name="feedback"
                             rows={2}
                             placeholder="Tell us more"
-                            style={{ maxWidth: "90%" }}
+                            style={{ maxWidth: "90%", height: "150px" }}
+                            onChange={this.handleChange}
                         />
                     </li>
                 </ul>

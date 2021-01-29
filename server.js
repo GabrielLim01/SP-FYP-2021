@@ -806,8 +806,9 @@ app.post('/botReply', (req, res) => {
 app.post("/ratings", (request, response) => {
     const db = dbChatbotService.getDbServiceInstance();
     const ratingsArray = request.body.ratings;
-    console.log(ratingsArray);
-    const sendRatings = db.uploadCustomerReview(ratingsArray);
+    const feedback = request.body.feedback;
+    //console.log(ratingsArray);
+    const sendRatings = db.uploadCustomerReview(ratingsArray, feedback);
 
     sendRatings
         .then((data) => {
