@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router-dom'
 import { Button } from 'semantic-ui-react';
-import { host, inProduction } from '../../common.js';
+import { host, inProduction, getRandomInt } from '../../common.js';
 import QuestPlayContainer from './QuestPlayContainer.js';
 import QuestScenarioPlay from './QuestScenarioPlay.js';
 import retrieveItems from '../retrieveItems.js';
@@ -67,7 +67,7 @@ class QuestPlay extends React.Component {
         if (choice.event) {
             let event = choice.event;
 
-            if (this.getRandomInt(10) <= (event.eventProcRate / 10)) {
+            if (getRandomInt(10) <= (event.eventProcRate / 10)) {
                 eventTriggered = true;
 
                 // 1 - positive change, 2 - negative change
@@ -85,11 +85,6 @@ class QuestPlay extends React.Component {
             eventTriggered: eventTriggered,
             characterMood: characterMood
         });
-    }
-
-    // Returns a random int between 1 (inclusive) and max (inclusive)
-    getRandomInt(max) {
-        return (Math.floor(Math.random() * Math.floor(max)) + 1);
     }
 
     updateFIQ() {

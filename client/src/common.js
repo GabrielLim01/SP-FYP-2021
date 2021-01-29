@@ -49,3 +49,8 @@ module.exports.updateFIQ = (state) => {
             });
     }
 }
+
+// Returns a random int between 1 (inclusive) and max (inclusive)
+module.exports.getRandomInt = (max) => {
+    return (Math.floor(Math.random() * Math.floor(max)) + 1);
+}

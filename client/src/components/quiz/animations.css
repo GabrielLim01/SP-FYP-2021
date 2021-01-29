@@ -19,17 +19,6 @@ since React Components don't allow <style></style> tags for some reason */
     }
 }
 
-@keyframes fadeInAndOut {
-    0%,
-    100% {
-        opacity: 0;
-    }
-    10%,
-    90% {
-        opacity: 1;
-    }
-}
-
 @keyframes timer {
     to {
         /* More performant than animating `width` */
