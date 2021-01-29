@@ -1,93 +1,56 @@
-import React, { Component } from "react";
-import { Button, Icon, Input } from "semantic-ui-react";
-
-//import Audio from './Audio';
+import React, { Component } from 'react';
+import { Button, Icon, Input } from 'semantic-ui-react';
 
 class Inputs extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { value: "" };
+    constructor(props) {
+        super(props);
+        this.state = { value: '' };
 
-    //this.handleAudio = this.handleAudio.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    //this.handleListen = this.handleListen.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  /*handleAudio(e) {
-		const last = e.results.length - 1;
-		const value = this.state.value + e.results[last][0].transcript;
-		this.setState({value});
-	}*/
-
-  handleChange(e) {
-    const value = e.target.value;
-    if (value.length >= 256) {
-      alert("You have reached 256 character limit!");
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
-    this.setState({ value });
-  }
 
-  /*handleListen() {
-		this.audio.listen();
-	}*/
+    handleChange(e) {
+        const value = e.target.value;
+        if (value.length >= 256) {
+            alert('You have reached 256 character limit!');
+        }
+        this.setState({ value });
+    }
 
-  handleSubmit(e) {
-    e.preventDefault();
-    this.props.onSubmit(this.state.value);
-    this.setState({ value: "" });
-  }
+    handleSubmit(e) {
+        e.preventDefault();
+        this.props.onSubmit(this.state.value);
+        this.setState({ value: '' });
+    }
 
-  componentDidMount() {
-    this._text.focus();
-    //this.audio = new Audio(this.handleAudioStart, this.handleAudio, this.handleAudioError);
-  }
+    componentDidMount() {
+        this._text.focus();
+    }
 
-  render() {
-    return (
-      <form className="text-form" onSubmit={this.handleSubmit}>
-        {/* <input
-          className="text-input"
-          type="text"
-          name="inputText"
-          placeholder="Enter your message"
-          value={this.state.value}
-          ref={(input) => (this._text = input)}
-          onChange={this.handleChange}
-          autoComplete={"false"}
-          required
-        /> */}
-        <Input
-          style={{ width: "200%" }}
-          fluid
-          className="text-input"
-          placeholder="Enter your message"
-          value={this.state.value}
-          ref={(input) => (this._text = input)}
-          onChange={this.handleChange}
-          autoComplete={"false"}
-          required
-        />
-        <Button icon labelPosition="right" value="Send">
-          Send
-          <Icon name="right arrow" />
-        </Button>
-        {/* <Form onSubmit={this.handleSubmit}>
-        <Form.Group widths="equal">
-          <Form.Field
-            control={Input}
-            placeholder="Enter your message"
-            value={this.state.value}
-            ref={(input) => (this._text = input)}
-            onChange={this.handleChange}
-            autoComplete={"false"}
-            required
-          />
-          <Form.Field control={Button}>Submit</Form.Field>
-        </Form.Group>
-      </Form> */}
-      </form>
-    );
-  }
+    render() {
+        return (
+            <form className="text-form" onSubmit={this.handleSubmit}>
+                <Input
+                    fluid
+                    className="text-input"
+                    placeholder="Enter your message"
+                    value={this.state.value}
+                    ref={(input) => (this._text = input)}
+                    onChange={this.handleChange}
+                    autoComplete={'false'}
+                    required
+                />
+                <Button animated="fade" value="Send" style={{ marginRight: '0px' }}>
+                    <Button.Content visible style={{ paddingRight: '10px' }}>
+                        Send
+                    </Button.Content>
+                    <Button.Content hidden>
+                        <Icon name="right arrow" />
+                    </Button.Content>
+                </Button>
+            </form>
+        );
+    }
 }
 export default Inputs;

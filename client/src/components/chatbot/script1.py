@@ -12,25 +12,12 @@ import sys
 
 warnings.filterwarnings('ignore')
 
-# Download the punkt package
 nltk.download('punkt', quiet=True)
 
-# Open text file with optimized data
-# client\\src\\components\\chatbot\\
 f = open("client\\src\\components\\chatbot\\content.txt", "r")
 content = f.read()
-# print("Content", content)
-
-# Print the articles text
-# print(corpus)
-
-# Tokenization
-# text = corpus
-# sentence_list = nltk.sent_tokenize(text)  # A list of sentences
 sentence_list = nltk.sent_tokenize(content)
 
-# Print the list of sentences
-# print(sentence_list)
 
 
 def index_sort(list_var):
@@ -41,7 +28,6 @@ def index_sort(list_var):
     for i in range(length):
         for j in range(length):
             if x[list_index[i]] > x[list_index[j]]:
-                # swap
                 temp = list_index[i]
                 list_index[i] = list_index[j]
                 list_index[j] = temp
@@ -49,8 +35,6 @@ def index_sort(list_var):
     return list_index
 
 
-# Create the bots response
-# print("This is printing the 1 index:", sys.argv[1])
 theUserInput = sys.argv[1]
 
 

@@ -1,13 +1,13 @@
-import axios from "axios";
-import React from "react";
+import axios from 'axios';
+import React from 'react';
 // import { Link } from "react-router-dom";
 // import { Redirect } from "react-router";
-import { Form, Button, Rating, TextArea } from "semantic-ui-react";
+import { Form, Button, Rating, TextArea } from 'semantic-ui-react';
 
 // import Noty from "noty";
 // import "../../../node_modules/noty/lib/noty.css";
 // import "../../../node_modules/noty/lib/themes/semanticui.css";
-import { host } from "../../common.js";
+import { host } from '../../common.js';
 
 /*function validate(categoryName) {
 
@@ -30,11 +30,11 @@ class StarRating extends React.Component {
             hover: null,
             setHover: null,
             questions: [
-                "How was the Quiz Gameplay",
-                "How was the quest gameplay?",
-                "Was it fun and interactive?",
-                "Did you find the chatbot useful?",
-                "Would you recommend this game to a friend",
+                'How was the Quiz Gameplay?',
+                'How was the Quest gameplay?',
+                'Was it fun and interactive?',
+                'Did you find the chatbot useful?',
+                'Would you recommend this game to a friend?',
             ],
         };
     }
@@ -45,7 +45,7 @@ class StarRating extends React.Component {
 
     handleRatingChange(event, index) {
         this.setState({
-            [`rating-${index + 1}`]: event.target.getAttribute("aria-posinset")
+            [`rating-${index + 1}`]: event.target.getAttribute('aria-posinset'),
         });
     }
 
@@ -60,7 +60,7 @@ class StarRating extends React.Component {
 
         const result = axios.post(`${host}/ratings`, {
             ratings: array,
-            feedback: this.state.feedback
+            feedback: this.state.feedback,
         });
 
         result
@@ -78,12 +78,11 @@ class StarRating extends React.Component {
                 //     theme: "semanticui",
                 // }).show();
             });
-    }
-
+    };
 
     render() {
         return (
-            <Form style={{ backgroundColor: "white", height: "385px", overflow: "auto" }}>
+            <Form style={{ backgroundColor: 'white', height: '385px', overflow: 'auto' }}>
                 {/* <h1 style={{ textAlign: "center" }}>How was the question?</h1> */}
                 <ul>
                     {this.state.questions.map((element, index) => {
@@ -91,10 +90,10 @@ class StarRating extends React.Component {
                             <li
                                 key={index}
                                 style={{
-                                    listStyle: "none",
-                                    textAlign: "center",
-                                    marginRight: "30px",
-                                    marginTop: "30px",
+                                    listStyle: 'none',
+                                    textAlign: 'center',
+                                    marginRight: '30px',
+                                    marginTop: '30px',
                                 }}
                             >
                                 {this.state.questions[index]}
@@ -109,34 +108,34 @@ class StarRating extends React.Component {
                             </li>
                         );
                     })}
-                    <li style={{ listStyle: "none" }}>
+                    <li style={{ listStyle: 'none' }}>
                         <h3
                             style={{
-                                textAlign: "center",
-                                marginRight: "40px",
-                                marginTop: "30px",
+                                textAlign: 'center',
+                                marginRight: '40px',
+                                marginTop: '30px',
                             }}
                         >
                             Any other feedback?
-            </h3>
+                        </h3>
                         <TextArea
                             name="feedback"
                             rows={2}
                             placeholder="Tell us more"
-                            style={{ maxWidth: "90%", height: "150px" }}
+                            style={{ maxWidth: '90%', height: '150px' }}
                             onChange={this.handleChange}
                         />
                     </li>
                 </ul>
 
                 <Button
-                    style={{ marginLeft: "38%", marginTop: "5%", marginBottom: "3%" }}
+                    style={{ marginLeft: '38%', marginTop: '5%', marginBottom: '3%' }}
                     className="blue"
                     name="submitRatings"
                     onClick={this.handleSubmit}
                 >
                     Submit
-        </Button>
+                </Button>
             </Form>
         );
     }
