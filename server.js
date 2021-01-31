@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const port = 9000;
+const port = 9000 || process.env.PORT;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
 
