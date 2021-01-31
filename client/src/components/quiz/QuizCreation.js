@@ -11,10 +11,6 @@ import 'noty/lib/noty.css';
 import 'noty/lib/themes/semanticui.css';
 import Validation from '../validationFile.js';
 
-// TO-DO
-// 1. Input validation (especially for checkboxes)
-// 2. Unify change handlers if possible
-
 class QuizCreation extends React.Component {
     constructor(props) {
         super(props);
@@ -39,7 +35,6 @@ class QuizCreation extends React.Component {
     };
 
     handleChange = (event) => {
-        //console.log(event.target.name + " " + event.target.value);
         this.setState({
             [event.target.name]: event.target.value,
         });
@@ -52,7 +47,6 @@ class QuizCreation extends React.Component {
     };
 
     handleCheckboxChange = (checkbox) => {
-        //console.log(checkbox.name + " " + !checkbox.checked);
         this.setState({
             [checkbox.name]: !checkbox.checked,
         });
@@ -67,7 +61,7 @@ class QuizCreation extends React.Component {
             const options = [];
 
             for (let j = 1; j < this.state.options + 1; j++) {
-                if (this.state[`option-${i}-${j}`] !== undefined && this.state[`option-${i}-${j}`] !== "") {
+                if (this.state[`option-${i}-${j}`] !== undefined && this.state[`option-${i}-${j}`] !== '') {
                     options.push({
                         name: this.state['option-' + i + '-' + j],
                         isCorrect: this.state['isCorrect-' + i + '-' + j] || false,
@@ -86,7 +80,6 @@ class QuizCreation extends React.Component {
             });
         }
 
-        // Construct a quiz JSON object
         let quiz = {
             title: this.state.quizTitle,
             description: this.state.quizDesc,

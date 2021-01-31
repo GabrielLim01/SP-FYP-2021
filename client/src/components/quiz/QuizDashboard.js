@@ -25,7 +25,11 @@ class QuizDashboard extends React.Component {
                 { key: 'name', text: 'Quiz Title', value: 'name' },
                 { key: 'category', text: 'Category', value: 'category' },
             ],
-            accountType: !inProduction ? JSON.parse(sessionStorage.getItem("user")).accountType ? JSON.parse(sessionStorage.getItem("user")).accountType : defaultAccountType : adminAccountType
+            accountType: !inProduction
+                ? JSON.parse(sessionStorage.getItem('user')).accountType
+                    ? JSON.parse(sessionStorage.getItem('user')).accountType
+                    : defaultAccountType
+                : adminAccountType,
         };
 
         this._isMounted = false;
@@ -77,12 +81,11 @@ class QuizDashboard extends React.Component {
     }
 
     componentDidUpdate() {
-        retrieveItems('quiz')
-            .then((data) => {
-                if (JSON.stringify(data) !== JSON.stringify(this.state.quizItems)) {
-                    this.setState({ quizItems: data });
-                }
-            })
+        retrieveItems('quiz').then((data) => {
+            if (JSON.stringify(data) !== JSON.stringify(this.state.quizItems)) {
+                this.setState({ quizItems: data });
+            }
+        });
     }
 
     componentDidMount() {
@@ -140,7 +143,9 @@ class QuizDashboard extends React.Component {
                                     Create New<i className="right wrench icon"></i>
                                 </button>
                             </Link>
-                        ) : ''}
+                        ) : (
+                            ''
+                        )}
                     </div>
                     <div className="ui stacked segment">
                         <Form>
@@ -152,14 +157,14 @@ class QuizDashboard extends React.Component {
                                                 <h2>{value.quizName}</h2>
                                                 <div style={{ fontStyle: 'italic' }}>
                                                     Category:
-                                                        <Label style={{ margin: '0 5px' }} horizontal>
+                                                    <Label style={{ margin: '0 5px' }} horizontal>
                                                         {this.state.categoryItems.map((category, index) => {
                                                             return category.categoryId === value.categoryId
                                                                 ? category.categoryName
                                                                 : '';
                                                         })}
                                                     </Label>
-                                                        Created At: {value.createdAt}
+                                                    Created At: {value.createdAt}
                                                     <Accordion panels={this.panel(value.quizDesc)} />
                                                 </div>
                                             </Grid.Row>
@@ -171,15 +176,18 @@ class QuizDashboard extends React.Component {
                                                             quiz={value}
                                                         />
                                                     </Grid.Column>
-                                                ) : ''}
+                                                ) : (
+                                                    ''
+                                                )}
                                                 {this.state.accountType === adminAccountType ? (
                                                     this.state.functions.map((button, index2) => {
                                                         return (
                                                             <Grid.Column key={index2} style={{ display: 'flex' }}>
                                                                 <Link
                                                                     to={{
-                                                                        // window.location.href.split("/").pop() gets the last part of the URL after the forward slash (e.g. 'quizzes')
-                                                                        pathname: `${window.location.href.split('/').pop()}/${button.path}/${value.quizId}`,
+                                                                        pathname: `${window.location.href
+                                                                            .split('/')
+                                                                            .pop()}/${button.path}/${value.quizId}`,
                                                                         quiz: value,
                                                                     }}
                                                                 >
@@ -193,29 +201,26 @@ class QuizDashboard extends React.Component {
                                                         );
                                                     })
                                                 ) : (
-                                                        <Grid.Column style={{ display: 'flex' }}>
-                                                            <Link
-                                                                to={{
-                                                                    // window.location.href.split("/").pop() gets the last part of the URL after the forward slash (e.g. 'quizzes')
-                                                                    pathname: `${window.location.href.split('/').pop()}/play/${value.quizId}`,
-                                                                    quiz: value,
-                                                                }}
-                                                            >
-                                                                <Button
-                                                                    circular
-                                                                    icon="play"
-                                                                    color="green"
-                                                                />
-                                                            </Link>
-                                                        </Grid.Column>
-                                                    )}
+                                                    <Grid.Column style={{ display: 'flex' }}>
+                                                        <Link
+                                                            to={{
+                                                                pathname: `${window.location.href
+                                                                    .split('/')
+                                                                    .pop()}/play/${value.quizId}`,
+                                                                quiz: value,
+                                                            }}
+                                                        >
+                                                            <Button circular icon="play" color="green" />
+                                                        </Link>
+                                                    </Grid.Column>
+                                                )}
                                             </Grid.Row>
                                         </Segment>
                                     );
                                 })
                             ) : (
-                                    <h2>No Results..</h2>
-                                )}
+                                <h2>No Results..</h2>
+                            )}
                         </Form>
                     </div>
                 </div>
