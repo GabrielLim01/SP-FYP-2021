@@ -36,7 +36,6 @@ class AdminRegistration extends React.Component {
 
         switch (name) {
             case 'username':
-                // Add more validation rules below by chaining if...elses as necessary
                 errors.username = '';
                 if (value.length < minUsernameLength)
                     errors.username = `Username must be at least ${minUsernameLength} characters long!`;

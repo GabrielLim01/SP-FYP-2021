@@ -16,22 +16,12 @@ class QuestUpdate extends React.Component {
         this.state = {
             categories: [],
             scenarios: [],
-            //noOfScenarios: 1,
-            //maxScenarios: 10,
             choices: 3,
             fiqOptionsRange: 6,
             moodOptionsRange: 10,
             redirect: null,
         };
     }
-
-    // onAddScenario = () => {
-    //     if (this.state.scenarios < this.state.maxScenarios) {
-    //         this.setState({ scenarios: this.state.scenarios + 1 });
-    //     } else {
-    //         alert('Maximum number of scenarios reached!');
-    //     }
-    // };
 
     handleChange = (event) => {
         this.setState({
@@ -112,7 +102,7 @@ class QuestUpdate extends React.Component {
                     type: 'success',
                     theme: 'semanticui',
                 }).show(),
-                window.location.href = 'quests'
+                (window.location.href = 'quests'),
             )
             .catch((err) => {
                 new Noty({
@@ -124,7 +114,6 @@ class QuestUpdate extends React.Component {
     };
 
     initializeStates(quest, scenarios) {
-        // Initialize quest details
         this.setState(
             {
                 categoryId: quest.categoryId,
@@ -138,7 +127,6 @@ class QuestUpdate extends React.Component {
                 scenarios: scenarios,
             },
             () => {
-                // Initialize scenarios
                 for (let i = 1; i < this.state.scenarios.length + 1; i++) {
                     let scenario = this.state.scenarios[i - 1].scenario;
 
@@ -151,14 +139,12 @@ class QuestUpdate extends React.Component {
                             let choice = scenario.choices[j - 1];
                             let event = choice.event;
 
-                            // Initialize scenario choices
                             if (choice.name !== undefined && choice.name !== '') {
                                 this.setState({
                                     [`choice-${i}-${j}`]: choice.name,
                                     [`choiceDesc-${i}-${j}`]: choice.description,
                                 });
 
-                                // Initialize event details, if any
                                 if (event !== undefined) {
                                     this.setState({
                                         [`hasEvent-${i}-${j}`]: true,
@@ -178,7 +164,6 @@ class QuestUpdate extends React.Component {
     }
 
     componentDidMount() {
-        // props will be undefined if the user navigates to this component directly via the URL
         if (this.props.location.quest !== undefined) {
             retrieveItems('category')
                 .then((data) => {
@@ -204,9 +189,6 @@ class QuestUpdate extends React.Component {
                     });
                 });
 
-                // Since data returned by the back-end has quiz-specific data appended to the front of every question
-                // and we only need to reference that data once, simply remove the question and quizQuestionId from the
-                // first element of the data array and store the quiz-specific data in another variable
                 delete data[0].scenario;
                 delete data[0].questScenarioId;
                 let quest = data[0];
@@ -214,7 +196,6 @@ class QuestUpdate extends React.Component {
                 this.initializeStates(quest, scenarios);
             });
         } else {
-            // Redirect users to /quests if they attempt to access this component directly via the URL
             this.setState({ redirect: '/quests' });
         }
     }

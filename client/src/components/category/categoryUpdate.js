@@ -1,8 +1,6 @@
 import axios from 'axios';
 import React from 'react';
-// import { Link } from "react-router-dom";
 import { Redirect } from 'react-router-dom';
-// import { Form, Button } from "semantic-ui-react";
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import validateCat from './validation.js';
@@ -77,24 +75,27 @@ class CategoryUpdate extends React.Component {
         if (this.props.location.category !== undefined) {
             let category = this.props.location.category;
             this.setState({ category: category }, () => {
-                this.setState({ categoryName: this.state.category.categoryName, categoryDesc: this.state.category.categoryDesc })
+                this.setState({
+                    categoryName: this.state.category.categoryName,
+                    categoryDesc: this.state.category.categoryDesc,
+                });
             });
         } else {
-            let categoryID = parseInt(window.location.href.split("/").pop());
+            let categoryID = parseInt(window.location.href.split('/').pop());
 
             retrieveItems(`category/${categoryID}`)
-                .then(data => {
+                .then((data) => {
                     if (data.length !== 0) {
                         this.setState({ category: data[0] });
                     } else {
-                        alert("No such category exists!")
+                        alert('No such category exists!');
                         this.setState({ redirect: '/dashboard' });
                     }
                 })
                 .catch((error) => {
                     alert(error);
                     this.setState({ redirect: '/dashboard' });
-                })
+                });
         }
     }
 
@@ -141,7 +142,11 @@ class CategoryUpdate extends React.Component {
                                     <button type="submit" className="ui primary button" onClick={this.handleSubmit}>
                                         Update<i aria-hidden="true" className="right edit icon"></i>
                                     </button>
-                                    <button type="button" className="ui button" onClick={() => this.setState({ redirect: '/category' })}>
+                                    <button
+                                        type="button"
+                                        className="ui button"
+                                        onClick={() => this.setState({ redirect: '/category' })}
+                                    >
                                         Back
                                     </button>
                                 </div>

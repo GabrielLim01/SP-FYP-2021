@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
 import { Button } from 'semantic-ui-react';
 import { host, inProduction, getRandomInt } from '../../common.js';
 import QuestPlayContainer from './QuestPlayContainer.js';
@@ -12,35 +12,42 @@ class QuestPlay extends React.Component {
         super(props);
         this.state = {
             state: 1,
-            stateTypes: { isStarting: 1, isLoadingScenario: 2, isLoadingChoices: 3, isLoadingExplanation: 4, isFinished: 5 },
+            stateTypes: {
+                isStarting: 1,
+                isLoadingScenario: 2,
+                isLoadingChoices: 3,
+                isLoadingExplanation: 4,
+                isFinished: 5,
+            },
             quest: {},
             scenarios: [],
-            //responses: [],
             currentScenario: 1,
             maxScenarios: 0,
             currentChoice: {},
-            characterName: "Error",
+            characterName: 'Error',
             characterMood: 0,
             eventTriggered: false,
-            //explanationActiveItem: 0,
-            transitionDuration: 4, // The amount of time, in seconds, the player has to read the question prior to it being loaded
-            afterAnsweringDelay: 2, // The amount of time, in seconds, the player has to see the correct/incorrect answers after answering, before it transitions
+            transitionDuration: 4,
+            afterAnsweringDelay: 2,
             redirect: null,
         };
 
-        // Prevents the function inside setTimeout from being executed if the user abruptly leaves the quiz (i.e. component gets unmounted)
-        // in two situations: 1. Leaving the quiz during a transition or 2. Leaving the quiz after answering, but not before the next question has loaded
-        // Has to be a class property instead of a state property since setState will not update the variable immediately during component mounting/unmounting
         this._isMounted = false;
     }
 
     handleRestart = () => {
-        this.setState({ state: this.state.stateTypes.isStarting, currentScenario: 1, currentChoice: {}, eventTriggered: false, characterMood: this.state.quest.characterMood });
+        this.setState({
+            state: this.state.stateTypes.isStarting,
+            currentScenario: 1,
+            currentChoice: {},
+            eventTriggered: false,
+            characterMood: this.state.quest.characterMood,
+        });
     };
 
     viewScenario = () => {
         this.setState({ state: this.state.stateTypes.isLoadingScenario });
-    }
+    };
 
     loadNextScenario = () => {
         if (this.state.currentScenario < this.state.maxScenarios) {
@@ -51,14 +58,14 @@ class QuestPlay extends React.Component {
         } else {
             this.updateFIQ();
             this.setState({
-                state: this.state.stateTypes.isFinished
+                state: this.state.stateTypes.isFinished,
             });
         }
-    }
+    };
 
     loadScenarioChoices = () => {
         this.setState({ state: this.state.stateTypes.isLoadingChoices });
-    }
+    };
 
     handleSelection = (choice) => {
         let eventTriggered = false;
@@ -67,10 +74,9 @@ class QuestPlay extends React.Component {
         if (choice.event) {
             let event = choice.event;
 
-            if (getRandomInt(10) <= (event.eventProcRate / 10)) {
+            if (getRandomInt(10) <= event.eventProcRate / 10) {
                 eventTriggered = true;
 
-                // 1 - positive change, 2 - negative change
                 if (event.moodChange === 1) {
                     characterMood += event.moodChangeValue;
                 } else {
@@ -83,19 +89,20 @@ class QuestPlay extends React.Component {
             currentChoice: choice,
             state: this.state.stateTypes.isLoadingExplanation,
             eventTriggered: eventTriggered,
-            characterMood: characterMood
+            characterMood: characterMood,
         });
-    }
+    };
 
     updateFIQ() {
         if (!inProduction) {
-            let user = JSON.parse(sessionStorage.getItem("user"));
+            let user = JSON.parse(sessionStorage.getItem('user'));
             let newFIQ = user.FIQ + this.state.quest.points;
 
-            axios.patch(`${host}/fiq/${user.id}`, { FIQ: newFIQ })
+            axios
+                .patch(`${host}/fiq/${user.id}`, { FIQ: newFIQ })
                 .then(() => {
                     user.FIQ = newFIQ;
-                    sessionStorage.setItem("user", JSON.stringify(user));
+                    sessionStorage.setItem('user', JSON.stringify(user));
                 })
                 .catch((error) => {
                     console.log(error);
@@ -105,7 +112,6 @@ class QuestPlay extends React.Component {
 
     componentDidMount() {
         this._isMounted = true;
-        // props will be undefined if the user navigates to this component directly via the URL
         if (this.props.location.quest !== undefined) {
             retrieveItems(`quest/${this.props.location.quest.questId}`).then((data) => {
                 let scenarios = [];
@@ -121,7 +127,6 @@ class QuestPlay extends React.Component {
                 });
             });
         } else {
-            // Redirect users to /quests if they attempt to access this component directly via the URL
             this.setState({ redirect: '/quests' });
         }
     }
@@ -145,12 +150,20 @@ class QuestPlay extends React.Component {
                             characterName={this.state.characterName}
                             characterMood={this.state.characterMood}
                         >
-                            <div className="subContainer" style={{ maxWidth: '70%', margin: 'auto', overflowWrap: 'break-word', paddingTop: '150px' }}>
+                            <div
+                                className="subContainer"
+                                style={{
+                                    maxWidth: '70%',
+                                    margin: 'auto',
+                                    overflowWrap: 'break-word',
+                                    paddingTop: '150px',
+                                }}
+                            >
                                 <h1>{this.state.quest.title}</h1>
                                 <h3>{this.state.quest.description}</h3>
                                 <Button color="teal" size="big" onClick={this.viewScenario}>
                                     Begin Quest
-                            </Button>
+                                </Button>
                             </div>
                         </QuestPlayContainer>
                     );
@@ -160,14 +173,19 @@ class QuestPlay extends React.Component {
                             characterName={this.state.characterName}
                             characterMood={this.state.characterMood}
                         >
-                            <div className="subContainer" style={{
-                                paddingTop: '150px', maxWidth: '80%', margin: 'auto'
-                            }}>
+                            <div
+                                className="subContainer"
+                                style={{
+                                    paddingTop: '150px',
+                                    maxWidth: '80%',
+                                    margin: 'auto',
+                                }}
+                            >
                                 <h1>Scenario {this.state.currentScenario}</h1>
                                 <h2>{JSON.parse(this.state.scenarios[this.state.currentScenario - 1]).description}</h2>
                                 <Button color="teal" size="medium" onClick={this.loadScenarioChoices}>
                                     Next
-                            </Button>
+                                </Button>
                             </div>
                         </QuestPlayContainer>
                     );
@@ -194,31 +212,45 @@ class QuestPlay extends React.Component {
                             characterName={this.state.characterName}
                             characterMood={this.state.characterMood}
                         >
-                            <div className="subContainer" style={{
-                                paddingTop: '150px', maxWidth: '80%', margin: 'auto'
-                            }}>
+                            <div
+                                className="subContainer"
+                                style={{
+                                    paddingTop: '150px',
+                                    maxWidth: '80%',
+                                    margin: 'auto',
+                                }}
+                            >
                                 <h1>{this.state.eventTriggered ? currentChoice.event.name : currentChoice.name}</h1>
-                                <h2>{this.state.eventTriggered ? currentChoice.event.description : currentChoice.description}</h2>
+                                <h2>
+                                    {this.state.eventTriggered
+                                        ? currentChoice.event.description
+                                        : currentChoice.description}
+                                </h2>
                                 <Button color="teal" size="medium" onClick={this.loadNextScenario}>
                                     Next
-                            </Button>
+                                </Button>
                             </div>
                         </QuestPlayContainer>
                     );
                 case stateTypes.isFinished:
                     return (
-                        <QuestPlayContainer style={{ height: '100%' }}
+                        <QuestPlayContainer
+                            style={{ height: '100%' }}
                             characterName={this.state.characterName}
                             characterMood={this.state.characterMood}
                         >
                             <div className="subContainer" style={{ paddingTop: '100px' }}>
                                 <div>
                                     <h1>Quest Complete!</h1>
-                                    <h2>{this.state.quest.conclusion ? this.state.quest.conclusion : 'Thanks for playing!'}</h2>
+                                    <h2>
+                                        {this.state.quest.conclusion
+                                            ? this.state.quest.conclusion
+                                            : 'Thanks for playing!'}
+                                    </h2>
                                     <h2>You have earned {this.state.quest.points} FIQ!</h2>
                                     <Button color="teal" size="big" onClick={this.handleRestart}>
                                         Play Again?
-                            </Button>
+                                    </Button>
                                 </div>
                             </div>
                         </QuestPlayContainer>

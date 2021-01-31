@@ -20,7 +20,7 @@ class QuestCreation extends React.Component {
             choices: 3,
             fiqOptionsRange: 6,
             moodOptionsRange: 10,
-            redirect: null
+            redirect: null,
         };
     }
 
@@ -59,8 +59,7 @@ class QuestCreation extends React.Component {
             const choices = [];
 
             for (let j = 1; j < this.state.choices + 1; j++) {
-
-                if (this.state[`choice-${i}-${j}`] !== undefined && this.state[`choice-${i}-${j}`] !== "") {
+                if (this.state[`choice-${i}-${j}`] !== undefined && this.state[`choice-${i}-${j}`] !== '') {
                     if (this.state[`hasEvent-${i}-${j}`]) {
                         choices.push({
                             name: this.state[`choice-${i}-${j}`],
@@ -70,13 +69,15 @@ class QuestCreation extends React.Component {
                                 description: this.state[`eventDesc-${i}-${j}`],
                                 eventProcRate: this.state[`eventProcRate-${i}-${j}`],
                                 moodChange: this.state[`moodChange-${i}-${j}`] ? this.state[`moodChange-${i}-${j}`] : 1,
-                                moodChangeValue: this.state[`moodChangeValue-${i}-${j}`] ? this.state[`moodChangeValue-${i}-${j}`] : 10
-                            }
+                                moodChangeValue: this.state[`moodChangeValue-${i}-${j}`]
+                                    ? this.state[`moodChangeValue-${i}-${j}`]
+                                    : 10,
+                            },
                         });
                     } else {
                         choices.push({
                             name: this.state[`choice-${i}-${j}`],
-                            description: this.state[`choiceDesc-${i}-${j}`]
+                            description: this.state[`choiceDesc-${i}-${j}`],
                         });
                     }
                 }
@@ -84,7 +85,7 @@ class QuestCreation extends React.Component {
 
             scenarios.push({
                 description: this.state[`scenario-${i}-desc`],
-                choices
+                choices,
             });
         }
 
@@ -99,9 +100,8 @@ class QuestCreation extends React.Component {
             scenarios: scenarios,
         };
 
-        //console.log(quest)
-
-        axios.post(`${host}/quest`, { quest: quest })
+        axios
+            .post(`${host}/quest`, { quest: quest })
             .then((response) => {
                 if (response.status === 201) {
                     new Noty({
@@ -173,7 +173,7 @@ class QuestCreation extends React.Component {
             FIQoptions.push({ text: value, value: value });
         }
 
-        for (let i = 1; i < (this.state.moodOptionsRange + 1); i++) {
+        for (let i = 1; i < this.state.moodOptionsRange + 1; i++) {
             let value = 10 * i;
             moodOptions.push({ text: value, value: value });
         }
@@ -301,15 +301,15 @@ class QuestCreation extends React.Component {
                                 onClick={this.onAddScenario}
                             >
                                 <Icon name="add" size="large" />
-                            Add Scenario
-                        </Button>
+                                Add Scenario
+                            </Button>
                             <Button className="blue" name="createQuest" onClick={this.handleSubmit}>
                                 Create Quest
-                        </Button>
+                            </Button>
                         </div>
                     </div>
                 </div>
-            )
+            );
         }
     }
 }

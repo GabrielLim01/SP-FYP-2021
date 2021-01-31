@@ -8,17 +8,20 @@ import 'noty/lib/noty.css';
 import 'noty/lib/themes/semanticui.css';
 import retrieveItems from '../retrieveItems';
 import { Button, Dropdown } from 'semantic-ui-react';
-//import userDetails from '../getUserInfo.js';
 
 class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: !inProduction ? JSON.parse(sessionStorage.getItem("user")) : { username: 'John' },
-            accountType: !inProduction ? JSON.parse(sessionStorage.getItem("user")).accountType ? JSON.parse(sessionStorage.getItem("user")).accountType : defaultAccountType : adminAccountType,
+            user: !inProduction ? JSON.parse(sessionStorage.getItem('user')) : { username: 'John' },
+            accountType: !inProduction
+                ? JSON.parse(sessionStorage.getItem('user')).accountType
+                    ? JSON.parse(sessionStorage.getItem('user')).accountType
+                    : defaultAccountType
+                : adminAccountType,
             ageGroupItems: [],
             hobbyItems: [],
-            hasMounted: false
+            hasMounted: false,
         };
     }
 
@@ -26,33 +29,33 @@ class Profile extends React.Component {
         event.preventDefault();
 
         let detail = {
-            // Username cannot be changed at the moment, but the following code supports changing of username anyway
             name: this.state.user.username ? this.state.user.username : this.state.username,
             ageGroup: this.state.ageGroup ? this.state.ageGroup : this.state.user.ageGroupId,
             hobby: this.state.hobby ? this.state.hobby : this.state.user.hobby ? this.state.user.hobby : {},
         };
 
-        console.log(this.state.user)
-        console.log(detail)
+        console.log(this.state.user);
+        console.log(detail);
 
-        axios.patch(`${host}/profile/${this.state.user.id}`, { detail: detail })
+        axios
+            .patch(`${host}/profile/${this.state.user.id}`, { detail: detail })
             .then((response) => {
                 if (response.status === 200) {
                     let user = this.state.user;
                     user.username = detail.name;
                     user.ageGroupId = detail.ageGroup;
                     user.hobby = detail.hobby;
-                    sessionStorage.setItem("user", JSON.stringify(user))
+                    sessionStorage.setItem('user', JSON.stringify(user));
 
                     new Noty({
                         text: `Profile Updated!`,
                         type: 'success',
                         theme: 'semanticui',
-                    }).show()
+                    }).show();
 
                     setTimeout(() => {
                         window.location.reload();
-                    }, 1000)
+                    }, 1000);
                 }
             })
             .catch((err) => {
@@ -77,7 +80,10 @@ class Profile extends React.Component {
     };
 
     generateItems() {
-        let items = [{ path: 'agegroup', state: 'ageGroupItems' }, { path: 'hobby', state: 'hobbyItems' }]
+        let items = [
+            { path: 'agegroup', state: 'ageGroupItems' },
+            { path: 'hobby', state: 'hobbyItems' },
+        ];
 
         for (let i = 0; i < items.length; i++) {
             retrieveItems(items[i].path)
@@ -91,7 +97,6 @@ class Profile extends React.Component {
 
                         this.setState({ [items[i].state]: tempArray });
                     } else {
-                        // use a noty here
                     }
                 })
                 .catch((error) => {
@@ -121,8 +126,6 @@ class Profile extends React.Component {
             ageGroupItems.push({ text: name, value: id });
         }
 
-        // Force the component to skip the initial render
-        // Doing this allows correct initialization of dropdown defaultValues (since they are initialized during componentDidMount)
         if (this.state.hasMounted) {
             return (
                 <div className="container">
@@ -133,7 +136,9 @@ class Profile extends React.Component {
                                 <Button floated="right">Account Management Console</Button>
                             </Link>
                         </div>
-                    ) : ''}
+                    ) : (
+                        ''
+                    )}
                     <div className="subContainer" style={containerStyle}>
                         <div>
                             <i aria-hidden="true" className="huge user icon"></i>
@@ -168,11 +173,8 @@ class Profile extends React.Component {
                                         name="hobby"
                                         labeled={true}
                                         placeholder="Select a hobby"
-                                        // Converts an integer string (e.g. "123") into an array of digits (e.g. [1, 2, 3])
                                         defaultValue={
-                                            this.state.user.hobby
-                                                ? Array.from(this.state.user.hobby).map(Number)
-                                                : ''
+                                            this.state.user.hobby ? Array.from(this.state.user.hobby).map(Number) : ''
                                         }
                                         fluid
                                         multiple
@@ -183,7 +185,12 @@ class Profile extends React.Component {
                                     />
                                 </div>
                                 <div className="field">
-                                    <button type="submit" className="ui primary button" onClick={this.handleSubmit} disabled={inProduction}>
+                                    <button
+                                        type="submit"
+                                        className="ui primary button"
+                                        onClick={this.handleSubmit}
+                                        disabled={inProduction}
+                                    >
                                         Update<i aria-hidden="true" className="right edit icon"></i>
                                     </button>
                                 </div>
