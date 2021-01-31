@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt');
 let instance = null;
 dotenv.config();
 
-// Create Database Connection
 const connection = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -14,7 +13,6 @@ const connection = mysql.createConnection({
     database: process.env.MySQL_DB,
 });
 
-// To Connect
 connection.connect((err) => {
     if (err) {
         throw err;
@@ -35,9 +33,6 @@ class DbService {
         return instance;
     }
 
-    // LOGIN AND REGISTRATION ======================================================================================================
-
-    // POST /register
     async insertNewUser(name, pwd) {
         try {
             const insertId = await new Promise((resolve, reject) => {
@@ -78,20 +73,17 @@ class DbService {
         }
     }
 
-    // POST /authenticate
     async authenticate(username, password) {
         try {
             const response = await new Promise((resolve, reject) => {
                 const query = 'SELECT * from users where name=?';
 
                 connection.query(query, [username], (err, results) => {
-                    // Case 1 - Reject promise if query fails
                     if (err) reject(`There are some errors with the query statement. ${err}`);
 
                     const jsonResults = JSON.parse(JSON.stringify(results));
                     const verify = bcrypt.compareSync(password, jsonResults[0].password);
 
-                    // Case 2 - Reject promise if passwords do not match, otherwise resolve promise with the access token
                     if (!verify) {
                         reject('Passwords do not match!');
                     } else {
@@ -106,18 +98,10 @@ class DbService {
 
             return response;
         } catch (error) {
-            // Catch rejected promises (errors)
-
-            // If a promise is rejected above, logic gets passed to this catch block, so a return error statement
-            // is needed in order to pass the error string to server.js
-            // This might not be the best practice, but without further research, not sure if there is a better way to pass error message info
             return error;
         }
     }
 
-    // CATEGORY ===================================================================================================================
-
-    //Retrieve all categories
     async getAllCategories() {
         try {
             return new Promise((resolve, reject) => {
@@ -133,7 +117,6 @@ class DbService {
         }
     }
 
-    // Retrieve a category by its ID
     async getCategoryDetailsById(id) {
         return new Promise((resolve, reject) => {
             const query = 'SELECT * from category WHERE categoryId = ?;';
@@ -148,7 +131,6 @@ class DbService {
         });
     }
 
-    //Create category
     async createCategory(catName, catDesc) {
         try {
             return new Promise((resolve, reject) => {
@@ -167,7 +149,6 @@ class DbService {
         }
     }
 
-    //Update category
     async updateCategoryById(id, catName, catDesc) {
         try {
             return new Promise((resolve, reject) => {
@@ -186,7 +167,6 @@ class DbService {
         }
     }
 
-    //Delete Category
     async deleteCategoryById(id) {
         try {
             return new Promise((resolve, reject) => {
@@ -201,8 +181,6 @@ class DbService {
             throw e.message;
         }
     }
-
-    // QUIZZES ===================================================================================================================
 
     async getAllQuizzes() {
         try {
@@ -282,22 +260,6 @@ class DbService {
         }
     }
 
-    // Wei Xian's API
-    // async createQuizQuestion(quizId, questionsObj) {
-    //   const array = [];
-    //   Object.keys(questionsObj).forEach(function (item) {
-    //     console.log(JSON.stringify(questionsObj[item].options));
-    //     array.push([
-    //       quizId,
-    //       questionsObj[item].questionTitle,
-    //       questionsObj[item].questionDesc,
-    //       questionsObj[item].fiqPoints,
-    //       questionsObj[item].timeLimit,
-    //       questionsObj[item].explanation,
-    //       JSON.stringify(questionsObj[item].options),
-    //     ]);
-    //   });
-
     async updateQuizDetailsById(id, title, desc, categoryId, points, time) {
         try {
             return new Promise((resolve, reject) => {
@@ -316,7 +278,6 @@ class DbService {
     async updateQuestionDetailsById(question) {
         let quizQuestionId = question.quizQuestionId;
 
-        // Wrap the question properties back inside a question object that excludes quizQuestionId, then stringify said object
         let quizQuestion = JSON.stringify({ question: question.question });
 
         return new Promise((resolve, reject) => {
@@ -352,8 +313,6 @@ class DbService {
         }
     }
 
-    // QUESTS =====================================================================================================================
-
     async getAllQuests() {
         try {
             return new Promise((resolve, reject) => {
@@ -384,41 +343,30 @@ class DbService {
         }
     }
 
-    //Create quest
     async createQuest(category, title, desc, conc, characterName, characterMood, points) {
         try {
             return new Promise((resolve, reject) => {
                 let createdAt = new Date();
                 const query =
                     'INSERT INTO quest (categoryId, title, description, conclusion, characterName, characterMood, points, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
-                connection.query(query, [category, title, desc, conc, characterName, characterMood, points, createdAt], (err, result) => {
-                    if (err) {
-                        console.log(err.message);
-                        reject(err.message);
-                    }
-                    resolve(result);
-                });
+                connection.query(
+                    query,
+                    [category, title, desc, conc, characterName, characterMood, points, createdAt],
+                    (err, result) => {
+                        if (err) {
+                            console.log(err.message);
+                            reject(err.message);
+                        }
+                        resolve(result);
+                    },
+                );
             });
         } catch (e) {
             throw e.message;
         }
     }
 
-    //Create quest scenarios
     async createQuestScenario(questId, scenario) {
-        // const array = [];
-        // Object.keys(obj).forEach(function (item) {
-        //     array.push([questId, obj[item].sub_questTitle, obj[item].sub_questDesc, JSON.stringify(obj[item].options)]);
-        // });
-
-        // const query = 'INSERT into quest_scenario (questId, sub_questTitle, sub_questDesc, options) values ?;';
-        // connection.query(query, [array], (err, result) => {
-        //     if (err) return err.message;
-        //     else {
-        //         console.log('Scenario(s) created.');
-        //         return result;
-        //     }
-        // });
         try {
             return new Promise((resolve, reject) => {
                 const query = 'INSERT into quest_scenario (questId, scenario) values (?,?);';
@@ -440,10 +388,14 @@ class DbService {
             return new Promise((resolve, reject) => {
                 const query =
                     'UPDATE quest SET categoryId = ?, title = ?, description = ?, conclusion = ?, characterName = ?, characterMood = ?, points = ? WHERE questId = ?';
-                connection.query(query, [category, title, desc, conc, characterName, characterMood, points, id], (err, result) => {
-                    if (err) return reject(err.message);
-                    resolve(result.affectedRows);
-                });
+                connection.query(
+                    query,
+                    [category, title, desc, conc, characterName, characterMood, points, id],
+                    (err, result) => {
+                        if (err) return reject(err.message);
+                        resolve(result.affectedRows);
+                    },
+                );
             });
         } catch (e) {
             throw e.message;
@@ -454,12 +406,10 @@ class DbService {
         console.log(scenario);
         let questScenarioId = scenario.scenarioId;
 
-        // Wrap the scenario properties back inside a scenario object that excludes questScenarioId, then stringify said object
         let questScenario = JSON.stringify(scenario.scenario);
 
         return new Promise((resolve, reject) => {
-            const query =
-                'UPDATE quest_scenario SET scenario = ? WHERE questScenarioId = ?;';
+            const query = 'UPDATE quest_scenario SET scenario = ? WHERE questScenarioId = ?;';
 
             connection.query(query, [questScenario, questScenarioId], (err, result) => {
                 if (err) reject(err.message);
@@ -485,8 +435,6 @@ class DbService {
             throw e.message;
         }
     }
-
-    // PROFILE =====================================================================================================================
 
     async getProfileById(id) {
         return new Promise((resolve, reject) => {
