@@ -4,14 +4,11 @@ import { Link, Redirect } from 'react-router-dom';
 import { Form, Button } from 'semantic-ui-react';
 import { host, appName, narrowContainerStyle } from '../common.js';
 import verifyLogin from './verifyLogin.js';
-import GuruOrGoonduIcon from '../GuruOrGoonduIcon.jpg'
+import GuruOrGoonduIcon from '../GuruOrGoonduIcon.jpg';
 import Noty from 'noty';
 import 'noty/lib/noty.css';
 import 'noty/lib/themes/semanticui.css';
 import Validate from './validationFile';
-
-// TO-DO
-// 1. Input validation
 
 class Login extends React.Component {
     constructor(props) {

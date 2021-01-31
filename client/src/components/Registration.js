@@ -4,19 +4,11 @@ import { Redirect } from 'react-router-dom';
 import { Form, Button } from 'semantic-ui-react';
 import { host, appName, narrowContainerStyle } from '../common.js';
 import verifyLogin from './verifyLogin.js';
-import GuruOrGoonduIcon from '../GuruOrGoonduIcon.jpg'
+import GuruOrGoonduIcon from '../GuruOrGoonduIcon.jpg';
 import Noty from 'noty';
 import 'noty/lib/noty.css';
 import 'noty/lib/themes/semanticui.css';
 import Validate from './validationFile';
-
-// BUGS
-// 1. Registration may be successful even if the confirmPassword field is not filled in
-// 2. Database may not have a record inserted successfully even if registration is successful
-
-// TO-DO
-// 1. Input validation
-// Password - Alphanumeric, can consider using a regex
 
 class Registration extends React.Component {
     constructor(props) {
@@ -45,7 +37,6 @@ class Registration extends React.Component {
 
         switch (name) {
             case 'username':
-                // Add more validation rules below by chaining if...elses as necessary
                 errors.username = '';
                 if (value.length < minUsernameLength)
                     errors.username = `Username must be at least ${minUsernameLength} characters long!`;

@@ -30,7 +30,6 @@ export default class DashboardMenu extends React.Component {
     };
 
     handleItemClick = (event, { name }) => {
-        // Prevents menu from disappearing when double-clicked on
         if (this.state.activeItem !== name) {
             if (name !== 'home') {
                 this.setState({ redirect: `/${name}` });
@@ -48,7 +47,6 @@ export default class DashboardMenu extends React.Component {
     };
 
     calculateFIQToNextLevel(currentLevel) {
-        // Formula to calculate FIQ to next level
         return currentLevel * (currentLevel * 250) + (currentLevel + 1) * 500;
     }
 
@@ -85,7 +83,6 @@ export default class DashboardMenu extends React.Component {
     }
 
     componentDidMount() {
-        // Display the Category menu item only if the user account is an administrator
         if (this.state.accountType === adminAccountType) {
             let menuItems = this.state.menuItems;
             menuItems.push({ name: 'category', path: 'category' });
