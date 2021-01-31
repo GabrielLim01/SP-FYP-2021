@@ -18,6 +18,9 @@ const port = 9000;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
 
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'client/build')));
+
 function validateID(x) {
     let regex = new RegExp('^[0-9]+$');
     let result = regex.test(x);

@@ -7,10 +7,10 @@ let instance = null;
 dotenv.config();
 
 const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.MySQL_DB,
+    host: 'fyp-database.c01lfveairsf.us-east-1.rds.amazonaws.com',
+    user: 'admin',
+    password: '12345678',
+    database: 'financial_literacy',
 });
 
 connection.connect((err) => {
