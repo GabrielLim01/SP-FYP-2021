@@ -2,7 +2,7 @@ const axios = require('axios');
 
 module.exports.appName = 'Guru or Goondu';
 
-module.exports.host = 'https://fyp-deployment-test.herokuapp.com';
+module.exports.host = 'http://localhost:9000';
 
 module.exports.inProduction = false;
 

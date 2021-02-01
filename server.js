@@ -21,15 +21,6 @@ app.listen(port, () => console.log(`Server started on port ${port}`));
 const path = require('path');
 
 //
-const dev = app.get('env') !== 'production';
-if (!dev) {
-    app.disable('x-powered-by');
-
-    app.use(express.static(path.resolve(__dirname, 'client/build')));
-    app.get('*', (request, response) => {
-        response.sendFile(path.resolve(__dirname, 'client/build', 'index.html'));
-    });
-}
 //
 function validateID(x) {
     let regex = new RegExp('^[0-9]+$');
