@@ -93,7 +93,7 @@ class QuestDashboard extends React.Component {
             .then((data) => {
                 if (data.length <= 0) {
                     new Noty({
-                        text: 'There are no quest to be retrieved from the database.',
+                        text: 'There are no quests to be retrieved from the database.',
                         type: 'error',
                         theme: 'semanticui',
                     }).show();
