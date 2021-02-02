@@ -74,32 +74,33 @@ class DbService {
     }
 
     async authenticate(username, password) {
-        try {
-            const response = await new Promise((resolve, reject) => {
-                const query = 'SELECT * from users where name=?';
+        const response = await new Promise((resolve, reject) => {
+            const query = 'SELECT * from users where name=?;';
 
-                connection.query(query, [username], (err, results) => {
-                    if (err) reject(`There are some errors with the query statement. ${err}`);
-
-                    const jsonResults = JSON.parse(JSON.stringify(results));
-                    const verify = bcrypt.compareSync(password, jsonResults[0].password);
-
-                    if (!verify) {
-                        reject('Passwords do not match!');
+            connection.query(query, [username], (err, results) => {
+                if (err) reject(`There are some errors with the query statement. ${err}`);
+                else {
+                    if (results.length <= 0) {
+                        reject('No records found!');
                     } else {
-                        const data = {
-                            user: jsonResults,
-                            token: 'Congrats',
-                        };
-                        resolve(data);
-                    }
-                });
-            });
+                        const jsonResults = JSON.parse(JSON.stringify(results));
+                        const verify = bcrypt.compareSync(password, jsonResults[0].password);
 
-            return response;
-        } catch (error) {
-            return error;
-        }
+                        if (!verify) {
+                            reject('Passwords do not match!');
+                        } else {
+                            const data = {
+                                user: jsonResults,
+                                token: 'Congrats',
+                            };
+                            resolve(data);
+                        }
+                    }
+                }
+            });
+        });
+
+        return response;
     }
 
     async getAllCategories() {
