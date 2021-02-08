@@ -16,12 +16,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const port = 9000;
+const port = 9000 || process.env.PORT;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
 
-// UTILITY FUNCTIONS ===========================================================================================================
+const path = require('path');
 
+//
+//
 function validateID(x) {
     let regex = new RegExp('^[0-9]+$');
     let result = regex.test(x);
@@ -56,16 +58,13 @@ function isBlank(str) {
     return !str || 0 === str.length;
 }
 
-// LOGIN AND REGISTRATION ======================================================================================================
-
-// POST /register
 app.post('/register', async (request, respond) => {
     const name = request.body.name;
     const password = request.body.password;
 
     if (!isBlank(name) && !isBlank(password)) {
         const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hashSync(password, salt);
+        const hashedPassword = bcrypt.hashSync(password, salt);
 
         const db = dbService.getDbServiceInstance();
 
@@ -73,9 +72,9 @@ app.post('/register', async (request, respond) => {
 
         result
             .then((data) => respond.json({ data: data }))
-            .catch((err) =>
-                response.status(400).send(`Registering of user where username equals to ${name} has failed.`, err),
-            );
+            .catch((err) => {
+                response.status(400).send(`Registering of user where username equals to ${name} has failed. ${err}`);
+            });
     } else response.status(400).send(`Name / Password is(are) empty.`);
 });
 
@@ -86,7 +85,7 @@ app.post('/admin/register', async (request, respond) => {
 
     if (!isBlank(name) && !isBlank(password) && !isBlank(role)) {
         const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hashSync(password, salt);
+        const hashedPassword = bcrypt.hashSync(password, salt);
 
         const db = dbService.getDbServiceInstance();
 
@@ -100,7 +99,6 @@ app.post('/admin/register', async (request, respond) => {
     } else response.status(400).send(`Name / Password is(are) empty.`);
 });
 
-// POST /authenticate
 app.post('/authenticate', (request, response) => {
     const username = request.body.username;
     const password = request.body.password;
@@ -113,7 +111,6 @@ app.post('/authenticate', (request, response) => {
         result
             .then((data) => {
                 response.json(data);
-                //response.status(200).send(`User is authenticated`);
             })
             .catch((err) => {
                 response
@@ -123,9 +120,6 @@ app.post('/authenticate', (request, response) => {
     } else response.status(400).send(`Username / Password is(are) empty.`);
 });
 
-// CATEGORY ===================================================================================================================
-
-//create
 app.post('/category', async (request, response) => {
     const category = request.body.category;
     const categoryName = category.name;
@@ -145,7 +139,6 @@ app.post('/category', async (request, response) => {
     } else response.status(400).send(`${categoryName} contained illegal characters or is empty. Please check again.`);
 });
 
-//read
 app.get('/category', async (request, response) => {
     const db = dbService.getDbServiceInstance();
 
@@ -158,7 +151,6 @@ app.get('/category', async (request, response) => {
         .catch((err) => response.status(400).send(`${err}`));
 });
 
-// Get by ID
 app.get('/category/:id', (request, response) => {
     let isValid = validateID(request.params.id);
     if (isValid) {
@@ -172,7 +164,6 @@ app.get('/category/:id', (request, response) => {
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
-//update
 app.patch('/category/:id', (request, response) => {
     const category = request.body.category;
     const categoryName = category.name;
@@ -189,7 +180,6 @@ app.patch('/category/:id', (request, response) => {
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
-//delete
 app.delete('/category/:id', async (request, response) => {
     const db = dbService.getDbServiceInstance();
     let isValid = validateID(request.params.id);
@@ -208,9 +198,6 @@ app.delete('/category/:id', async (request, response) => {
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
-// QUIZZES ===================================================================================================================
-
-// read
 app.get('/quiz', (request, response) => {
     const db = dbService.getDbServiceInstance();
     const result = db.getAllQuizzes();
@@ -239,9 +226,7 @@ app.get('/quiz/:id', (request, response) => {
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
-// get quiz by category
 app.get('/quiz/category/:id', (request, response) => {
-    // URL to change to however you want it to be
     const db = dbService.getDbServiceInstance();
     let isValid = validateID(request.params.id);
     if (isValid) {
@@ -259,7 +244,6 @@ app.get('/quiz/category/:id', (request, response) => {
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
-// POST /quiz
 app.post('/quiz', (request, response) => {
     const quiz = request.body.quiz;
     const name = quiz.title;
@@ -274,21 +258,8 @@ app.post('/quiz', (request, response) => {
 
         createQuizResult
             .then((data) => {
-                // response.json({
-                //   insertId: data.insertId,
-                //   categoryid: category,
-                //   name: name,
-                //   description: desc,
-                //   points: points,
-                //   time: time
-                // });
-
                 const quizId = data.insertId;
-                // let createQuestionResult = new Promise((resolve, reject) => { });
-                // createQuestionResult = db.createQuizQuestion(
-                //   quizId,
-                //   quiz.questions
-                // );
+
                 let createQuestionResult = new Promise((resolve, reject) => { });
 
                 const questions = quiz.questions;
@@ -297,51 +268,15 @@ app.post('/quiz', (request, response) => {
                 });
 
                 createQuestionResult.catch((err) => response.send(`Creation of questions failed. ${err}`));
+
+                response.status(201).send('Quiz created!');
             })
             .catch((err) => {
-                // Please addon to this list if you encountered something new
                 response.send(`Creation of quiz failed. ${err}`);
             });
     } else response.send(`Category / Name / Description / Points/Time Per Question cannot be empty!`);
 });
 
-// Wei Xian's API
-//   app.post('/quiz', (request, response) => {
-//     const quiz = request.body.quiz;
-//     const name = quiz.name;
-//     const desc = quiz.description;
-//     const category = quiz.category;
-//     const points = quiz.points;
-//     const time = quiz.time;
-
-//     if (!isBlank(name) && !isBlank(category) && !isBlank(points)) {
-//         const db = dbService.getDbServiceInstance();
-//         const createQuizResult = db.createQuiz(name, desc, category, points, time);
-
-//         createQuizResult
-//             .then((data) => {
-//                 response.json({
-//                     insertId: data.insertId,
-//                     categoryid: category,
-//                     name: name,
-//                     description: desc,
-//                     points: points,
-//                     time: time,
-//                 });
-
-//                 const quizId = data.insertId;
-//                 let createQuestionResult = new Promise((resolve, reject) => { });
-//                 createQuestionResult = db.createQuizQuestion(quizId, quiz.questions);
-//                 createQuestionResult.catch((err) => response.status(400).send(`Creation of questions failed. ${err}`));
-//             })
-//             .catch((err) => {
-//                 // Please addon to this list if you encountered something new
-//                 response.status(400).send(`Creation of quiz failed. ${err}`);
-//             });
-//     } else response.status(400).send(`Category / Name / Description / Points/Time Per Question cannot be empty!`);
-// });
-
-// update
 app.patch('/quiz/:id', (request, response) => {
     let isValid = validateID(request.params.id);
     if (isValid) {
@@ -358,33 +293,26 @@ app.patch('/quiz/:id', (request, response) => {
 
         result
             .then((data) => {
-                response.json({ data: data });
-
-                let updateQuestionsResult = new Promise((resolve, reject) => { });
+                let updateQuestionResult = new Promise((resolve, reject) => { });
 
                 questions.forEach((question) => {
-                    updateQuestionsResult = db.updateQuestionDetailsById(question);
+                    updateQuestionResult = db.updateQuestionDetailsById(question);
                 });
 
-                updateQuestionsResult.catch((err) =>
-                    response
-                        //.status(400)
-                        .send(`Updating of questions where quiz id equals to ${request.params.id} has failed. ${err}`),
+                updateQuestionResult.catch((err) =>
+                    response.send(
+                        `Updating of questions where quiz id equals to ${request.params.id} has failed. ${err}`,
+                    ),
                 );
             })
             .catch((err) =>
-                response
-                    //.status(400)
-                    .send(`Updating of quiz where id equals to ${request.params.id} has failed. ${err}`),
+                response.send(`Updating of quiz where id equals to ${request.params.id} has failed. ${err}`),
             );
     } else {
-        response
-            //.status(400)
-            .send(`${request.params.id} contained illegal characters. Please check again.`);
+        response.send(`${request.params.id} contained illegal characters. Please check again.`);
     }
 });
 
-// delete
 app.delete('/quiz/:id', (request, response) => {
     let isValid = validateID(request.params.id);
     if (isValid) {
@@ -402,88 +330,14 @@ app.delete('/quiz/:id', (request, response) => {
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
-// QUESTS =====================================================================================================================
-
-/////////////////////////////////////////
-/*
-1. Declare mock object
-2. Create
-3. Read
-4. Update
-5. Delete
-*/
-const obj = {
-    questTitle: 'dvzdvc',
-    questCategoryId: 1,
-    questDesc: '',
-    questObjective: '',
-    fiqPoints: 100,
-    questions: [
-        {
-            scenarioId: 5,
-            sub_questTitle: 'Scenario A',
-            sub_questDesc: '',
-            options: [
-                {
-                    option: 'Option 1',
-                    optionDesc: '',
-                    pros: '',
-                    cons: '',
-                },
-                {
-                    option: 'Option 2',
-                    optionDesc: '',
-                    pros: '',
-                    cons: '',
-                },
-            ],
-        },
-        {
-            scenarioId: 6,
-            sub_questTitle: 'Scenario B',
-            sub_questDesc: '',
-            options: [
-                {
-                    option: 'Option 1',
-                    optionDesc: '',
-                    pros: '',
-                    cons: '',
-                },
-                {
-                    option: 'Option 2',
-                    optionDesc: '',
-                    pros: '',
-                    cons: '',
-                },
-            ],
-        },
-    ],
-};
-
-//create
-app.post('/quest/createNew', async (request, response) => {
-    //syntaxes to change during integration
-    const title = obj.questTitle;
-    const desc = obj.questDesc;
-    const objective = obj.questObjective;
-    const categoryId = obj.questCategoryId;
-    const fiqPoints = obj.fiqPoints;
-    const scenarioObj = obj.questions;
-    let isValid = validateString(title);
+app.get('/quest', (request, response) => {
     const db = dbService.getDbServiceInstance();
-    if (isValid) {
-        let result = db.createQuest(title, desc, objective, categoryId, fiqPoints);
-        result
-            .then((data) => {
-                response.json({ data: data.insertId });
-
-                let createQuestScenarioResult = db.createQuestScenario(data.insertId, scenarioObj);
-                createQuestScenarioResult.catch((err) => console.log(`Creation of scenario(s) failed. ${err}`));
-            })
-            .catch((err) => {
-                response.status(500).send(`Error creating quest: ${title}, ${err}`);
-            });
-    } else response.status(400).send(`${title} contained illegal characters. Please check again.`);
+    const result = db.getAllQuests();
+    result
+        .then((data) => {
+            response.json(data);
+        })
+        .catch((err) => response.status(400).send(`Fetching of data failed. ${err}`));
 });
 
 app.get('/quest/:id', (request, response) => {
@@ -494,8 +348,7 @@ app.get('/quest/:id', (request, response) => {
         result
             .then((data) => {
                 if (!isEmpty(data)) {
-                    const questObject = JSON.parse(JSON.stringify(data));
-                    response.json({ data: questObject });
+                    response.json(data);
                 } else response.status(400).send(`Quest of id: ${request.params.id} is not present.`);
             })
             .catch((err) => {
@@ -504,87 +357,85 @@ app.get('/quest/:id', (request, response) => {
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
-//create
-app.post('/quest/createNew', async (request, response) => {
-    //syntaxes to change during integration
-    const title = obj.questTitle;
-    const desc = obj.questDesc;
-    const objective = obj.questObjective;
-    const categoryId = obj.questCategoryId;
-    const fiqPoints = obj.fiqPoints;
-    const scenarioObj = obj.questions;
-    let isValid = validateString(title);
-    const db = dbService.getDbServiceInstance();
-    if (isValid) {
-        let result = db.createQuest(title, desc, objective, categoryId, fiqPoints);
-        result
-            .then((data) => {
-                response.json({ data: data.insertId });
+app.post('/quest', async (request, response) => {
+    const quest = request.body.quest;
+    const category = quest.categoryId;
+    const title = quest.title;
+    const desc = quest.description;
+    const conc = quest.conclusion;
+    const characterName = quest.characterName;
+    const characterMood = quest.characterMood;
+    const points = quest.points;
 
-                let createQuestScenarioResult = db.createQuestScenario(data.insertId, scenarioObj);
-                createQuestScenarioResult.catch((err) => console.log(`Creation of scenario(s) failed. ${err}`));
+    if (!isBlank(title) && !isBlank(category) && !isBlank(points)) {
+        const db = dbService.getDbServiceInstance();
+
+        const createQuestResult = db.createQuest(category, title, desc, conc, characterName, characterMood, points);
+
+        createQuestResult
+            .then((data) => {
+                const questId = data.insertId;
+
+                let createScenarioResult = new Promise((resolve, reject) => { });
+
+                const scenarios = quest.scenarios;
+                scenarios.forEach((scenario) => {
+                    createScenarioResult = db.createQuestScenario(questId, JSON.stringify(scenario));
+                });
+
+                createScenarioResult.catch((err) => response.send(`Creation of scenario failed. ${err}`));
+
+                response.status(201).send('Quest created!');
             })
             .catch((err) => {
-                response.status(500).send(`Error creating quest: ${title}, ${err}`);
+                response.send(`Error creating quest: ${err}`);
             });
-    } else response.status(400).send(`${title} contained illegal characters. Please check again.`);
-});
-
-app.get('/quest/:id', (request, response) => {
-    const db = dbService.getDbServiceInstance();
-    let isValid = validateID(request.params.id);
-    if (isValid) {
-        const result = db.getQuestById(request.params.id);
-        result
-            .then((data) => {
-                if (!isEmpty(data)) {
-                    const questObject = JSON.parse(JSON.stringify(data));
-                    response.json({ data: questObject });
-                } else response.status(400).send(`Quest of id: ${request.params.id} is not present.`);
-            })
-            .catch((err) => {
-                response.status(400).send(`Unable to retrieve specified quest of id: ${request.params.id}.`, err);
-            });
-    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+    } else response.send(`Category / Title / Points cannot be empty!`);
 });
 
 app.patch('/quest/:id', (request, response) => {
     let isValid = validateID(request.params.id);
     if (isValid) {
-        const title = obj.questTitle;
-        const desc = obj.questDesc;
-        const objective = obj.questObjective;
-        const categoryId = obj.questCategoryId;
-        const fiqPoint = obj.fiqPoints;
-        const scenearioObj = obj.questions;
+        const quest = request.body.quest;
+        const category = quest.categoryId;
+        const title = quest.title;
+        const desc = quest.description;
+        const conc = quest.conclusion;
+        const characterName = quest.characterName;
+        const characterMood = quest.characterMood;
+        const points = quest.points;
+        const scenarios = quest.scenarios;
 
         const db = dbService.getDbServiceInstance();
-        const result = db.updateQuestDetailsById(request.params.id, title, desc, objective, categoryId, fiqPoint);
+        const result = db.updateQuest(
+            request.params.id,
+            category,
+            title,
+            desc,
+            conc,
+            characterName,
+            characterMood,
+            points,
+        );
 
         result
             .then((data) => {
                 response.json({ data: data });
 
                 let updateScenarioResult = new Promise((resolve, reject) => { });
-                scenearioObj.forEach((scenario) => {
-                    updateScenarioResult = db.updateScenarioDetailsById(
-                        request.params.id,
-                        scenario.scenarioId,
-                        scenario.sub_questTitle,
-                        scenario.sub_questDesc,
-                        JSON.stringify(scenario.options),
-                    );
+
+                scenarios.forEach((scenario) => {
+                    updateScenarioResult = db.updateQuestScenario(scenario);
                 });
+
                 updateScenarioResult.catch((err) =>
                     response
                         .status(400)
-                        .send(`Updating of questions where questId equals to ${request.params.id} has failed. ${err}`),
+                        .send(`Updating of scenario where questId equals to ${request.params.id} has failed. ${err}`),
                 );
             })
             .catch((err) => {
-                response
-                    //.status(400)
-                    .send(`Updating of quiz where id equals to ${request.params.id} has failed. ${err}`);
+                response.send(`Updating of quest where id equals to ${request.params.id} has failed. ${err}`);
             });
     }
 });
@@ -607,8 +458,6 @@ app.delete('/quest/:id', async (request, response) => {
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
-// PROFILE =====================================================================================================================
-
 app.get('/profile/:id', async (request, response) => {
     const db = dbService.getDbServiceInstance();
     let isValid = validateID(request.params.id);
@@ -623,7 +472,6 @@ app.get('/profile/:id', async (request, response) => {
     }
 });
 
-//update profile
 app.patch('/profile/:id', (request, response) => {
     let hobbyStr = '';
     const db = dbService.getDbServiceInstance();
@@ -684,7 +532,6 @@ app.get('/profile/hobby/:id', async (request, response) => {
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
-//update user FIQ
 app.patch('/fiq/:id', (request, response) => {
     const FIQ = request.body.FIQ;
     const db = dbService.getDbServiceInstance();
@@ -769,18 +616,13 @@ app.delete('/user/:accountId', async (request, response) => {
     } else response.status(400).send(`${request.params.accountId} contained illegal characters. Please check again.`);
 });
 
-
 app.post('/botReply', (req, res) => {
     const userInput = req.body.userinput;
     let dataToSend = '';
     const db = dbChatbotService.getDbServiceInstance();
-
-    // console.log("This is user input", userInput);
-
     const python = spawn('python', ['client\\src\\components\\chatbot\\script1.py', userInput]);
 
     python.stdout.on('data', function (data) {
-        // console.log(data);
         dataToSend = data.toString();
 
         const sendChatbot = db.uploadChatbotConvo(userInput, dataToSend);
@@ -788,13 +630,11 @@ app.post('/botReply', (req, res) => {
         sendChatbot
             .then((data) => {
                 python.on('close', (code, signal) => {
-                    // console.log(`child process close all stdio with code ${code} and signal ${signal}`);
                     res.send(dataToSend)
                 });
             })
             .catch((err) => {
                 python.on('close', (code, signal) => {
-                    // console.log(`child process close all stdio with code ${code} and signal ${signal}`);
                     res.status(400).send(`Error in sending chatbot ${err}`);
                 });
             });
@@ -807,7 +647,6 @@ app.post("/ratings", (request, response) => {
     const db = dbChatbotService.getDbServiceInstance();
     const ratingsArray = request.body.ratings;
     const feedback = request.body.feedback;
-    //console.log(ratingsArray);
     const sendRatings = db.uploadCustomerReview(ratingsArray, feedback);
 
     sendRatings
@@ -815,7 +654,6 @@ app.post("/ratings", (request, response) => {
             response.status(201).send("Ratings inserted");
         })
         .catch((err) => {
-            // Please addon to this list if you encountered something new
             response.status(400).send(`insertion failed. ${err}`);
         });
 });

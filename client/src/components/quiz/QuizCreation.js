@@ -4,15 +4,12 @@ import { Redirect } from 'react-router-dom';
 import { Segment, Form, Grid, TextArea, Dropdown, Button, Popup, Icon } from 'semantic-ui-react';
 import { host } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
+import retrieveItems from '../retrieveItems.js';
 import QuizQuestionCreation from './QuizQuestionCreation.js';
-import retrieveItems from './retrieveItems.js';
 import Noty from 'noty';
 import 'noty/lib/noty.css';
 import 'noty/lib/themes/semanticui.css';
-
-// TO-DO
-// 1. Input validation (especially for checkboxes)
-// 2. Unify change handlers if possible
+import Validation from '../validationFile.js';
 
 class QuizCreation extends React.Component {
     constructor(props) {
@@ -25,6 +22,7 @@ class QuizCreation extends React.Component {
             fiqOptionsRange: 5,
             timeOptionsRange: 7,
             redirect: null,
+            errors: [],
         };
     }
 
@@ -37,7 +35,6 @@ class QuizCreation extends React.Component {
     };
 
     handleChange = (event) => {
-        //console.log(event.target.name + " " + event.target.value);
         this.setState({
             [event.target.name]: event.target.value,
         });
@@ -50,7 +47,6 @@ class QuizCreation extends React.Component {
     };
 
     handleCheckboxChange = (checkbox) => {
-        //console.log(checkbox.name + " " + !checkbox.checked);
         this.setState({
             [checkbox.name]: !checkbox.checked,
         });
@@ -65,7 +61,7 @@ class QuizCreation extends React.Component {
             const options = [];
 
             for (let j = 1; j < this.state.options + 1; j++) {
-                if (this.state['option-' + i + '-' + j] !== undefined && this.state['option-' + i + '-' + j] !== "") {
+                if (this.state[`option-${i}-${j}`] !== undefined && this.state[`option-${i}-${j}`] !== '') {
                     options.push({
                         name: this.state['option-' + i + '-' + j],
                         isCorrect: this.state['isCorrect-' + i + '-' + j] || false,
@@ -79,12 +75,11 @@ class QuizCreation extends React.Component {
                     points: this.state['question' + i + 'points'],
                     time: this.state['question' + i + 'time'],
                     explanation: this.state['question' + i + 'explanation'],
-                    options
+                    options,
                 },
             });
         }
 
-        // Construct a quiz JSON object
         let quiz = {
             title: this.state.quizTitle,
             description: this.state.quizDesc,
@@ -94,9 +89,19 @@ class QuizCreation extends React.Component {
             questions: questions,
         };
 
-        //console.log(JSON.stringify(quiz));
+        const isEmpty = Validation.validate([
+            this.state.quizTitle,
+            this.state.quizCategory,
+            this.state.quizPoints,
+            this.state.quizTime,
+        ]);
+        if (isEmpty.length > 0) {
+            this.setState({ errors: 'Quiz Title, Category, FIQ per question and Time per question CANNOT be empty.' });
+            return;
+        }
 
-        axios.post(host + '/quiz', { quiz: quiz })
+        axios
+            .post(host + '/quiz', { quiz: quiz })
             .then(
                 new Noty({
                     text: `Quiz Created: ${quiz.title}`,
@@ -170,9 +175,10 @@ class QuizCreation extends React.Component {
                 <div className="container">
                     <DashboardMenu page="quizzes"></DashboardMenu>
                     <h1 className="ui teal image header">Create your quiz!</h1>
+                    {this.state.errors.length > 0 ? <p style={{ color: 'red' }}>Error: {this.state.errors}</p> : null}
                     <div
                         className="subContainer"
-                        style={{ maxWidth: '60%', margin: 'auto', textAlign: 'left', paddingTop: '20px' }}
+                        style={{ maxWidth: '70%', margin: 'auto', textAlign: 'left', paddingTop: '20px' }}
                     >
                         <Segment>
                             <Form>
@@ -268,7 +274,7 @@ class QuizCreation extends React.Component {
                             </Button>
                         </div>
                     </div>
-                </div >
+                </div>
             );
         }
     }

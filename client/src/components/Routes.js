@@ -20,13 +20,19 @@ import QuizCreation from './quiz/QuizCreation.js';
 import QuizPlay from './quiz/QuizPlay.js';
 import QuizUpdate from './quiz/QuizUpdate.js';
 
+// Quests
+import QuestDashboard from './quest/QuestDashboard.js';
+import QuestCreation from './quest/QuestCreation.js';
+import QuestPlay from './quest/QuestPlay.js';
+import QuestUpdate from './quest/QuestUpdate.js';
+
 // Profile
 import Profile from './profile/Profile.js';
 import About from './profile/About.js';
 
 // Account
-import AccountOverview from './Account/accountOverview.js';
-import AdminRegistration from './Account/adminRegister.js';
+import AccountOverview from './account/AccountOverview.js';
+import AdminRegistration from './account/AdminRegister.js';
 
 const Routes = () => {
     return (
@@ -44,6 +50,11 @@ const Routes = () => {
             <ProtectedRoute exact path="/quizzes/creation" component={QuizCreation} adminOnly={true}></ProtectedRoute>
             <ProtectedRoute exact path="/quizzes/play/:id" component={QuizPlay}></ProtectedRoute>
             <ProtectedRoute exact path="/quizzes/update/:id" component={QuizUpdate} adminOnly={true}></ProtectedRoute>
+
+            <ProtectedRoute exact path="/quests" component={QuestDashboard}></ProtectedRoute>
+            <ProtectedRoute exact path="/quests/creation" component={QuestCreation} adminOnly={true}></ProtectedRoute>
+            <ProtectedRoute exact path="/quests/play/:id" component={QuestPlay}></ProtectedRoute>
+            <ProtectedRoute exact path="/quests/update/:id" component={QuestUpdate} adminOnly={true}></ProtectedRoute>
 
             <ProtectedRoute exact path="/account" component={Profile}></ProtectedRoute>
             <ProtectedRoute exact path="/about" component={About}></ProtectedRoute>

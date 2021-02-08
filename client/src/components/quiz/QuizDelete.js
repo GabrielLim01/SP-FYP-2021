@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { Modal } from 'semantic-ui-react'
 import { host } from '../../common.js';
-import retrieveItems from './retrieveItems.js';
+import retrieveItems from '../retrieveItems.js';
 
 class QuizDelete extends React.Component {
     constructor(props) {

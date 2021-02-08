@@ -1,10 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
-// import { Form, Button } from "semantic-ui-react";
 import { containerStyle } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import retrieveItems from '../quiz/retrieveItems';
+import retrieveItems from '../retrieveItems';
 import Modal from './deleteModal.js';
 
 class CategoryDashboard extends React.Component {

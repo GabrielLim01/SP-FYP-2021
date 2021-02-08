@@ -85,7 +85,6 @@ export default class DashboardMenu extends React.Component {
     }
 
     componentDidMount() {
-        // Display the Category menu item only if the user account is an administrator
         if (this.state.accountType === adminAccountType) {
             let menuItems = this.state.menuItems;
             menuItems.push({ name: 'category', path: 'category' });
@@ -112,10 +111,10 @@ export default class DashboardMenu extends React.Component {
                         content={
                             !this.state.isMaxLevel
                                 ? `Level ${this.state.currentLevel}: ` +
-                                  this.state.currentFIQ +
-                                  '/' +
-                                  this.state.fiqToNextLevel +
-                                  ' FIQ'
+                                this.state.currentFIQ +
+                                '/' +
+                                this.state.fiqToNextLevel +
+                                ' FIQ'
                                 : `Level ${this.state.currentLevel}: Max level reached!`
                         }
                     />

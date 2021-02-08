@@ -6,15 +6,13 @@ const bcrypt = require('bcrypt');
 let instance = null;
 dotenv.config();
 
-// Create Database Connection
 const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.MySQL_DB,
+    host: 'fyp-database.c01lfveairsf.us-east-1.rds.amazonaws.com',
+    user: 'admin',
+    password: '12345678',
+    database: 'financial_literacy',
 });
 
-// To Connect
 connection.connect((err) => {
     if (err) {
         throw err;
@@ -27,7 +25,7 @@ const joinQuizTableQuery = 'SELECT * FROM quiz INNER JOIN quiz_question ON quiz.
 const retrieveQuizByCategoryIdQuery =
     'SELECT DISTINCT(quiz.quizId), quiz.quizName FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId';
 
-const joinQuestTableQuery = 'SELECT * FROM quest INNER JOIN quest_scenario ON quest.insertId = quest_scenario.questId';
+const joinQuestTableQuery = 'SELECT * FROM quest INNER JOIN quest_scenario ON quest.questId = quest_scenario.questId';
 
 class DbService {
     static getDbServiceInstance() {
@@ -35,9 +33,6 @@ class DbService {
         return instance;
     }
 
-    // LOGIN AND REGISTRATION ======================================================================================================
-
-    // POST /register
     async insertNewUser(name, pwd) {
         try {
             const insertId = await new Promise((resolve, reject) => {
@@ -54,7 +49,7 @@ class DbService {
                 insertId: insertId,
             };
         } catch (error) {
-            console.log(error.message);
+            return error.message;
         }
     }
 
@@ -74,50 +69,40 @@ class DbService {
                 insertId: insertId,
             };
         } catch (error) {
-            console.log(error.message);
+            return error.message;
         }
     }
 
-    // POST /authenticate
     async authenticate(username, password) {
-        try {
-            const response = await new Promise((resolve, reject) => {
-                const query = 'SELECT * from users where name=?';
+        const response = await new Promise((resolve, reject) => {
+            const query = 'SELECT * from users where name=?;';
 
-                connection.query(query, [username], (err, results) => {
-                    // Case 1 - Reject promise if query fails
-                    if (err) reject(`There are some errors with the query statement. ${err}`);
-
-                    const jsonResults = JSON.parse(JSON.stringify(results));
-                    const verify = bcrypt.compareSync(password, jsonResults[0].password);
-
-                    // Case 2 - Reject promise if passwords do not match, otherwise resolve promise with the access token
-                    if (!verify) {
-                        reject('Passwords do not match!');
+            connection.query(query, [username], (err, results) => {
+                if (err) reject(`There are some errors with the query statement. ${err}`);
+                else {
+                    if (results.length <= 0) {
+                        reject('No records found!');
                     } else {
-                        const data = {
-                            user: jsonResults,
-                            token: 'Congrats',
-                        };
-                        resolve(data);
+                        const jsonResults = JSON.parse(JSON.stringify(results));
+                        const verify = bcrypt.compareSync(password, jsonResults[0].password);
+
+                        if (!verify) {
+                            reject('Passwords do not match!');
+                        } else {
+                            const data = {
+                                user: jsonResults,
+                                token: 'Congrats',
+                            };
+                            resolve(data);
+                        }
                     }
-                });
+                }
             });
+        });
 
-            return response;
-        } catch (error) {
-            // Catch rejected promises (errors)
-
-            // If a promise is rejected above, logic gets passed to this catch block, so a return error statement
-            // is needed in order to pass the error string to server.js
-            // This might not be the best practice, but without further research, not sure if there is a better way to pass error message info
-            return error;
-        }
+        return response;
     }
 
-    // CATEGORY ===================================================================================================================
-
-    //Retrieve all categories
     async getAllCategories() {
         try {
             return new Promise((resolve, reject) => {
@@ -133,7 +118,6 @@ class DbService {
         }
     }
 
-    // Retrieve a category by its ID
     async getCategoryDetailsById(id) {
         return new Promise((resolve, reject) => {
             const query = 'SELECT * from category WHERE categoryId = ?;';
@@ -148,7 +132,6 @@ class DbService {
         });
     }
 
-    //Create category
     async createCategory(catName, catDesc) {
         try {
             return new Promise((resolve, reject) => {
@@ -167,7 +150,6 @@ class DbService {
         }
     }
 
-    //Update category
     async updateCategoryById(id, catName, catDesc) {
         try {
             return new Promise((resolve, reject) => {
@@ -186,7 +168,6 @@ class DbService {
         }
     }
 
-    //Delete Category
     async deleteCategoryById(id) {
         try {
             return new Promise((resolve, reject) => {
@@ -201,8 +182,6 @@ class DbService {
             throw e.message;
         }
     }
-
-    // QUIZZES ===================================================================================================================
 
     async getAllQuizzes() {
         try {
@@ -282,22 +261,6 @@ class DbService {
         }
     }
 
-    // Wei Xian's API
-    // async createQuizQuestion(quizId, questionsObj) {
-    //   const array = [];
-    //   Object.keys(questionsObj).forEach(function (item) {
-    //     console.log(JSON.stringify(questionsObj[item].options));
-    //     array.push([
-    //       quizId,
-    //       questionsObj[item].questionTitle,
-    //       questionsObj[item].questionDesc,
-    //       questionsObj[item].fiqPoints,
-    //       questionsObj[item].timeLimit,
-    //       questionsObj[item].explanation,
-    //       JSON.stringify(questionsObj[item].options),
-    //     ]);
-    //   });
-
     async updateQuizDetailsById(id, title, desc, categoryId, points, time) {
         try {
             return new Promise((resolve, reject) => {
@@ -316,7 +279,6 @@ class DbService {
     async updateQuestionDetailsById(question) {
         let quizQuestionId = question.quizQuestionId;
 
-        // Wrap the question properties back inside a question object that excludes quizQuestionId, then stringify said object
         let quizQuestion = JSON.stringify({ question: question.question });
 
         return new Promise((resolve, reject) => {
@@ -352,12 +314,25 @@ class DbService {
         }
     }
 
-    // QUESTS =====================================================================================================================
+    async getAllQuests() {
+        try {
+            return new Promise((resolve, reject) => {
+                const query = 'SELECT * FROM quest;';
+
+                connection.query(query, (err, result) => {
+                    if (err) return reject(err.message);
+                    resolve(result);
+                });
+            });
+        } catch (e) {
+            throw e.message;
+        }
+    }
 
     async getQuestById(id) {
         try {
             return new Promise((resolve, reject) => {
-                const query = `${joinQuestTableQuery} WHERE quest.insertId = ?;`;
+                const query = `${joinQuestTableQuery} WHERE quest.questId = ?;`;
 
                 connection.query(query, id, (err, result) => {
                     if (err) return reject(err.message);
@@ -369,69 +344,78 @@ class DbService {
         }
     }
 
-    //Create quest
-    async createQuest(title, description, objective, categoryId, fiqPoints) {
-        return new Promise((resolve, reject) => {
-            const query =
-                'INSERT INTO quest (title, description, objective, categoryId, fiqPoint) VALUES (?, ?, ?, ?, ?);';
-            connection.query(query, [title, description, objective, categoryId, fiqPoints], (err, result) => {
-                if (err) {
-                    console.log(err.message);
-                    reject(err.message);
-                }
-                resolve(result);
+    async createQuest(category, title, desc, conc, characterName, characterMood, points) {
+        try {
+            return new Promise((resolve, reject) => {
+                let createdAt = new Date();
+                const query =
+                    'INSERT INTO quest (categoryId, title, description, conclusion, characterName, characterMood, points, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
+                connection.query(
+                    query,
+                    [category, title, desc, conc, characterName, characterMood, points, createdAt],
+                    (err, result) => {
+                        if (err) {
+                            console.log(err.message);
+                            reject(err.message);
+                        }
+                        resolve(result);
+                    },
+                );
             });
-        });
+        } catch (e) {
+            throw e.message;
+        }
     }
 
-    //Create quest scenarios
-    async createQuestScenario(questId, obj) {
-        const array = [];
-        Object.keys(obj).forEach(function (item) {
-            array.push([questId, obj[item].sub_questTitle, obj[item].sub_questDesc, JSON.stringify(obj[item].options)]);
-        });
-
-        const query = 'INSERT into quest_scenario (questId, sub_questTitle, sub_questDesc, options) values ?;';
-        connection.query(query, [array], (err, result) => {
-            if (err) return err.message;
-            else {
-                console.log('Scenario(s) created.');
-                return result;
-            }
-        });
-    }
-
-    async updateQuestDetailsById(id, title, desc, objective, categoryId, fiqPoint) {
-        return new Promise((resolve, reject) => {
-            const query =
-                'UPDATE quest SET title = ?, description = ?, objective = ?, categoryId = ?, fiqPoint = ?  WHERE insertId = ?;';
-            connection.query(query, [title, desc, objective, categoryId, fiqPoint, id], (err, result) => {
-                if (err) return reject(err.message);
-                resolve(result.affectedRows);
+    async createQuestScenario(questId, scenario) {
+        try {
+            return new Promise((resolve, reject) => {
+                const query = 'INSERT into quest_scenario (questId, scenario) values (?,?);';
+                connection.query(query, [questId, scenario], (err, result) => {
+                    if (err) reject(err.message);
+                    else {
+                        console.log('Scenario created. questScenarioId:', result.insertId);
+                        resolve(result);
+                    }
+                });
             });
-        });
+        } catch (e) {
+            throw e.message;
+        }
     }
 
-    async updateQuestDetailsById(id, title, desc, objective, categoryId, fiqPoint) {
-        return new Promise((resolve, reject) => {
-            const query =
-                'UPDATE quest SET title = ?, description = ?, objective = ?, categoryId = ?, fiqPoint = ?  WHERE insertId = ?;';
-            connection.query(query, [title, desc, objective, categoryId, fiqPoint, id], (err, result) => {
-                if (err) return reject(err.message);
-                resolve(result.affectedRows);
+    async updateQuest(id, category, title, desc, conc, characterName, characterMood, points) {
+        try {
+            return new Promise((resolve, reject) => {
+                const query =
+                    'UPDATE quest SET categoryId = ?, title = ?, description = ?, conclusion = ?, characterName = ?, characterMood = ?, points = ? WHERE questId = ?';
+                connection.query(
+                    query,
+                    [category, title, desc, conc, characterName, characterMood, points, id],
+                    (err, result) => {
+                        if (err) return reject(err.message);
+                        resolve(result.affectedRows);
+                    },
+                );
             });
-        });
+        } catch (e) {
+            throw e.message;
+        }
     }
 
-    async updateScenarioDetailsById(id, scenarioId, sub_questTitle, sub_questDesc, options) {
+    async updateQuestScenario(scenario) {
+        console.log(scenario);
+        let questScenarioId = scenario.scenarioId;
+
+        let questScenario = JSON.stringify(scenario.scenario);
+
         return new Promise((resolve, reject) => {
-            const query =
-                'UPDATE quest_scenario SET sub_questTitle = ?, sub_questDesc= ?, options = ? WHERE questId = ? and scenarioId = ?;';
-            console.log(query);
-            connection.query(query, [sub_questTitle, sub_questDesc, options, id, scenarioId], (err, result) => {
+            const query = 'UPDATE quest_scenario SET scenario = ? WHERE questScenarioId = ?;';
+
+            connection.query(query, [questScenario, questScenarioId], (err, result) => {
                 if (err) reject(err.message);
                 else {
-                    console.log('Updated scenario(s)', result);
+                    console.log(`Updated scenarios ${questScenarioId}. ${result}`);
                     resolve(result.affectedRows);
                 }
             });
@@ -441,7 +425,7 @@ class DbService {
     async deleteQuestById(id) {
         try {
             return new Promise((resolve, reject) => {
-                const query = 'DELETE FROM quest WHERE insertId = ?';
+                const query = 'DELETE FROM quest WHERE questId = ?';
 
                 connection.query(query, [id], (err, result) => {
                     if (err) return reject(err.message);
@@ -452,8 +436,6 @@ class DbService {
             throw e.message;
         }
     }
-
-    // PROFILE =====================================================================================================================
 
     async getProfileById(id) {
         return new Promise((resolve, reject) => {
