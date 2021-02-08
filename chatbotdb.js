@@ -8,10 +8,10 @@ dotenv.config();
 
 // Create Database Connection
 const chatbotConnection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: "chatbot",
+    host: 'fyp-database.c01lfveairsf.us-east-1.rds.amazonaws.com',
+    user: 'admin',
+    password: '12345678',
+    database: 'financial_literacy',
 });
 
 // To Connect
