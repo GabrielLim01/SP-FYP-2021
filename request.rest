@@ -107,10 +107,6 @@ GET http://localhost:9000/quiz/16
 
 ###
 
-GET http://localhost:9000/quests/32
-
-###
-
 DELETE http://localhost:9000/quests/12
 
 ###
