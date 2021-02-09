@@ -30,11 +30,11 @@ class dbChatbotService {
 
     async uploadCustomerReview(ratingsArray, feedback) {
         const array = [];
-        for (let i = 0; i < 5; i++) {
-            array.push(ratingsArray[i]);
-        }
+        Object.values(ratingsArray).forEach((rating) => {
+            array.push(rating);
+        });
         return new Promise((resolve, reject) => {
-            const query = 'INSERT INTO customer_ratings(qns1, qns2, qns3, qns4, qns5, feedback) VALUES(?, ?, ?, ?, ?);';
+            const query = 'INSERT INTO customer_ratings(qns1, qns2, qns3, qns4, qns5, feedback) VALUES(?, ?);';
 
             chatbotConnection.query(query, [array, feedback], (err, result) => {
                 if (err) reject(new Error(err.message));

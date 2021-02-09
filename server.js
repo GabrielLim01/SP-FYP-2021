@@ -642,7 +642,6 @@ app.post('/botReply', (req, res) => {
 
     python.stdout.on('data', function (data) {
         dataToSend = data.toString();
-
         const sendChatbot = db.uploadChatbotConvo(userInput, dataToSend);
 
         sendChatbot

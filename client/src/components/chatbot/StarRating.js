@@ -4,22 +4,11 @@ import React from 'react';
 // import { Redirect } from "react-router";
 import { Form, Button, Rating, TextArea } from 'semantic-ui-react';
 
-// import Noty from "noty";
-// import "../../../node_modules/noty/lib/noty.css";
-// import "../../../node_modules/noty/lib/themes/semanticui.css";
+import Noty from 'noty';
+import '../../../node_modules/noty/lib/noty.css';
+import '../../../node_modules/noty/lib/themes/semanticui.css';
 import { host } from '../../common.js';
 
-/*function validate(categoryName) {
-
-  const errors = [];
-
-  if (categoryName.length === 0) {
-    errors.push("Category Name can't be empty");
-  }
-
-  return errors;
-}
-*/
 class StarRating extends React.Component {
     constructor(props) {
         super(props);
@@ -53,37 +42,40 @@ class StarRating extends React.Component {
         let array = [];
 
         for (let i = 1; i < 6; i++) {
-            array.push(this.state[`rating-${i}`]);
+            if (this.state[`rating-${i}`]) {
+                array.push(this.state[`rating-${i}`]);
+            } else array.push(0);
         }
-
-        //console.log(array);
 
         const result = axios.post(`${host}/ratings`, {
             ratings: array,
-            feedback: this.state.feedback,
+            feedback: this.state.feedback ? this.state.feedback : null,
         });
 
         result
             .then((response) => {
-                // new Noty({
-                //     text: `Ratings successfully updated`,
-                //     type: "success",
-                //     theme: "semanticui",
-                // }).show();
+                new Noty({
+                    text: `Ratings successfully inserted.`,
+                    type: 'success',
+                    theme: 'semanticui',
+                }).show();
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             })
             .catch((err) => {
-                // new Noty({
-                //     text: `Something went wrong. ${err}`,
-                //     type: "error",
-                //     theme: "semanticui",
-                // }).show();
+                new Noty({
+                    text: `Something went wrong. ${err}`,
+                    type: 'error',
+                    theme: 'semanticui',
+                }).show();
             });
     };
 
     render() {
         return (
             <Form style={{ backgroundColor: 'white', height: '385px', overflow: 'auto' }}>
-                {/* <h1 style={{ textAlign: "center" }}>How was the question?</h1> */}
                 <ul>
                     {this.state.questions.map((element, index) => {
                         return (
