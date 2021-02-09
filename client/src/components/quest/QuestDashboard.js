@@ -23,10 +23,7 @@ class QuestDashboard extends React.Component {
             redirect: null,
             filter: '',
             filterType: null,
-            filterOptions: [
-                { key: 'name', text: 'Quest Title', value: 'name' },
-                { key: 'category', text: 'Category', value: 'category' },
-            ],
+            filterOptions: [{ key: 'name', text: 'Quest Title', value: 'name' }],
             accountType: !inProduction
                 ? JSON.parse(sessionStorage.getItem('user')).accountType
                     ? JSON.parse(sessionStorage.getItem('user')).accountType
@@ -113,7 +110,7 @@ class QuestDashboard extends React.Component {
         let questItems = this.state.questItems.filter((item) => {
             switch (this.state.filterType) {
                 default:
-                    return item.title.toLowerCase().indexOf(this.state.filter) !== -1;
+                    return item.title.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1;
             }
         });
 
@@ -125,12 +122,10 @@ class QuestDashboard extends React.Component {
                     <DashboardMenu page="quests"></DashboardMenu>
                     <div className="subContainer" style={containerStyle}>
                         <div className="filter-input" style={{ marginBottom: '50px' }}>
-                            <Message info header="This is a filter component." />
                             <Input fluid placeholder="Search..." action>
                                 <input name="filter" onChange={this.handleChange} />
                                 <Select
                                     name="filterType"
-                                    disabled
                                     options={this.state.filterOptions}
                                     onChange={this.handleDropdownChange}
                                     defaultValue="name"

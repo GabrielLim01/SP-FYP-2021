@@ -22,10 +22,7 @@ class QuizDashboard extends React.Component {
             ],
             filter: '',
             filterType: null,
-            filterOptions: [
-                { key: 'name', text: 'Quiz Title', value: 'name' },
-                { key: 'category', text: 'Category', value: 'category' },
-            ],
+            filterOptions: [{ key: 'name', text: 'Quiz Title', value: 'name' }],
             accountType: !inProduction
                 ? JSON.parse(sessionStorage.getItem('user')).accountType
                     ? JSON.parse(sessionStorage.getItem('user')).accountType
@@ -115,7 +112,7 @@ class QuizDashboard extends React.Component {
         let quizItems = this.state.quizItems.filter((item) => {
             switch (this.state.filterType) {
                 default:
-                    return item.quizName.toLowerCase().indexOf(this.state.filter) !== -1;
+                    return item.quizName.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1;
             }
         });
 
@@ -124,7 +121,6 @@ class QuizDashboard extends React.Component {
                 <DashboardMenu page="quizzes"></DashboardMenu>
                 <div className="subContainer" style={containerStyle}>
                     <div className="filter-input" style={{ marginBottom: '50px' }}>
-                        <Message info header="This is a filter component." />
                         <Input fluid placeholder="Search..." action>
                             <input name="filter" onChange={this.handleChange} />
                             <Select
