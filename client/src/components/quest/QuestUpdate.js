@@ -349,6 +349,7 @@ class QuestUpdate extends React.Component {
                                                 placeholder="Conclusion"
                                                 onChange={this.handleChange}
                                                 defaultValue={this.state.conclusion}
+                                                maxLength="500"
                                             />
                                         </Grid.Column>
                                     </Grid.Row>

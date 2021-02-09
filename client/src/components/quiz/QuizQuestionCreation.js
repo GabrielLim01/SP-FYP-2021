@@ -113,6 +113,7 @@ class QuizQuestionCreation extends React.Component {
                                     name={'question' + number + 'explanation'}
                                     placeholder="Description"
                                     onChange={this.props.handleChange}
+                                    maxLength="500"
                                 />
                                 <h3 style={{ float: 'right', color: 'red' }}>* required</h3>
                             </Grid.Column>

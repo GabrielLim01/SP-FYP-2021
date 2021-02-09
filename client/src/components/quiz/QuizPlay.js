@@ -124,8 +124,9 @@ class QuizPlay extends React.Component {
                                 You answered:{' '}
                                 {answers[index]
                                     ? answers[index].name !== null
-                                        ? `${answers[index].name}, which was ${answers[index].isCorrect ? 'correct' : 'incorrect'
-                                        }!`
+                                        ? `${answers[index].name}, which was ${
+                                              answers[index].isCorrect ? 'correct' : 'incorrect'
+                                          }!`
                                         : 'Nothing...'
                                     : 'Nothing...'}
                             </h3>
@@ -133,26 +134,26 @@ class QuizPlay extends React.Component {
                             {/* If there are multiple correct answers, return multiple correct answers, otherwise return a single correct answer*/}
                             {question.options.filter((element) => element.isCorrect).map((element) => element.name)
                                 .length > 1 ? (
+                                <h3>
+                                    Other correct answers:{' '}
+                                    {question.options
+                                        .filter((element) => element.isCorrect)
+                                        .map((element, index) => {
+                                            return <div key={index}>{element.name}</div>;
+                                        })}
+                                </h3>
+                            ) : !this.state.answers[index].isCorrect ? (
+                                question.options.find((element) => element.isCorrect).name ? (
                                     <h3>
-                                        Other correct answers:{' '}
-                                        {question.options
-                                            .filter((element) => element.isCorrect)
-                                            .map((element, index) => {
-                                                return <div key={index}>{element.name}</div>;
-                                            })}
+                                        The correct answer was:{' '}
+                                        {question.options.find((element) => element.isCorrect).name}
                                     </h3>
-                                ) : !this.state.answers[index].isCorrect ? (
-                                    question.options.find((element) => element.isCorrect).name ? (
-                                        <h3>
-                                            The correct answer was:{' '}
-                                            {question.options.find((element) => element.isCorrect).name}
-                                        </h3>
-                                    ) : (
-                                            ''
-                                        )
                                 ) : (
-                                        ''
-                                    )}
+                                    ''
+                                )
+                            ) : (
+                                ''
+                            )}
 
                             <h3 style={{ width: '90%', margin: 'auto', textAlign: 'justify' }}>
                                 {question.explanation
@@ -211,6 +212,9 @@ class QuizPlay extends React.Component {
                                 style={{ paddingTop: '200px', maxWidth: '80%', margin: 'auto' }}
                             >
                                 <h1>Welcome to {this.state.quiz.quizName}!</h1>
+                                <Button size="big" onClick={() => this.setState({ redirect: '/quizzes' })}>
+                                    Back
+                                </Button>
                                 <Button color="teal" size="big" onClick={this.handleStart}>
                                     Start Quiz
                                 </Button>

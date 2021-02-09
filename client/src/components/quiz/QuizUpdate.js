@@ -230,6 +230,7 @@ class QuizUpdate extends React.Component {
                                                 placeholder="Description"
                                                 onChange={this.handleChange}
                                                 defaultValue={this.state.quizDesc}
+                                                maxLength="500"
                                             />
                                         </Grid.Column>
                                     </Grid.Row>

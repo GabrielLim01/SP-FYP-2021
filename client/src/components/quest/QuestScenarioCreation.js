@@ -1,5 +1,5 @@
-import React from "react";
-import { Segment, Form, Divider, Grid, TextArea, Dropdown, Checkbox } from "semantic-ui-react";
+import React from 'react';
+import { Segment, Form, Divider, Grid, TextArea, Dropdown, Checkbox } from 'semantic-ui-react';
 
 class QuestScenarioCreation extends React.Component {
     constructor(props) {
@@ -10,13 +10,17 @@ class QuestScenarioCreation extends React.Component {
     }
 
     onSelectedChange = (event) => {
-        let checkbox = event.target.tagName === "LABEL" ? event.target.previousElementSibling : event.target.firstElementChild;
+        let checkbox =
+            event.target.tagName === 'LABEL' ? event.target.previousElementSibling : event.target.firstElementChild;
         this.setState({ [checkbox.name]: !checkbox.checked });
         this.props.handleCheckboxChange(checkbox);
     };
 
     renderEventOptions(number, value) {
-        const moodChangeOptions = [{ text: "Increase", value: 1 }, { text: "Decrease", value: 2 },];
+        const moodChangeOptions = [
+            { text: 'Increase', value: 1 },
+            { text: 'Decrease', value: 2 },
+        ];
         const rateOptions = [];
 
         for (let i = 1; i < this.state.rateOptionsRange + 1; i++) {
@@ -25,7 +29,7 @@ class QuestScenarioCreation extends React.Component {
         }
 
         return (
-            <Grid style={{ padding: "10px 0px" }}>
+            <Grid style={{ padding: '10px 0px' }}>
                 <Grid.Row columns={2}>
                     <Grid.Column>
                         <h3>Event Title</h3>
@@ -50,12 +54,12 @@ class QuestScenarioCreation extends React.Component {
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
-                    <Grid.Column style={{ display: "flex" }}>
-                        <h3 style={{ width: "15%" }}>Mood Change</h3>
+                    <Grid.Column style={{ display: 'flex' }}>
+                        <h3 style={{ width: '15%' }}>Mood Change</h3>
                         <Dropdown
                             name={`moodChange-${number}-${value}`}
                             placeholder="Select mood change type"
-                            style={{ width: "20%" }}
+                            style={{ width: '20%' }}
                             defaultValue={1}
                             fluid
                             selection
@@ -66,7 +70,7 @@ class QuestScenarioCreation extends React.Component {
                         <Dropdown
                             name={`moodChangeValue-${number}-${value}`}
                             placeholder="Specify the amount to modify the mood by"
-                            style={{ marginLeft: "20px", width: "20%" }}
+                            style={{ marginLeft: '20px', width: '20%' }}
                             defaultValue={10}
                             fluid
                             selection
@@ -83,6 +87,7 @@ class QuestScenarioCreation extends React.Component {
                             name={`eventDesc-${number}-${value}`}
                             placeholder="Description"
                             onChange={this.props.handleChange}
+                            maxLength="500"
                         />
                     </Grid.Column>
                 </Grid.Row>
@@ -99,7 +104,7 @@ class QuestScenarioCreation extends React.Component {
         }
 
         return (
-            <div className="container" style={{ padding: "25px 0px" }}>
+            <div className="container" style={{ padding: '25px 0px' }}>
                 <Segment>
                     <Form>
                         <h2>Scenario {number}</h2>
@@ -108,16 +113,17 @@ class QuestScenarioCreation extends React.Component {
                             <Grid.Column>
                                 <h3>Description</h3>
                                 <TextArea
-                                    name={"scenario-" + number + "-desc"}
+                                    name={'scenario-' + number + '-desc'}
                                     placeholder="Description"
                                     onChange={this.props.handleChange}
+                                    maxLength="500"
                                 />
                             </Grid.Column>
                         </Grid>
                         {choices.map((value, index) => {
                             return (
-                                <div key={"choices-" + number + "-" + value}>
-                                    <h3 style={{ paddingTop: "20px" }}>Choice {value}</h3>
+                                <div key={'choices-' + number + '-' + value}>
+                                    <h3 style={{ paddingTop: '20px' }}>Choice {value}</h3>
                                     <Divider></Divider>
                                     <Grid columns="equal">
                                         <Grid.Row columns={2}>
@@ -125,32 +131,32 @@ class QuestScenarioCreation extends React.Component {
                                                 <input
                                                     type="text"
                                                     name={`choice-${number}-${value}`}
-                                                    placeholder={"Choice " + value}
+                                                    placeholder={'Choice ' + value}
                                                     onChange={this.props.handleChange}
                                                 />
                                                 <Checkbox
                                                     toggle
                                                     label="Has Event?"
                                                     name={`hasEvent-${number}-${value}`}
-                                                    style={{ padding: "20px 0px" }}
-                                                    onClick={(event) => this.onSelectedChange(event, index)
-                                                    }
+                                                    style={{ padding: '20px 0px' }}
+                                                    onClick={(event) => this.onSelectedChange(event, index)}
                                                 />
                                             </Grid.Column>
                                             <Grid.Column>
                                                 <TextArea
                                                     name={`choiceDesc-${number}-${value}`}
-                                                    placeholder={"Description " + value}
+                                                    placeholder={'Description ' + value}
                                                     onChange={this.props.handleChange}
+                                                    maxLength="500"
                                                 />
                                             </Grid.Column>
                                         </Grid.Row>
                                         <Grid.Row>
                                             <Grid.Column>
                                                 {this.state[`hasEvent-${number}-${value}`] !== undefined &&
-                                                    this.state[`hasEvent-${number}-${value}`] !== false
+                                                this.state[`hasEvent-${number}-${value}`] !== false
                                                     ? this.renderEventOptions(number, value)
-                                                    : ""}
+                                                    : ''}
                                             </Grid.Column>
                                         </Grid.Row>
                                     </Grid>

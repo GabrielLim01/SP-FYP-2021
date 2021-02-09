@@ -125,7 +125,6 @@ class QuizDashboard extends React.Component {
                             <input name="filter" onChange={this.handleChange} />
                             <Select
                                 name="filterType"
-                                disabled
                                 options={this.state.filterOptions}
                                 onChange={this.handleDropdownChange}
                                 defaultValue="name"

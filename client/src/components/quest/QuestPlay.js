@@ -161,6 +161,9 @@ class QuestPlay extends React.Component {
                             >
                                 <h1>{this.state.quest.title}</h1>
                                 <h3>{this.state.quest.description}</h3>
+                                <Button size="big" onClick={() => this.setState({ redirect: '/quests' })}>
+                                    Back
+                                </Button>
                                 <Button color="teal" size="big" onClick={this.viewScenario}>
                                     Begin Quest
                                 </Button>

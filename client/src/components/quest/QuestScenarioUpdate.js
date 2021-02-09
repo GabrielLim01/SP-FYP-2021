@@ -1,5 +1,5 @@
-import React from "react";
-import { Segment, Form, Divider, Grid, TextArea, Dropdown, Checkbox } from "semantic-ui-react";
+import React from 'react';
+import { Segment, Form, Divider, Grid, TextArea, Dropdown, Checkbox } from 'semantic-ui-react';
 
 class QuestScenarioUpdate extends React.Component {
     constructor(props) {
@@ -12,7 +12,8 @@ class QuestScenarioUpdate extends React.Component {
     }
 
     onSelectedChange = (event) => {
-        let checkbox = event.target.tagName === "LABEL" ? event.target.previousElementSibling : event.target.firstElementChild;
+        let checkbox =
+            event.target.tagName === 'LABEL' ? event.target.previousElementSibling : event.target.firstElementChild;
         this.setState({ [checkbox.name]: !checkbox.checked });
         this.props.handleCheckboxChange(checkbox);
     };
@@ -26,11 +27,14 @@ class QuestScenarioUpdate extends React.Component {
                 desc: scenario.choices[value - 1].event.description,
                 procRate: scenario.choices[value - 1].event.eventProcRate,
                 moodChangeType: scenario.choices[value - 1].event.moodChange,
-                moodChangeValue: scenario.choices[value - 1].event.moodChangeValue
-            }
+                moodChangeValue: scenario.choices[value - 1].event.moodChangeValue,
+            };
         }
 
-        const moodChangeOptions = [{ text: "Increase", value: 1 }, { text: "Decrease", value: 2 },];
+        const moodChangeOptions = [
+            { text: 'Increase', value: 1 },
+            { text: 'Decrease', value: 2 },
+        ];
         const rateOptions = [];
 
         for (let i = 1; i < this.state.rateOptionsRange + 1; i++) {
@@ -39,7 +43,7 @@ class QuestScenarioUpdate extends React.Component {
         }
 
         return (
-            <Grid style={{ padding: "10px 0px" }}>
+            <Grid style={{ padding: '10px 0px' }}>
                 <Grid.Row columns={2}>
                     <Grid.Column>
                         <h3>Event Title</h3>
@@ -66,12 +70,12 @@ class QuestScenarioUpdate extends React.Component {
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
-                    <Grid.Column style={{ display: "flex" }}>
-                        <h3 style={{ width: "15%" }}>Mood Change</h3>
+                    <Grid.Column style={{ display: 'flex' }}>
+                        <h3 style={{ width: '15%' }}>Mood Change</h3>
                         <Dropdown
                             name={`moodChange-${number}-${value}`}
                             placeholder="Select the type of mood change"
-                            style={{ width: "20%" }}
+                            style={{ width: '20%' }}
                             fluid
                             selection
                             clearable
@@ -82,7 +86,7 @@ class QuestScenarioUpdate extends React.Component {
                         <Dropdown
                             name={`moodChangeValue-${number}-${value}`}
                             placeholder="Specify the amount to modify the mood by"
-                            style={{ marginLeft: "20px", width: "20%" }}
+                            style={{ marginLeft: '20px', width: '20%' }}
                             fluid
                             selection
                             clearable
@@ -100,6 +104,7 @@ class QuestScenarioUpdate extends React.Component {
                             placeholder="Description"
                             onChange={this.props.handleChange}
                             defaultValue={event.desc ? event.desc : ''}
+                            maxLength="100"
                         />
                     </Grid.Column>
                 </Grid.Row>
@@ -124,7 +129,7 @@ class QuestScenarioUpdate extends React.Component {
         }
 
         return (
-            <div className="container" style={{ padding: "25px 0px" }}>
+            <div className="container" style={{ padding: '25px 0px' }}>
                 <Segment>
                     <Form>
                         <h2>Scenario {number}</h2>
@@ -137,13 +142,14 @@ class QuestScenarioUpdate extends React.Component {
                                     placeholder="Description"
                                     onChange={this.props.handleChange}
                                     defaultValue={scenario.description}
+                                    maxLength="500"
                                 />
                             </Grid.Column>
                         </Grid>
                         {choices.map((value, index) => {
                             return (
-                                <div key={"choices-" + number + "-" + value}>
-                                    <h3 style={{ paddingTop: "20px" }}>Choice {value}</h3>
+                                <div key={'choices-' + number + '-' + value}>
+                                    <h3 style={{ paddingTop: '20px' }}>Choice {value}</h3>
                                     <Divider></Divider>
                                     <Grid columns="equal">
                                         <Grid.Row columns={2}>
@@ -151,7 +157,7 @@ class QuestScenarioUpdate extends React.Component {
                                                 <input
                                                     type="text"
                                                     name={`choice-${number}-${value}`}
-                                                    placeholder={"Choice " + value}
+                                                    placeholder={'Choice ' + value}
                                                     onChange={this.props.handleChange}
                                                     defaultValue={scenario.choices[index].name}
                                                 />
@@ -159,27 +165,27 @@ class QuestScenarioUpdate extends React.Component {
                                                     toggle
                                                     label="Has Event?"
                                                     name={`hasEvent-${number}-${value}`}
-                                                    style={{ padding: "20px 0px" }}
+                                                    style={{ padding: '20px 0px' }}
                                                     defaultChecked={scenario.choices[index].event ? true : false}
-                                                    onClick={(event) => this.onSelectedChange(event, index)
-                                                    }
+                                                    onClick={(event) => this.onSelectedChange(event, index)}
                                                 />
                                             </Grid.Column>
                                             <Grid.Column>
                                                 <TextArea
                                                     name={`choiceDesc-${number}-${value}`}
-                                                    placeholder={"Description " + value}
+                                                    placeholder={'Description ' + value}
                                                     onChange={this.props.handleChange}
                                                     defaultValue={scenario.choices[index].description}
+                                                    maxLength="500"
                                                 />
                                             </Grid.Column>
                                         </Grid.Row>
                                         <Grid.Row>
                                             <Grid.Column>
                                                 {this.state[`hasEvent-${number}-${value}`] !== undefined &&
-                                                    this.state[`hasEvent-${number}-${value}`] !== false
+                                                this.state[`hasEvent-${number}-${value}`] !== false
                                                     ? this.renderEventOptions(scenario, number, value)
-                                                    : ""}
+                                                    : ''}
                                             </Grid.Column>
                                         </Grid.Row>
                                     </Grid>

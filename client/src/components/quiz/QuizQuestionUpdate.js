@@ -123,6 +123,7 @@ class QuizQuestionUpdate extends React.Component {
                                     placeholder="Description"
                                     onChange={this.props.handleChange}
                                     defaultValue={question.explanation}
+                                    maxLength="500"
                                 />
                                 <h3 style={{ float: 'right', color: 'red' }}>* required</h3>
                             </Grid.Column>
