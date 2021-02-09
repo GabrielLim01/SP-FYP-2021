@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Form, Button, Segment, Grid, Label, Input, Select, Message, Accordion } from 'semantic-ui-react';
 import { containerStyle, inProduction, defaultAccountType, adminAccountType } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
-import retrieveItems from './retrieveItems.js';
+import retrieveItems from '../retrieveItems.js';
 import QuizDelete from './QuizDelete.js';
 import Noty from 'noty';
 import ReactBotUI from '../chatbot/ReactBotUI';
@@ -145,8 +145,8 @@ class QuizDashboard extends React.Component {
                                 </button>
                             </Link>
                         ) : (
-                                ''
-                            )}
+                            ''
+                        )}
                     </div>
                     <div className="ui stacked segment">
                         <Form>
@@ -178,8 +178,8 @@ class QuizDashboard extends React.Component {
                                                         />
                                                     </Grid.Column>
                                                 ) : (
-                                                        ''
-                                                    )}
+                                                    ''
+                                                )}
                                                 {this.state.accountType === adminAccountType ? (
                                                     this.state.functions.map((button, index2) => {
                                                         return (
@@ -202,26 +202,26 @@ class QuizDashboard extends React.Component {
                                                         );
                                                     })
                                                 ) : (
-                                                        <Grid.Column style={{ display: 'flex' }}>
-                                                            <Link
-                                                                to={{
-                                                                    pathname: `${window.location.href
-                                                                        .split('/')
-                                                                        .pop()}/play/${value.quizId}`,
-                                                                    quiz: value,
-                                                                }}
-                                                            >
-                                                                <Button circular icon="play" color="green" />
-                                                            </Link>
-                                                        </Grid.Column>
-                                                    )}
+                                                    <Grid.Column style={{ display: 'flex' }}>
+                                                        <Link
+                                                            to={{
+                                                                pathname: `${window.location.href
+                                                                    .split('/')
+                                                                    .pop()}/play/${value.quizId}`,
+                                                                quiz: value,
+                                                            }}
+                                                        >
+                                                            <Button circular icon="play" color="green" />
+                                                        </Link>
+                                                    </Grid.Column>
+                                                )}
                                             </Grid.Row>
                                         </Segment>
                                     );
                                 })
                             ) : (
-                                    <h2>No Results..</h2>
-                                )}
+                                <h2>No Results..</h2>
+                            )}
                         </Form>
                     </div>
                     <ReactBotUI
