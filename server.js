@@ -8,7 +8,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const dbService = require('./db');
-const dbChatbotService = require("./chatbotdb");
+const dbChatbotService = require('./chatbotdb');
 const { response } = require('express');
 const { spawn } = require('child_process');
 
@@ -94,7 +94,7 @@ app.post('/admin/register', async (request, respond) => {
         result
             .then((data) => respond.json({ data: data }))
             .catch((err) =>
-                response.status(400).send(`Registering of user where username equals to ${name} has failed.`, err),
+                response.status(400).send(`Registering of user where username equals to ${name} has failed. ${err}`),
             );
     } else response.status(400).send(`Name / Password is(are) empty.`);
 });
@@ -134,7 +134,7 @@ app.post('/category', async (request, response) => {
                 response.json({ data: data });
             })
             .catch((err) => {
-                response.status(500).send(`Error creating category: ${categoryName}`, err);
+                response.status(500).send(`Error creating category: ${categoryName}. ${err}`);
             });
     } else response.status(400).send(`${categoryName} contained illegal characters or is empty. Please check again.`);
 });
@@ -226,7 +226,7 @@ app.get('/quiz/:id', (request, response) => {
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
 
-app.get('/quiz/category/:id', (request, response) => {
+app.get('/quiz/associatedCategory/:id', (request, response) => {
     const db = dbService.getDbServiceInstance();
     let isValid = validateID(request.params.id);
     if (isValid) {
@@ -239,7 +239,7 @@ app.get('/quiz/category/:id', (request, response) => {
                 } else response.status(200).send(`Category of id: ${request.params.id} is not present.`);
             })
             .catch((err) => {
-                response.status(400).send(`Unable to retrieve specified category of id: ${request.params.id}.`, err);
+                response.status(400).send(`Unable to retrieve specified category of id: ${request.params.id}. ${err}`);
             });
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
@@ -260,7 +260,7 @@ app.post('/quiz', (request, response) => {
             .then((data) => {
                 const quizId = data.insertId;
 
-                let createQuestionResult = new Promise((resolve, reject) => { });
+                let createQuestionResult = new Promise((resolve, reject) => {});
 
                 const questions = quiz.questions;
                 questions.forEach((question) => {
@@ -293,7 +293,7 @@ app.patch('/quiz/:id', (request, response) => {
 
         result
             .then((data) => {
-                let updateQuestionResult = new Promise((resolve, reject) => { });
+                let updateQuestionResult = new Promise((resolve, reject) => {});
 
                 questions.forEach((question) => {
                     updateQuestionResult = db.updateQuestionDetailsById(question);
@@ -352,7 +352,25 @@ app.get('/quest/:id', (request, response) => {
                 } else response.status(400).send(`Quest of id: ${request.params.id} is not present.`);
             })
             .catch((err) => {
-                response.status(400).send(`Unable to retrieve specified quest of id: ${request.params.id}.`, err);
+                response.status(400).send(`Unable to retrieve specified quest of id: ${request.params.id}. ${err}`);
+            });
+    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+});
+
+app.get('/quest/associatedCategory/:id', (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    let isValid = validateID(request.params.id);
+    if (isValid) {
+        const result = db.getQuestByCategory(request.params.id);
+        result
+            .then((data) => {
+                if (!isEmpty(data)) {
+                    const quizObject = JSON.parse(JSON.stringify(data));
+                    response.json(quizObject);
+                } else response.status(200).send(`Category of id: ${request.params.id} is not present.`);
+            })
+            .catch((err) => {
+                response.status(400).send(`Unable to retrieve specified category of id: ${request.params.id}. ${err}`);
             });
     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
 });
@@ -376,7 +394,7 @@ app.post('/quest', async (request, response) => {
             .then((data) => {
                 const questId = data.insertId;
 
-                let createScenarioResult = new Promise((resolve, reject) => { });
+                let createScenarioResult = new Promise((resolve, reject) => {});
 
                 const scenarios = quest.scenarios;
                 scenarios.forEach((scenario) => {
@@ -422,7 +440,7 @@ app.patch('/quest/:id', (request, response) => {
             .then((data) => {
                 response.json({ data: data });
 
-                let updateScenarioResult = new Promise((resolve, reject) => { });
+                let updateScenarioResult = new Promise((resolve, reject) => {});
 
                 scenarios.forEach((scenario) => {
                     updateScenarioResult = db.updateQuestScenario(scenario);
@@ -630,7 +648,7 @@ app.post('/botReply', (req, res) => {
         sendChatbot
             .then((data) => {
                 python.on('close', (code, signal) => {
-                    res.send(dataToSend)
+                    res.send(dataToSend);
                 });
             })
             .catch((err) => {
@@ -639,11 +657,9 @@ app.post('/botReply', (req, res) => {
                 });
             });
     });
-})
+});
 
-
-
-app.post("/ratings", (request, response) => {
+app.post('/ratings', (request, response) => {
     const db = dbChatbotService.getDbServiceInstance();
     const ratingsArray = request.body.ratings;
     const feedback = request.body.feedback;
@@ -651,7 +667,7 @@ app.post("/ratings", (request, response) => {
 
     sendRatings
         .then((data) => {
-            response.status(201).send("Ratings inserted");
+            response.status(201).send('Ratings inserted');
         })
         .catch((err) => {
             response.status(400).send(`insertion failed. ${err}`);

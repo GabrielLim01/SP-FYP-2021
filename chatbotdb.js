@@ -1,6 +1,6 @@
-const { response } = require("express");
-const mysql = require("mysql");
-const dotenv = require("dotenv");
+const { response } = require('express');
+const mysql = require('mysql');
+const dotenv = require('dotenv');
 // const bcrypt = require("bcrypt");
 
 let instance = null;
@@ -19,7 +19,7 @@ chatbotConnection.connect((err) => {
     if (err) {
         throw err;
     }
-    console.log("Customer Review Recieved!");
+    console.log('Chatbot connected!');
 });
 
 class dbChatbotService {
@@ -34,8 +34,7 @@ class dbChatbotService {
             array.push(ratingsArray[i]);
         }
         return new Promise((resolve, reject) => {
-            const query =
-                "INSERT INTO stars(qns1,qns2,qns3,qns4,qns5, feedback) VALUES(?, ?);";
+            const query = 'INSERT INTO stars(qns1,qns2,qns3,qns4,qns5, feedback) VALUES(?, ?);';
 
             chatbotConnection.query(query, [array, feedback], (err, result) => {
                 if (err) reject(new Error(err.message));
@@ -44,25 +43,21 @@ class dbChatbotService {
         });
     }
 
-
     async uploadChatbotConvo(userInput, botResponse) {
         try {
             return new Promise((resolve, reject) => {
-                const query =
-                    "INSERT INTO chat(UserInput,ChatReply) VALUES(?,?);";
+                const query = 'INSERT INTO chat(UserInput,ChatReply) VALUES(?,?);';
 
                 chatbotConnection.query(query, [userInput, botResponse], (err, result) => {
-                    console.log("sent");
+                    console.log('sent');
                     if (err) reject(new Error(err.message));
                     resolve(result);
                 });
             });
-        }
-        catch (e) {
+        } catch (e) {
             throw e.message;
             console.log(e);
         }
     }
-
 }
 module.exports = dbChatbotService;

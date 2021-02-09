@@ -9,6 +9,7 @@ import 'noty/lib/themes/semanticui.css';
 function DeleteModal(value) {
     const [open, setOpen] = useState(false);
     const [quizArray, setQuizArray] = useState([]);
+    const [questArray, setQuestArray] = useState([]);
     const [isPopulated, setIsPopulated] = useState(false);
 
     function handleSubmit() {
@@ -39,8 +40,8 @@ function DeleteModal(value) {
             });
     }
 
-    function check() {
-        const result = axios.get(host + `/quiz/category/${value.category.categoryId}`);
+    function quizCheck() {
+        const result = axios.get(host + `/quiz/associatedCategory/${value.category.categoryId}`);
         result
             .then((data) => {
                 if (typeof data.data === 'object') {
@@ -58,6 +59,25 @@ function DeleteModal(value) {
             .catch();
     }
 
+    function questCheck() {
+        const result = axios.get(host + `/quest/associatedCategory/${value.category.categoryId}`);
+        result
+            .then((data) => {
+                if (typeof data.data === 'object') {
+                    let tempArray = [];
+
+                    Object.values(data.data).forEach((quest) => {
+                        tempArray.push(quest.questId);
+                    });
+
+                    setQuestArray(tempArray);
+                } else {
+                    console.log('Array has something already');
+                }
+            })
+            .catch();
+    }
+
     return (
         <Modal
             closeIcon
@@ -68,7 +88,8 @@ function DeleteModal(value) {
                 setOpen(true);
 
                 if (!isPopulated) {
-                    check();
+                    quizCheck();
+                    questCheck();
                     setIsPopulated(true);
                 }
             }}
@@ -76,10 +97,11 @@ function DeleteModal(value) {
             <Header icon="trash" content={`Delete Category: ${value.category.categoryName}?`} />
             <Modal.Content>
                 <div>
-                    {quizArray.length !== 0 ? (
+                    {quizArray.length !== 0 || questArray.length !== 0 ? (
                         <div className="ui warning message">
                             <div className="header">
-                                This category is being referenced by {quizArray.length} quiz(zes)!
+                                This category is being referenced by {quizArray.length} quiz(zes), {questArray.length}{' '}
+                                quest(s)!
                             </div>
                             <p>Please delete the following quiz(zes) with id: {quizArray.join(', ')}.</p>
                         </div>

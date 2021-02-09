@@ -25,6 +25,9 @@ const joinQuizTableQuery = 'SELECT * FROM quiz INNER JOIN quiz_question ON quiz.
 const retrieveQuizByCategoryIdQuery =
     'SELECT DISTINCT(quiz.quizId), quiz.quizName FROM quiz INNER JOIN quiz_question ON quiz.quizId = quiz_question.quizId';
 
+const retrieveQuestByCategoryIdQuery =
+    'SELECT DISTINCT(quest.questId), quest.title FROM quest INNER JOIN quest_scenario ON quest.questId = quest_scenario.questId';
+
 const joinQuestTableQuery = 'SELECT * FROM quest INNER JOIN quest_scenario ON quest.questId = quest_scenario.questId';
 
 class DbService {
@@ -333,6 +336,21 @@ class DbService {
         try {
             return new Promise((resolve, reject) => {
                 const query = `${joinQuestTableQuery} WHERE quest.questId = ?;`;
+
+                connection.query(query, id, (err, result) => {
+                    if (err) return reject(err.message);
+                    resolve(result);
+                });
+            });
+        } catch (e) {
+            throw e.message;
+        }
+    }
+
+    async getQuestByCategory(id) {
+        try {
+            return new Promise((resolve, reject) => {
+                const query = `${retrieveQuestByCategoryIdQuery} WHERE quest.categoryId = ?;`;
 
                 connection.query(query, id, (err, result) => {
                     if (err) return reject(err.message);
