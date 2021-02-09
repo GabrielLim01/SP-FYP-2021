@@ -653,7 +653,7 @@ app.post('/botReply', (req, res) => {
             })
             .catch((err) => {
                 python.on('close', (code, signal) => {
-                    res.status(400).send(`Error in sending chatbot ${err}`);
+                    res.status(400).send(`Error in sending responses to server. ${err}`);
                 });
             });
     });
