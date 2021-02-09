@@ -34,7 +34,7 @@ class dbChatbotService {
             array.push(ratingsArray[i]);
         }
         return new Promise((resolve, reject) => {
-            const query = 'INSERT INTO stars(qns1,qns2,qns3,qns4,qns5, feedback) VALUES(?, ?);';
+            const query = 'INSERT INTO responses(qns1, qns2, qns3, qns4, qns5, feedback) VALUES(?, ?, ?, ?, ?);';
 
             chatbotConnection.query(query, [array, feedback], (err, result) => {
                 if (err) reject(new Error(err.message));
@@ -46,7 +46,7 @@ class dbChatbotService {
     async uploadChatbotConvo(userInput, botResponse) {
         try {
             return new Promise((resolve, reject) => {
-                const query = 'INSERT INTO chat(UserInput,ChatReply) VALUES(?,?);';
+                const query = 'INSERT INTO chat(userInput,chatReply) VALUES(?,?);';
 
                 chatbotConnection.query(query, [userInput, botResponse], (err, result) => {
                     console.log('sent');
