@@ -604,6 +604,21 @@ class DbService {
             throw e.message;
         }
     }
+
+    async exportCRtoCSV() {
+        try {
+            return new Promise((resolve, reject) => {
+                const query = 'SELECT * FROM customer_ratings';
+
+                connection.query(query, (err, result) => {
+                    if (err) return reject(err.message);
+                    resolve(result);
+                });
+            });
+        } catch (e) {
+            throw e.message;
+        }
+    }
 }
 
 module.exports = DbService;

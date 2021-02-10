@@ -1,6 +1,7 @@
 const { response } = require('express');
 const mysql = require('mysql');
 const dotenv = require('dotenv');
+const moment = require('moment');
 // const bcrypt = require("bcrypt");
 
 let instance = null;
@@ -34,9 +35,10 @@ class dbChatbotService {
             array.push(rating);
         });
         return new Promise((resolve, reject) => {
-            const query = 'INSERT INTO customer_ratings(qns1, qns2, qns3, qns4, qns5, feedback) VALUES(?, ?);';
+            const query =
+                'INSERT INTO customer_ratings(qns1, qns2, qns3, qns4, qns5, feedback, createdAt) VALUES(?, ?, ?);';
 
-            chatbotConnection.query(query, [array, feedback], (err, result) => {
+            chatbotConnection.query(query, [array, feedback, moment().format('LLLL')], (err, result) => {
                 if (err) reject(new Error(err.message));
                 resolve(result);
             });
