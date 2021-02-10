@@ -218,17 +218,17 @@ class QuestPlay extends React.Component {
                             <div
                                 className="subContainer"
                                 style={{
-                                    paddingTop: '150px',
+                                    paddingTop: '120px',
                                     maxWidth: '80%',
                                     margin: 'auto',
                                 }}
                             >
                                 <h1>{this.state.eventTriggered ? currentChoice.event.name : currentChoice.name}</h1>
-                                <h2>
+                                <h3>
                                     {this.state.eventTriggered
                                         ? currentChoice.event.description
                                         : currentChoice.description}
-                                </h2>
+                                </h3>
                                 <Button color="teal" size="medium" onClick={this.loadNextScenario}>
                                     Next
                                 </Button>
@@ -242,18 +242,23 @@ class QuestPlay extends React.Component {
                             characterName={this.state.characterName}
                             characterMood={this.state.characterMood}
                         >
-                            <div className="subContainer" style={{ paddingTop: '100px' }}>
+                            <div className="subContainer" style={{ paddingTop: '120px' }}>
                                 <div>
                                     <h1>Quest Complete!</h1>
-                                    <h2>
+                                    <h3>
                                         {this.state.quest.conclusion
                                             ? this.state.quest.conclusion
                                             : 'Thanks for playing!'}
-                                    </h2>
+                                    </h3>
                                     <h2>You have earned {this.state.quest.points} FIQ!</h2>
                                     <Button color="teal" size="big" onClick={this.handleRestart}>
                                         Play Again?
                                     </Button>
+                                    <br />
+                                    <br />
+                                    <Button color="teal" size="medium" onClick={() => this.setState({ redirect: '/quests' })}>
+                                        Return to Quests
+                        </Button>
                                 </div>
                             </div>
                         </QuestPlayContainer>

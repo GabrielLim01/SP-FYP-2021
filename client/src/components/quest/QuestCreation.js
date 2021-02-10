@@ -206,7 +206,7 @@ class QuestCreation extends React.Component {
                                             <Popup
                                                 content="Tell us what your quest is about!"
                                                 trigger={<h3>Quest Description</h3>}
-                                                maxLength="100"
+                                                maxLength="500"
                                             />
                                             <TextArea
                                                 name="questDesc"
