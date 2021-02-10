@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Form, Button, Segment, Grid, Accordion, Label, Message, Input, Select } from 'semantic-ui-react';
+import { Form, Button, Segment, Grid, Accordion, Label, Input, Select } from 'semantic-ui-react';
 import { containerStyle, inProduction, defaultAccountType, adminAccountType } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import retrieveItems from '../retrieveItems.js';
