@@ -5,6 +5,7 @@ const app = express();
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const excel = require('exceljs');
 dotenv.config();
 
 const dbService = require('./db');
@@ -671,4 +672,30 @@ app.post('/ratings', (request, response) => {
         .catch((err) => {
             response.status(400).send(`insertion failed. ${err}`);
         });
+});
+
+app.get('/downloadCR/excel', async (request, response) => {
+    const db = dbService.getDbServiceInstance();
+    const result = db.exportCRtoCSV();
+    result
+        .then((data) => {
+            let workbook = new excel.Workbook();
+            let worksheet = workbook.addWorksheet(`customer_ratings`);
+            worksheet.columns = [
+                { header: 'Qns1', key: 'qns1', width: 10 },
+                { header: 'Qns2', key: 'qns2', width: 10 },
+                { header: 'Qns3', key: 'qns3', width: 10 },
+                { header: 'Qns4', key: 'qns4', width: 10 },
+                { header: 'Qns5', key: 'qns5', width: 10 },
+                { header: 'feedback', key: 'feedback', width: 50 },
+                { header: 'createdAt', key: 'createdAt', width: 50 },
+            ];
+
+            worksheet.addRows(JSON.parse(JSON.stringify(data)));
+
+            workbook.xlsx.writeFile(`customer_ratings.xlsx`).then(function () {
+                console.log('file saved!');
+            });
+        })
+        .catch((err) => response.status(400).send(`${err}`));
 });

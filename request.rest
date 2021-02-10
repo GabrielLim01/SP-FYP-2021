@@ -137,8 +137,11 @@ Content-Type: application/json
 
 {
     "ratings":  [4,4,4,4,4], 
-    "feedback": "hello"
+    "feedback": "我不转弯"
 }
+###
+
+GET http://localhost:9000/downloadCR/excel
 
 
 

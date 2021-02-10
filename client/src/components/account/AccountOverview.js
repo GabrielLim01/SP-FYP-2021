@@ -51,6 +51,16 @@ class AccountOverview extends React.Component {
         });
     }
 
+    download() {
+        retrieveItems('downloadCR/excel')
+            .then((data) => {
+                console.log('Downloaded!');
+            })
+            .catch((err) => {
+                console.log(`Error downloading file.`);
+            });
+    }
+
     onLoad() {
         retrieveItems('roles')
             .then((data) => {
@@ -111,6 +121,9 @@ class AccountOverview extends React.Component {
             <div className="container" style={{ textAlign: 'left' }}>
                 <DashboardMenu></DashboardMenu>
                 <div className="subContainer" style={containerStyle}>
+                    <button type="button" className="ui black basic button" onClick={this.download}>
+                        Export Customer Ratings
+                    </button>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <h1>List of available {`${accountType}`}</h1>
                         <Popup
@@ -149,12 +162,12 @@ class AccountOverview extends React.Component {
                                     <Table.Row>
                                         <Table.HeaderCell>
                                             <Icon name="user" />
-                                                Username
-                                            </Table.HeaderCell>
+                                            Username
+                                        </Table.HeaderCell>
                                         <Table.HeaderCell>
                                             <Icon name="tag" />
-                                                Account Type
-                                            </Table.HeaderCell>
+                                            Account Type
+                                        </Table.HeaderCell>
                                         <Table.HeaderCell>Management</Table.HeaderCell>
                                     </Table.Row>
                                 </Table.Header>
@@ -172,9 +185,7 @@ class AccountOverview extends React.Component {
                                                         })}
                                                     </Label>
                                                 </Table.Cell>
-                                                <Table.Cell
-                                                    style={{ display: 'flex', flexDirection: 'row-reverse' }}
-                                                >
+                                                <Table.Cell style={{ display: 'flex', flexDirection: 'row-reverse' }}>
                                                     <Grid.Column>
                                                         <AccountUpdate
                                                             key={value.insertId + '-update'}
@@ -194,14 +205,13 @@ class AccountOverview extends React.Component {
                                 })}
                             </Table>
                         ) : (
-                                <h2>No Results..</h2>
-                            )}
+                            <h2>No Results..</h2>
+                        )}
                     </div>
                 </div>
             </div>
         );
     }
 }
-
 
 export default AccountOverview;
