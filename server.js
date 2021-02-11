@@ -261,7 +261,7 @@ app.post('/quiz', (request, response) => {
             .then((data) => {
                 const quizId = data.insertId;
 
-                let createQuestionResult = new Promise((resolve, reject) => {});
+                let createQuestionResult = new Promise((resolve, reject) => { });
 
                 const questions = quiz.questions;
                 questions.forEach((question) => {
@@ -294,11 +294,13 @@ app.patch('/quiz/:id', (request, response) => {
 
         result
             .then((data) => {
-                let updateQuestionResult = new Promise((resolve, reject) => {});
+                let updateQuestionResult = new Promise((resolve, reject) => { });
 
                 questions.forEach((question) => {
                     updateQuestionResult = db.updateQuestionDetailsById(question);
                 });
+
+                response.status(204).send();
 
                 updateQuestionResult.catch((err) =>
                     response.send(
@@ -395,7 +397,7 @@ app.post('/quest', async (request, response) => {
             .then((data) => {
                 const questId = data.insertId;
 
-                let createScenarioResult = new Promise((resolve, reject) => {});
+                let createScenarioResult = new Promise((resolve, reject) => { });
 
                 const scenarios = quest.scenarios;
                 scenarios.forEach((scenario) => {
@@ -441,7 +443,7 @@ app.patch('/quest/:id', (request, response) => {
             .then((data) => {
                 response.json({ data: data });
 
-                let updateScenarioResult = new Promise((resolve, reject) => {});
+                let updateScenarioResult = new Promise((resolve, reject) => { });
 
                 scenarios.forEach((scenario) => {
                     updateScenarioResult = db.updateQuestScenario(scenario);

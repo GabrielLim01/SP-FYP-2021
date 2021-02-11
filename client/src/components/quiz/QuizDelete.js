@@ -12,6 +12,8 @@ class QuizDelete extends React.Component {
             quiz: props.quiz,
             questions: 0
         }
+
+        this._isMounted = false;
     }
 
     handleSubmit = () => {
@@ -29,21 +31,26 @@ class QuizDelete extends React.Component {
     }
 
     componentDidUpdate(prevState) {
-        if (this.props.quiz !== prevState.quiz) {
+        if (this._isMounted && this.props.quiz !== prevState.quiz) {
             this.setState({ quiz: this.props.quiz });
         }
     }
 
     componentDidMount() {
+        this._isMounted = true;
         retrieveItems(`quiz/${this.state.quiz.quizId}`)
             .then(data => {
-                if (data !== undefined) {
+                if (this._isMounted && data !== undefined) {
                     this.setState({ questions: data.length });
                 }
             })
             .catch((error) => {
                 alert(error);
             })
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render() {

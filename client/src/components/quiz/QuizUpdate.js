@@ -78,7 +78,13 @@ class QuizUpdate extends React.Component {
 
         axios
             .patch(`${host}/quiz/${this.state.quizId}`, { quiz: quiz })
-            .then((window.location.href = 'quizzes'))
+            .then((response) => {
+                if (response.status === 204) {
+                    window.location.href = 'quizzes';
+                } else {
+                    alert("Error while updating quiz!");
+                }
+            })
             .catch((error) => {
                 alert(error);
             });
@@ -138,7 +144,6 @@ class QuizUpdate extends React.Component {
 
                             for (let j = 1; j < this.state.options + 1; j++) {
                                 if (question.options[j - 1] !== undefined) {
-                                    console.log(question.options[j - 1].name);
                                     this.setState({
                                         ['option-' + i + '-' + j]: question.options[j - 1].name,
                                         ['isCorrect-' + i + '-' + j]: question.options[j - 1].isCorrect,

@@ -5,7 +5,7 @@ import { appName, inProduction, defaultAccountType, adminAccountType } from '../
 
 export default class DashboardMenu extends React.Component {
     state = {
-        activeItem: this.props.page,
+        activeItem: window.location.href.split('/').pop(),
         menuItems: [
             { name: 'home', path: 'dashboard' },
             { name: 'quizzes', path: 'quizzes' },
@@ -29,16 +29,26 @@ export default class DashboardMenu extends React.Component {
         redirect: null,
     };
 
-    handleItemClick = (event, { name }) => {
+    handleItemClick = (event, { text, name }) => {
         // Prevents menu from disappearing when double-clicked on
-        if (this.state.activeItem !== name) {
-            if (name !== 'home') {
-                this.setState({ redirect: `/${name}` });
-            } else if (this.state.activeItem !== 'dashboard') {
-                this.setState({ redirect: '/dashboard' });
+        if (this.state.activeItem !== undefined) {
+            if (this.state.activeItem !== name) {
+                this.handleRedirect(name);
+            }
+        } else {
+            if (text.toLowerCase() !== name) {
+                this.handleRedirect(name);
             }
         }
     };
+
+    handleRedirect(name) {
+        if (name !== 'home') {
+            this.setState({ redirect: `/${name}` });
+        } else if (this.state.activeItem !== 'dashboard') {
+            this.setState({ redirect: '/dashboard' });
+        }
+    }
 
     handleLogout = (event) => {
         this.setState({ isLoggingOut: true }, () => {
