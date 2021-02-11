@@ -6,9 +6,6 @@ import { host } from '../../common.js';
 import DashboardMenu from '../DashboardMenu.js';
 import retrieveItems from '../retrieveItems.js';
 import QuizQuestionUpdate from './QuizQuestionUpdate.js';
-import Noty from 'noty';
-import 'noty/lib/noty.css';
-import 'noty/lib/themes/semanticui.css';
 
 class QuizUpdate extends React.Component {
     constructor(props) {
