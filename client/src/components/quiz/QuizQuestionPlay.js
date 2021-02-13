@@ -74,10 +74,19 @@ class QuizQuestionPlay extends React.Component {
 
         if (currentQuestion !== prevState.question) {
             this.setState({
-                hasAnswered: false,
+                hasAnswered: true,
+                isAnimating: true,
                 question: question,
                 options: question.options,
                 questionNumber: this.props.questionNumber,
+
+            }, () => {
+                setTimeout(() => {
+                    if (this._isMounted) {
+                        this.start();
+                        this.setState({ hasAnswered: false, isAnimating: false });
+                    }
+                }, this.state.animationDelay * 1000);
             });
         }
 
