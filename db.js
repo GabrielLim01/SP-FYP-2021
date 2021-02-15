@@ -231,13 +231,13 @@ class DbService {
         }
     }
 
-    async createQuiz(name, desc, category, points, time) {
+    async createQuiz(name, desc, category, difficulty, points, time) {
         try {
             return new Promise((resolve, reject) => {
                 let createdAt = new Date();
                 const query =
-                    'INSERT INTO quiz (categoryId, quizName, quizDesc, pointsPerQuestion, timePerQuestion, createdAt) VALUES (?,?,?,?,?,?);';
-                connection.query(query, [category, name, desc, points, time, createdAt], (err, result) => {
+                    'INSERT INTO quiz (categoryId, quizName, quizDesc, pointsPerQuestion, timePerQuestion, difficulty, createdAt) VALUES (?,?,?,?,?,?,?);';
+                connection.query(query, [category, name, desc, points, time, difficulty, createdAt], (err, result) => {
                     if (err) return reject(err.message);
                     resolve(result);
                 });
@@ -264,12 +264,12 @@ class DbService {
         }
     }
 
-    async updateQuizDetailsById(id, title, desc, categoryId, points, time) {
+    async updateQuizDetailsById(id, title, desc, categoryId, points, time, difficulty) {
         try {
             return new Promise((resolve, reject) => {
                 const query =
-                    'UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, pointsPerQuestion = ?, timePerQuestion = ? WHERE quizId = ?';
-                connection.query(query, [categoryId, title, desc, points, time, id], (err, result) => {
+                    'UPDATE quiz SET categoryId= ?, quizName = ?, quizDesc = ?, pointsPerQuestion = ?, timePerQuestion = ?, difficulty = ? WHERE quizId = ?';
+                connection.query(query, [categoryId, title, desc, points, time, difficulty, id], (err, result) => {
                     if (err) return reject(err.message);
                     resolve(result.affectedRows);
                 });

@@ -16,6 +16,7 @@ class QuizUpdate extends React.Component {
             options: 4,
             fiqOptionsRange: 5,
             timeOptionsRange: 7,
+            difficulty: [{ text: "Easy", value: "Easy" }, { text: "Medium", value: "Medium" }, { text: "Hard", value: "Hard" }],
             redirect: null,
         };
     }
@@ -71,6 +72,7 @@ class QuizUpdate extends React.Component {
             title: this.state.quizTitle,
             description: this.state.quizDesc,
             category: this.state.quizCategory,
+            difficulty: this.state.quizDifficulty,
             points: this.state.quizPoints,
             time: this.state.quizTime,
             questions: questions,
@@ -126,6 +128,7 @@ class QuizUpdate extends React.Component {
                         quizTitle: quiz.quizName,
                         quizDesc: quiz.quizDesc,
                         quizCategory: quiz.categoryId,
+                        quizDifficulty: quiz.difficulty,
                         quizPoints: quiz.pointsPerQuestion,
                         quizTime: quiz.timePerQuestion,
                         questions: questions,
@@ -236,7 +239,7 @@ class QuizUpdate extends React.Component {
                                             />
                                         </Grid.Column>
                                     </Grid.Row>
-                                    <Grid.Row columns={3}>
+                                    <Grid.Row columns={2}>
                                         <Grid.Column>
                                             <Popup
                                                 content="What category does your quiz belong in?"
@@ -253,6 +256,24 @@ class QuizUpdate extends React.Component {
                                                 onChange={this.handleDropdownChange}
                                             />
                                         </Grid.Column>
+                                        <Grid.Column>
+                                            <Popup
+                                                content="How difficult would you rate your quiz?"
+                                                trigger={<h3>Dfficulty *</h3>}
+                                            />
+                                            <Dropdown
+                                                name="quizDifficulty"
+                                                placeholder="Select Quiz Difficulty"
+                                                fluid
+                                                selection
+                                                clearable
+                                                options={this.state.difficulty}
+                                                defaultValue={this.state.quizDifficulty}
+                                                onChange={this.handleDropdownChange}
+                                            />
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                    <Grid.Row columns={2}>
                                         <Grid.Column>
                                             <Popup
                                                 content="How much FIQ (Financial IQ) points should players earn upon correctly answering each question?"

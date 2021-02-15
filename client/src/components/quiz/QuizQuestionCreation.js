@@ -47,7 +47,7 @@ class QuizQuestionCreation extends React.Component {
                             <Grid.Row columns={2}>
                                 <Grid.Column>
                                     <Popup
-                                        content="How much FIQ (Financial IQ) points should players earn upon correctly answering this question?"
+                                        content="How much FIQ (Financial IQ) points should players earn upon correctly answering this question? (Overrides FIQ per question)"
                                         trigger={<h3>FIQ awarded</h3>}
                                     />
                                     <Dropdown
@@ -62,7 +62,7 @@ class QuizQuestionCreation extends React.Component {
                                 </Grid.Column>
                                 <Grid.Column>
                                     <Popup
-                                        content="How much time (in seconds) will the player have to answer this question?"
+                                        content="How much time (in seconds) will the player have to answer this question? (Overrides Time per question)"
                                         trigger={<h3>Time</h3>}
                                     />
                                     <Dropdown

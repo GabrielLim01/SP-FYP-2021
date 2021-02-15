@@ -23,6 +23,7 @@ class QuizCreation extends React.Component {
             timeOptionsRange: 7,
             redirect: null,
             errors: [],
+            difficulty: [{ text: "Easy", value: "Easy" }, { text: "Medium", value: "Medium" }, { text: "Hard", value: "Hard" }]
         };
     }
 
@@ -84,6 +85,7 @@ class QuizCreation extends React.Component {
             title: this.state.quizTitle,
             description: this.state.quizDesc,
             category: this.state.quizCategory,
+            difficulty: this.state.quizDifficulty,
             points: this.state.quizPoints,
             time: this.state.quizTime,
             questions: questions,
@@ -92,11 +94,12 @@ class QuizCreation extends React.Component {
         const isEmpty = Validation.validate([
             this.state.quizTitle,
             this.state.quizCategory,
+            this.state.quizDifficulty,
             this.state.quizPoints,
             this.state.quizTime,
         ]);
         if (isEmpty.length > 0) {
-            this.setState({ errors: 'Quiz Title, Category, FIQ per question and Time per question CANNOT be empty.' });
+            this.setState({ errors: 'Quiz Title, Category, Difficulty, FIQ per question and Time per question CANNOT be empty.' });
             return;
         }
 
@@ -205,7 +208,7 @@ class QuizCreation extends React.Component {
                                             />
                                         </Grid.Column>
                                     </Grid.Row>
-                                    <Grid.Row columns={3}>
+                                    <Grid.Row columns={2}>
                                         <Grid.Column>
                                             <Popup
                                                 content="What category does your quiz belong in?"
@@ -221,6 +224,23 @@ class QuizCreation extends React.Component {
                                                 onChange={this.handleDropdownChange}
                                             />
                                         </Grid.Column>
+                                        <Grid.Column>
+                                            <Popup
+                                                content="How difficult would you rate your quiz?"
+                                                trigger={<h3>Dfficulty *</h3>}
+                                            />
+                                            <Dropdown
+                                                name="quizDifficulty"
+                                                placeholder="Select Quiz Difficulty"
+                                                fluid
+                                                selection
+                                                clearable
+                                                options={this.state.difficulty}
+                                                onChange={this.handleDropdownChange}
+                                            />
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                    <Grid.Row columns={2}>
                                         <Grid.Column>
                                             <Popup
                                                 content="How much FIQ (Financial IQ) points should players earn upon correctly answering each question?"

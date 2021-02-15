@@ -140,8 +140,8 @@ class QuizDashboard extends React.Component {
                                 </button>
                             </Link>
                         ) : (
-                            ''
-                        )}
+                                ''
+                            )}
                     </div>
                     <div className="ui stacked segment">
                         <Form>
@@ -160,7 +160,10 @@ class QuizDashboard extends React.Component {
                                                                 : '';
                                                         })}
                                                     </Label>
+                                                    <br />
                                                     Created At: {value.createdAt}
+                                                    <br />
+                                                    Difficulty: {value.difficulty}
                                                     <Accordion panels={this.panel(value.quizDesc)} />
                                                 </div>
                                             </Grid.Row>
@@ -173,8 +176,8 @@ class QuizDashboard extends React.Component {
                                                         />
                                                     </Grid.Column>
                                                 ) : (
-                                                    ''
-                                                )}
+                                                        ''
+                                                    )}
                                                 {this.state.accountType === adminAccountType ? (
                                                     this.state.functions.map((button, index2) => {
                                                         return (
@@ -197,26 +200,26 @@ class QuizDashboard extends React.Component {
                                                         );
                                                     })
                                                 ) : (
-                                                    <Grid.Column style={{ display: 'flex' }}>
-                                                        <Link
-                                                            to={{
-                                                                pathname: `${window.location.href
-                                                                    .split('/')
-                                                                    .pop()}/play/${value.quizId}`,
-                                                                quiz: value,
-                                                            }}
-                                                        >
-                                                            <Button circular icon="play" color="green" />
-                                                        </Link>
-                                                    </Grid.Column>
-                                                )}
+                                                        <Grid.Column style={{ display: 'flex' }}>
+                                                            <Link
+                                                                to={{
+                                                                    pathname: `${window.location.href
+                                                                        .split('/')
+                                                                        .pop()}/play/${value.quizId}`,
+                                                                    quiz: value,
+                                                                }}
+                                                            >
+                                                                <Button circular icon="play" color="green" />
+                                                            </Link>
+                                                        </Grid.Column>
+                                                    )}
                                             </Grid.Row>
                                         </Segment>
                                     );
                                 })
                             ) : (
-                                <h2>No Results..</h2>
-                            )}
+                                    <h2>No Results..</h2>
+                                )}
                         </Form>
                     </div>
                     <ReactBotUI

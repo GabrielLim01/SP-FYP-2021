@@ -250,12 +250,13 @@ app.post('/quiz', (request, response) => {
     const name = quiz.title;
     const desc = quiz.description;
     const category = quiz.category;
+    const difficulty = quiz.difficulty;
     const points = quiz.points;
     const time = quiz.time;
 
-    if (!isBlank(name) && !isBlank(category) && !isBlank(points) && !isBlank(time)) {
+    if (!isBlank(name) && !isBlank(category) && !isBlank(difficulty) && !isBlank(points) && !isBlank(time)) {
         const db = dbService.getDbServiceInstance();
-        const createQuizResult = db.createQuiz(name, desc, category, points, time);
+        const createQuizResult = db.createQuiz(name, desc, category, difficulty, points, time);
 
         createQuizResult
             .then((data) => {
@@ -285,12 +286,13 @@ app.patch('/quiz/:id', (request, response) => {
         const title = quiz.title;
         const desc = quiz.description;
         const category = quiz.category;
+        const difficulty = quiz.difficulty;
         const points = quiz.points;
         const time = quiz.time;
         const questions = quiz.questions;
 
         const db = dbService.getDbServiceInstance();
-        const result = db.updateQuizDetailsById(request.params.id, title, desc, category, points, time);
+        const result = db.updateQuizDetailsById(request.params.id, title, desc, category, points, time, difficulty);
 
         result
             .then((data) => {
