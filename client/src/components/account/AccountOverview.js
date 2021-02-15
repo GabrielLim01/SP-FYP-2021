@@ -114,7 +114,7 @@ class AccountOverview extends React.Component {
         let accountType = this.state.accountType;
 
         filteredContent = this.state.displayItems.filter((account) => {
-            return account.name.toLowerCase().indexOf(this.state.filter) !== -1;
+            return account.name.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1;
         });
 
         return (
@@ -205,8 +205,8 @@ class AccountOverview extends React.Component {
                                 })}
                             </Table>
                         ) : (
-                            <h2>No Results..</h2>
-                        )}
+                                <h2>No Results..</h2>
+                            )}
                     </div>
                 </div>
             </div>
