@@ -59,7 +59,25 @@ class QuizDashboard extends React.Component {
     }
 
     displayDifficulty(status) {
-        return `Difficulty: ${status}`;
+        if (status.toLowerCase() === 'easy') {
+            return (
+                <span class="ui green tag label" style={{ height: '25px' }}>
+                    {`${status}`}
+                </span>
+            );
+        } else if (status.toLowerCase() === 'medium') {
+            return (
+                <span class="ui yellow tag label" style={{ height: '25px' }}>
+                    {`${status}`}
+                </span>
+            );
+        } else {
+            return (
+                <span class="ui red tag label" style={{ height: '25px' }}>
+                    {`${status}`}
+                </span>
+            );
+        }
     }
 
     getAllCategories() {
@@ -154,7 +172,10 @@ class QuizDashboard extends React.Component {
                                     return (
                                         <Segment color="green" key={index}>
                                             <Grid.Row>
-                                                <h2>{value.quizName}</h2>
+                                                <div style={{ display: 'flex' }}>
+                                                    <h2>{value.quizName}</h2>
+                                                    {value.difficulty ? this.displayDifficulty(value.difficulty) : null}
+                                                </div>
 
                                                 <div style={{ fontStyle: 'italic' }}>
                                                     Category:
@@ -167,7 +188,6 @@ class QuizDashboard extends React.Component {
                                                     </Label>
                                                     Created At: {value.createdAt}
                                                     <br />
-                                                    {value.difficulty ? this.displayDifficulty(value.difficulty) : null}
                                                     <Accordion panels={this.panel(value.quizDesc)} />
                                                 </div>
                                             </Grid.Row>
