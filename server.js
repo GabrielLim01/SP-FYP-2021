@@ -103,6 +103,8 @@ app.post('/admin/register', async (request, respond) => {
 app.post('/authenticate', (request, response) => {
     const username = request.body.username;
     const password = request.body.password;
+    console.log(username);
+    console.log(password);
 
     if (!isBlank(username) && !isBlank(password)) {
         const db = dbService.getDbServiceInstance();

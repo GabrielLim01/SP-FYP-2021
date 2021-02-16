@@ -59,57 +59,68 @@ class Registration extends React.Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
+        let isValidated = true;
 
         const isEmpty = Validate.validate([this.state.username, this.state.password, this.state.confirmPassword]);
+
         if (isEmpty.length > 0) {
             new Noty({
-                text: `Username, password and confirm password fields CANNOT be empty!`,
+                text: `Please ensure that the Username, Password and Confirm Password fields are not empty.`,
                 type: 'error',
                 theme: 'semanticui',
             }).show();
             return;
+        } else if (this.state.username.length < 8 || this.state.password.length < 8 || this.state.confirmPassword < 8 || this.state.password !== this.state.confirmPassword) {
+            isValidated = false;
         }
 
-        console.log(this.state.error);
-        axios
-            .post(host + '/register', {
-                name: this.state.username,
-                password: this.state.password,
-            })
-            .then((response) => {
-                if (JSON.stringify(response.data).includes('ER_DUP_ENTRY')) {
-                    new Noty({
-                        text: `There is already an existing account called ${this.state.username}. Please choose a different name.`,
-                        type: 'error',
-                        theme: 'semanticui',
-                    }).show();
-                } else {
-                    if (response.status === 200) {
+        if (isValidated) {
+            axios
+                .post(host + '/register', {
+                    name: this.state.username,
+                    password: this.state.password,
+                })
+                .then((response) => {
+                    if (JSON.stringify(response.data).includes('ER_DUP_ENTRY')) {
                         new Noty({
-                            text: `${this.state.username} created!`,
-                            type: 'success',
-                            theme: 'semanticui',
-                        }).show();
-
-                        setTimeout(() => {
-                            if (this._isMounted) this.setState({ redirect: '/' });
-                        }, 1500);
-                    } else {
-                        new Noty({
-                            text: 'Something went wrong.',
+                            text: `There is already an existing account called ${this.state.username}. Please choose a different name.`,
                             type: 'error',
                             theme: 'semanticui',
                         }).show();
+                    } else {
+                        if (response.status === 200) {
+                            new Noty({
+                                text: `${this.state.username} created!`,
+                                type: 'success',
+                                theme: 'semanticui',
+                            }).show();
+
+                            setTimeout(() => {
+                                if (this._isMounted) this.setState({ redirect: '/' });
+                            }, 1500);
+                        } else {
+                            new Noty({
+                                text: 'Something went wrong.',
+                                type: 'error',
+                                theme: 'semanticui',
+                            }).show();
+                        }
                     }
-                }
-            })
-            .catch((error) => {
-                new Noty({
-                    text: `Something went wrong. ${error}`,
-                    type: 'error',
-                    theme: 'semanticui',
-                }).show();
-            });
+                })
+                .catch((error) => {
+                    new Noty({
+                        text: `Something went wrong. ${error}`,
+                        type: 'error',
+                        theme: 'semanticui',
+                    }).show();
+                });
+        } else {
+            new Noty({
+                text: `Account not created. Please ensure that your credentials are correctly filled in.`,
+                type: 'error',
+                theme: 'semanticui',
+            }).show();
+        }
     };
 
     componentDidMount() {
