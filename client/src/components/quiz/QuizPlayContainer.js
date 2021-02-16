@@ -1,6 +1,7 @@
 import React from 'react'
 import { Segment } from 'semantic-ui-react'
 import DashboardMenu from '../DashboardMenu.js';
+import ReactBotUI from '../chatbot/ReactBotUI';
 
 class QuizPlayContainer extends React.Component {
     render() {
@@ -18,6 +19,12 @@ class QuizPlayContainer extends React.Component {
                     }}
                 >
                     {this.props.children}
+                    <ReactBotUI
+                        dialogHeightMax={350}
+                        isUserHidden={true}
+                        isVisible={true}
+                        ref={(el) => (this.chat = el)}
+                    />
                 </Segment>
             </div>
         )

@@ -5,6 +5,7 @@ import { containerStyle, inProduction, defaultAccountType, adminAccountType } fr
 import DashboardMenu from '../DashboardMenu.js';
 import retrieveItems from '../retrieveItems.js';
 import QuestDelete from './QuestDelete.js';
+import ReactBotUI from '../chatbot/ReactBotUI';
 import Noty from 'noty';
 import 'noty/lib/noty.css';
 import 'noty/lib/themes/semanticui.css';
@@ -219,6 +220,12 @@ class QuestDashboard extends React.Component {
                                     )}
                             </Form>
                         </div>
+                        <ReactBotUI
+                            dialogHeightMax={350}
+                            isUserHidden={true}
+                            isVisible={true}
+                            ref={(el) => (this.chat = el)}
+                        />
                     </div>
                 </div>
             );
