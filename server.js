@@ -650,16 +650,16 @@ app.post('/botReply', (req, res) => {
         const sendChatbot = db.uploadChatbotConvo(userInput, dataToSend);
 
         sendChatbot
-            .then((data) => {
-                python.on('close', (code, signal) => {
-                    res.send(dataToSend);
-                });
-            })
             .catch((err) => {
                 python.on('close', (code, signal) => {
                     res.status(400).send(`Error in sending responses to server. ${err}`);
                 });
             });
+
+        python.on('close', (code, signal) => {
+            console.log(`child process close all stdio with code ${code} and signal ${signal}`);
+            res.send(dataToSend);
+        });
     });
 });
 
