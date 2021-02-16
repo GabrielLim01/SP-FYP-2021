@@ -640,6 +640,7 @@ app.delete('/user/:accountId', async (request, response) => {
 });
 
 app.post('/botReply', (req, res) => {
+    const userId = req.body.id;
     const userInput = req.body.userinput;
     let dataToSend = '';
     const db = dbChatbotService.getDbServiceInstance();
@@ -647,7 +648,7 @@ app.post('/botReply', (req, res) => {
 
     python.stdout.on('data', function (data) {
         dataToSend = data.toString();
-        const sendChatbot = db.uploadChatbotConvo(userInput, dataToSend);
+        const sendChatbot = db.uploadChatbotConvo(userId, userInput, dataToSend);
 
         sendChatbot
             .catch((err) => {
@@ -665,9 +666,10 @@ app.post('/botReply', (req, res) => {
 
 app.post('/ratings', (request, response) => {
     const db = dbChatbotService.getDbServiceInstance();
+    const userId = request.body.id;
     const ratingsArray = request.body.ratings;
     const feedback = request.body.feedback;
-    const sendRatings = db.uploadCustomerReview(ratingsArray, feedback);
+    const sendRatings = db.uploadCustomerReview(userId, ratingsArray, feedback);
 
     sendRatings
         .then((data) => {

@@ -29,28 +29,28 @@ class dbChatbotService {
         return instance;
     }
 
-    async uploadCustomerReview(ratingsArray, feedback) {
+    async uploadCustomerReview(userId, ratingsArray, feedback) {
         const array = [];
         Object.values(ratingsArray).forEach((rating) => {
             array.push(rating);
         });
         return new Promise((resolve, reject) => {
             const query =
-                'INSERT INTO customer_ratings(qns1, qns2, qns3, qns4, qns5, feedback, createdAt) VALUES(?, ?, ?);';
+                'INSERT INTO customer_ratings(userId, qns1, qns2, qns3, qns4, qns5, feedback, createdAt) VALUES(?,?, ?, ?);';
 
-            chatbotConnection.query(query, [array, feedback, moment().format('LLLL')], (err, result) => {
+            chatbotConnection.query(query, [userId, array, feedback, moment().format('LLLL')], (err, result) => {
                 if (err) reject(new Error(err.message));
                 resolve(result);
             });
         });
     }
 
-    async uploadChatbotConvo(userInput, botResponse) {
+    async uploadChatbotConvo(userId, userInput, botResponse) {
         try {
             return new Promise((resolve, reject) => {
-                const query = 'INSERT INTO chat(userInput,chatReply) VALUES(?,?);';
+                const query = 'INSERT INTO chat(userId, userInput,chatReply) VALUES(?,?,?);';
 
-                chatbotConnection.query(query, [userInput, botResponse], (err, result) => {
+                chatbotConnection.query(query, [userId, userInput, botResponse], (err, result) => {
                     console.log('sent');
                     if (err) reject(new Error(err.message));
                     resolve(result);
