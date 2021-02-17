@@ -28,52 +28,62 @@ class Login extends React.Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
+        let isValidated = true;
 
         const isEmpty = Validate.validate([this.state.username, this.state.password]);
         if (isEmpty.length > 0) {
+            isValidated = false;
             new Noty({
-                text: `Username and password fields CANNOT be empty!`,
+                text: `Please ensure that the Username and Password fields are not empty.`,
                 type: 'error',
                 theme: 'semanticui',
             }).show();
             return;
         }
 
-        axios
-            .post(host + '/authenticate', {
-                username: this.state.username,
-                password: this.state.password,
-            })
-            .then((response) => {
-                if (response.data.token === 'Congrats') {
-                    let userData = response.data.user[0];
+        if (isValidated) {
+            axios
+                .post(host + '/authenticate', {
+                    username: this.state.username,
+                    password: this.state.password,
+                })
+                .then((response) => {
+                    if (response.data.token === 'Congrats') {
+                        let userData = response.data.user[0];
 
-                    let user = {
-                        id: userData.insertId,
-                        username: userData.name,
-                        ageGroupId: userData.ageGroupId,
-                        hobby: userData.hobby,
-                        FIQ: userData.FIQ,
-                        accountType: userData.accountType,
-                    };
+                        let user = {
+                            id: userData.insertId,
+                            username: userData.name,
+                            ageGroupId: userData.ageGroupId,
+                            hobby: userData.hobby,
+                            FIQ: userData.FIQ,
+                            accountType: userData.accountType,
+                        };
 
-                    sessionStorage.setItem('user', JSON.stringify(user));
-                    this.setState({ redirect: '/dashboard' });
-                } else {
+                        sessionStorage.setItem('user', JSON.stringify(user));
+                        this.setState({ redirect: '/dashboard' });
+                    } else {
+                        new Noty({
+                            text: `Incorrect username or password!`,
+                            type: 'error',
+                            theme: 'semanticui',
+                        }).show();
+                    }
+                })
+                .catch((error) => {
                     new Noty({
                         text: `Incorrect username or password!`,
                         type: 'error',
                         theme: 'semanticui',
                     }).show();
-                }
-            })
-            .catch((error) => {
-                new Noty({
-                    text: `Incorrect username or password! ${error}`,
-                    type: 'error',
-                    theme: 'semanticui',
-                }).show();
-            });
+                });
+        } else {
+            new Noty({
+                text: `Login unsuccessful`,
+                type: 'error',
+                theme: 'semanticui',
+            }).show();
+        }
     };
 
     render() {
