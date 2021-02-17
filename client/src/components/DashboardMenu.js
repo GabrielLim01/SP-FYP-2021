@@ -121,10 +121,10 @@ export default class DashboardMenu extends React.Component {
                         content={
                             !this.state.isMaxLevel
                                 ? `Level ${this.state.currentLevel}: ` +
-                                this.state.currentFIQ +
-                                '/' +
-                                this.state.fiqToNextLevel +
-                                ' FIQ'
+                                  this.state.currentFIQ +
+                                  '/' +
+                                  this.state.fiqToNextLevel +
+                                  ' FIQ'
                                 : `Level ${this.state.currentLevel}: Max level reached!`
                         }
                     />

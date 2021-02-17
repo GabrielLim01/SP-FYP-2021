@@ -69,7 +69,7 @@ class Login extends React.Component {
             })
             .catch((error) => {
                 new Noty({
-                    text: `${error}`,
+                    text: `Incorrect username or password! ${error}`,
                     type: 'error',
                     theme: 'semanticui',
                 }).show();
