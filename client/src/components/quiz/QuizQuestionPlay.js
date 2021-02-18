@@ -96,12 +96,6 @@ class QuizQuestionPlay extends React.Component {
                 }, this.state.animationDelay * 1000);
             });
         }
-
-        // if (question.time) {
-        //     this.remainingTime = question.time;
-        // } else {
-        //     this.remainingTime = this.state.globalTimePerQuestion;
-        // }
     }
 
     componentDidMount() {
