@@ -57,6 +57,7 @@ class QuizPlay extends React.Component {
             if (isCorrect) this.setState({ score: this.state.score + 1, totalPoints: this.state.totalPoints + points });
 
             this.setState({ answers: [...this.state.answers, { name: option, isCorrect: isCorrect }] });
+
         } else {
             if (isCorrect) {
                 this.setState({ score: this.state.score + 1, totalPoints: this.state.totalPoints + points }, () => {

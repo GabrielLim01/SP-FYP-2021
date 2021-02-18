@@ -69,12 +69,19 @@ class QuizQuestionPlay extends React.Component {
     }
 
     componentDidUpdate(prevState) {
+        if (this.state.question.time) {
+            this.remainingTime = question.time;
+        } else {
+            this.remainingTime = this.state.globalTimePerQuestion;
+        }
+
         let currentQuestion = this.props.question;
         let question = JSON.parse(this.props.question).question;
 
         if (currentQuestion !== prevState.question) {
             this.setState({
                 hasAnswered: true,
+                temporaryTime: this.remainingTime,
                 isAnimating: true,
                 question: question,
                 options: question.options,
@@ -90,17 +97,17 @@ class QuizQuestionPlay extends React.Component {
             });
         }
 
-        if (question.time) {
-            this.remainingTime = question.time;
-        } else {
-            this.remainingTime = this.state.globalTimePerQuestion;
-        }
+        // if (question.time) {
+        //     this.remainingTime = question.time;
+        // } else {
+        //     this.remainingTime = this.state.globalTimePerQuestion;
+        // }
     }
 
     componentDidMount() {
         this._isMounted = true;
         this.pause();
-        this.setState({ hasAnswered: true, isAnimating: true });
+        this.setState({ hasAnswered: true, isAnimating: true, temporaryTime: this.remainingTime });
 
         setTimeout(() => {
             if (this._isMounted) {

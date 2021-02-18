@@ -100,6 +100,7 @@ class QuizQuestionUpdate extends React.Component {
                                                     defaultValue={element.name ? element.name : ''}
                                                 />
                                                 <Checkbox
+                                                    toggle
                                                     label="Correct Answer?"
                                                     name={'isCorrect-' + number + '-' + questionIndex}
                                                     style={{ padding: '20px 0px' }}
