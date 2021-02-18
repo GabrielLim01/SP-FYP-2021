@@ -36,7 +36,7 @@ class dbChatbotService {
         });
         return new Promise((resolve, reject) => {
             const query =
-                'INSERT INTO customer_ratings(qns1, qns2, qns3, qns4, qns5, feedback, createdAt) VALUES(?, ?, ?);';
+                'INSERT INTO customer_ratings(qns1, feedback, createdAt) VALUES(?, ?, ?);';
 
             chatbotConnection.query(query, [array, feedback, moment().format('LLLL')], (err, result) => {
                 if (err) reject(new Error(err.message));

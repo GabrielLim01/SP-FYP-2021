@@ -19,11 +19,12 @@ class StarRating extends React.Component {
             hover: null,
             setHover: null,
             questions: [
-                'How was the Quiz Gameplay?',
-                'How was the Quest gameplay?',
-                'Was it fun and interactive?',
-                'Did you find the chatbot useful?',
-                'Would you recommend this game to a friend?',
+                'Rate the Guru or Goondu platform'
+                // 'How was the Quiz Gameplay?',
+                // 'How was the Quest gameplay?',
+                // 'Was it fun and interactive?',
+                // 'Did you find the chatbot useful?',
+                // 'Would you recommend this game to a friend?',
             ],
         };
     }
@@ -41,36 +42,74 @@ class StarRating extends React.Component {
     handleSubmit = () => {
         let array = [];
 
-        for (let i = 1; i < 6; i++) {
+        // for (let i = 1; i < 6; i++) {
+        //     if (this.state[`rating-${i}`]) {
+        //         array.push(this.state[`rating-${i}`]);
+        //     } else array.push(0);
+        // }
+        console.log("array length", this.state.questions.length);
+        for (let i = 1; i < (this.state.questions.length + 1); i++) {
             if (this.state[`rating-${i}`]) {
                 array.push(this.state[`rating-${i}`]);
-            } else array.push(0);
-        }
-
-        const result = axios.post(`${host}/ratings`, {
-            ratings: array,
-            feedback: this.state.feedback ? this.state.feedback : null,
-        });
-
-        result
-            .then((response) => {
+                console.log("This is array", array);
+            }
+            else
                 new Noty({
-                    text: `Ratings successfully inserted.`,
-                    type: 'success',
-                    theme: 'semanticui',
-                }).show();
-
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
-            })
-            .catch((err) => {
-                new Noty({
-                    text: `Something went wrong. ${err}`,
+                    text: `Please give a star rating!`,
                     type: 'error',
                     theme: 'semanticui',
                 }).show();
+        }
+        if (array == null || this.state.feedback == null) {
+            if (array == null) {
+                new Noty({
+                    text: `Please give a star ratings`,
+                    type: 'error',
+                    theme: 'semanticui',
+                }).show();
+            }
+            else if (this.state.feedback == null) {
+                new Noty({
+                    text: `Please provide a feedback`,
+                    type: 'error',
+                    theme: 'semanticui',
+                }).show();
+            } else {
+                new Noty({
+                    text: `Please fill in all the fields`,
+                    type: 'error',
+                    theme: 'semanticui',
+                }).show();
+            }
+        }
+        else {
+
+            const result = axios.post(`${host}/ratings`, {
+                ratings: array,
+                feedback: this.state.feedback ? this.state.feedback : null,
             });
+
+            result
+                .then((response) => {
+                    console.log("this is my array", array);
+                    new Noty({
+                        text: `Ratings successfully inserted.`,
+                        type: 'success',
+                        theme: 'semanticui',
+                    }).show();
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                })
+                .catch((err) => {
+                    new Noty({
+                        text: `Something went wrong. ${err}`,
+                        type: 'error',
+                        theme: 'semanticui',
+                    }).show();
+                });
+        }
     };
 
     render() {
@@ -108,7 +147,7 @@ class StarRating extends React.Component {
                                 marginTop: '30px',
                             }}
                         >
-                            Any other feedback?
+                            What do you like about the Guru or Goondu platform?
                         </h3>
                         <TextArea
                             name="feedback"

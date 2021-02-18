@@ -668,7 +668,6 @@ app.post('/ratings', (request, response) => {
     const ratingsArray = request.body.ratings;
     const feedback = request.body.feedback;
     const sendRatings = db.uploadCustomerReview(ratingsArray, feedback);
-
     sendRatings
         .then((data) => {
             response.status(201).send('Ratings inserted');
