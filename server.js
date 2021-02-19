@@ -103,6 +103,8 @@ app.post('/admin/register', async (request, respond) => {
 app.post('/authenticate', (request, response) => {
     const username = request.body.username;
     const password = request.body.password;
+    console.log(username);
+    console.log(password);
 
     if (!isBlank(username) && !isBlank(password)) {
         const db = dbService.getDbServiceInstance();
@@ -541,19 +543,19 @@ app.get('/hobby', async (request, response) => {
         .catch((err) => response.status(400).send(`${err}`));
 });
 
-app.get('/profile/hobby/:id', async (request, response) => {
-    const db = dbService.getDbServiceInstance();
-    let isValid = validateID(request.params.id);
+// app.get('/profile/hobby/:id', async (request, response) => {
+//     const db = dbService.getDbServiceInstance();
+//     let isValid = validateID(request.params.id);
 
-    if (isValid) {
-        const result = db.getAssociatedHobbyById(request.params.id);
-        result
-            .then((data) => {
-                response.json(data);
-            })
-            .catch((err) => response.status(400).send(`${err}`));
-    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
-});
+//     if (isValid) {
+//         const result = db.getAssociatedHobbyById(request.params.id);
+//         result
+//             .then((data) => {
+//                 response.json(data);
+//             })
+//             .catch((err) => response.status(400).send(`${err}`));
+//     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+// });
 
 app.patch('/fiq/:id', (request, response) => {
     const FIQ = request.body.FIQ;
@@ -640,6 +642,7 @@ app.delete('/user/:accountId', async (request, response) => {
 });
 
 app.post('/botReply', (req, res) => {
+    const userId = req.body.id;
     const userInput = req.body.userinput;
     let dataToSend = '';
     const db = dbChatbotService.getDbServiceInstance();
@@ -647,14 +650,13 @@ app.post('/botReply', (req, res) => {
 
     python.stdout.on('data', function (data) {
         dataToSend = data.toString();
-        const sendChatbot = db.uploadChatbotConvo(userInput, dataToSend);
+        const sendChatbot = db.uploadChatbotConvo(userId, userInput, dataToSend);
 
-        sendChatbot
-            .catch((err) => {
-                python.on('close', (code, signal) => {
-                    res.status(400).send(`Error in sending responses to server. ${err}`);
-                });
+        sendChatbot.catch((err) => {
+            python.on('close', (code, signal) => {
+                res.status(400).send(`Error in sending responses to server. ${err}`);
             });
+        });
 
         python.on('close', (code, signal) => {
             console.log(`child process close all stdio with code ${code} and signal ${signal}`);
@@ -665,9 +667,11 @@ app.post('/botReply', (req, res) => {
 
 app.post('/ratings', (request, response) => {
     const db = dbChatbotService.getDbServiceInstance();
+    const userId = request.body.id;
     const ratingsArray = request.body.ratings;
     const feedback = request.body.feedback;
-    const sendRatings = db.uploadCustomerReview(ratingsArray, feedback);
+    const sendRatings = db.uploadCustomerReview(userId, ratingsArray, feedback);
+
     sendRatings
         .then((data) => {
             response.status(201).send('Ratings inserted');

@@ -41,7 +41,7 @@ export default class ReactBotUI extends Component {
         this.handleToggle = this.handleToggle.bind(this);
     }
 
-    appendMessage(text, isUser = false, next = () => {}) {
+    appendMessage(text, isUser = false, next = () => { }) {
         let messages = this.state.messages.slice();
         messages.push({ isUser, text });
         this.setState({ messages, isBotTyping: this.botQueue.length > 0 }, next);
@@ -67,8 +67,9 @@ export default class ReactBotUI extends Component {
     }
 
     getResponse(userInput) {
+        let userId = JSON.parse(sessionStorage.getItem("user")).id;
         axios
-            .post(host + '/botReply', { userinput: userInput })
+            .post(host + '/botReply', { id: userId, userinput: userInput })
             .then((response) => {
                 console.log('this is response', response.data);
                 this.processResponse(response.data);

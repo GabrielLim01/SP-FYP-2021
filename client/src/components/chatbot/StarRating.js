@@ -83,8 +83,10 @@ class StarRating extends React.Component {
             }
         }
         else {
+            let userId = JSON.parse(sessionStorage.getItem("user")).id;
 
             const result = axios.post(`${host}/ratings`, {
+                id: userId,
                 ratings: array,
                 feedback: this.state.feedback ? this.state.feedback : null,
             });
