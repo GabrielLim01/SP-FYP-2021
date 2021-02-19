@@ -507,20 +507,20 @@ class DbService {
         }
     }
 
-    async getAssociatedHobbyById(id) {
-        try {
-            return new Promise((resolve, reject) => {
-                const query = 'SELECT hobbyId FROM user_hobby where userId = ?;';
+    // async getAssociatedHobbyById(id) {
+    //     try {
+    //         return new Promise((resolve, reject) => {
+    //             const query = 'SELECT hobbyId FROM user_hobby where userId = ?;';
 
-                connection.query(query, id, (err, result) => {
-                    if (err) return reject(err.message);
-                    resolve(result);
-                });
-            });
-        } catch (e) {
-            throw e.message;
-        }
-    }
+    //             connection.query(query, id, (err, result) => {
+    //                 if (err) return reject(err.message);
+    //                 resolve(result);
+    //             });
+    //         });
+    //     } catch (e) {
+    //         throw e.message;
+    //     }
+    // }
 
     async updateFIQ(id, FIQ) {
         return new Promise((resolve, reject) => {

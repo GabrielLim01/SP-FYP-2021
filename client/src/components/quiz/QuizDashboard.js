@@ -61,19 +61,19 @@ class QuizDashboard extends React.Component {
     displayDifficulty(status) {
         if (status.toLowerCase() === 'easy') {
             return (
-                <span class="ui green label" style={{ height: '25px' }}>
+                <span className="ui green label" style={{ height: '25px' }}>
                     {`${status}`}
                 </span>
             );
         } else if (status.toLowerCase() === 'medium') {
             return (
-                <span class="ui yellow label" style={{ height: '25px' }}>
+                <span className="ui yellow label" style={{ height: '25px' }}>
                     {`${status}`}
                 </span>
             );
         } else {
             return (
-                <span class="ui red label" style={{ height: '25px' }}>
+                <span className="ui red label" style={{ height: '25px' }}>
                     {`${status}`}
                 </span>
             );

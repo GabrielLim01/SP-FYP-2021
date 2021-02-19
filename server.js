@@ -103,6 +103,8 @@ app.post('/admin/register', async (request, respond) => {
 app.post('/authenticate', (request, response) => {
     const username = request.body.username;
     const password = request.body.password;
+    console.log(username);
+    console.log(password);
 
     if (!isBlank(username) && !isBlank(password)) {
         const db = dbService.getDbServiceInstance();
@@ -262,7 +264,7 @@ app.post('/quiz', (request, response) => {
             .then((data) => {
                 const quizId = data.insertId;
 
-                let createQuestionResult = new Promise((resolve, reject) => { });
+                let createQuestionResult = new Promise((resolve, reject) => {});
 
                 const questions = quiz.questions;
                 questions.forEach((question) => {
@@ -296,7 +298,7 @@ app.patch('/quiz/:id', (request, response) => {
 
         result
             .then((data) => {
-                let updateQuestionResult = new Promise((resolve, reject) => { });
+                let updateQuestionResult = new Promise((resolve, reject) => {});
 
                 questions.forEach((question) => {
                     updateQuestionResult = db.updateQuestionDetailsById(question);
@@ -399,7 +401,7 @@ app.post('/quest', async (request, response) => {
             .then((data) => {
                 const questId = data.insertId;
 
-                let createScenarioResult = new Promise((resolve, reject) => { });
+                let createScenarioResult = new Promise((resolve, reject) => {});
 
                 const scenarios = quest.scenarios;
                 scenarios.forEach((scenario) => {
@@ -445,7 +447,7 @@ app.patch('/quest/:id', (request, response) => {
             .then((data) => {
                 response.json({ data: data });
 
-                let updateScenarioResult = new Promise((resolve, reject) => { });
+                let updateScenarioResult = new Promise((resolve, reject) => {});
 
                 scenarios.forEach((scenario) => {
                     updateScenarioResult = db.updateQuestScenario(scenario);
@@ -541,19 +543,19 @@ app.get('/hobby', async (request, response) => {
         .catch((err) => response.status(400).send(`${err}`));
 });
 
-app.get('/profile/hobby/:id', async (request, response) => {
-    const db = dbService.getDbServiceInstance();
-    let isValid = validateID(request.params.id);
+// app.get('/profile/hobby/:id', async (request, response) => {
+//     const db = dbService.getDbServiceInstance();
+//     let isValid = validateID(request.params.id);
 
-    if (isValid) {
-        const result = db.getAssociatedHobbyById(request.params.id);
-        result
-            .then((data) => {
-                response.json(data);
-            })
-            .catch((err) => response.status(400).send(`${err}`));
-    } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
-});
+//     if (isValid) {
+//         const result = db.getAssociatedHobbyById(request.params.id);
+//         result
+//             .then((data) => {
+//                 response.json(data);
+//             })
+//             .catch((err) => response.status(400).send(`${err}`));
+//     } else response.status(400).send(`${request.params.id} contained illegal characters. Please check again.`);
+// });
 
 app.patch('/fiq/:id', (request, response) => {
     const FIQ = request.body.FIQ;
@@ -650,12 +652,11 @@ app.post('/botReply', (req, res) => {
         dataToSend = data.toString();
         const sendChatbot = db.uploadChatbotConvo(userId, userInput, dataToSend);
 
-        sendChatbot
-            .catch((err) => {
-                python.on('close', (code, signal) => {
-                    res.status(400).send(`Error in sending responses to server. ${err}`);
-                });
+        sendChatbot.catch((err) => {
+            python.on('close', (code, signal) => {
+                res.status(400).send(`Error in sending responses to server. ${err}`);
             });
+        });
 
         python.on('close', (code, signal) => {
             console.log(`child process close all stdio with code ${code} and signal ${signal}`);
