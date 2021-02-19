@@ -69,14 +69,14 @@ class QuizQuestionPlay extends React.Component {
     }
 
     componentDidUpdate(prevState) {
+        let currentQuestion = this.props.question;
+        let question = JSON.parse(this.props.question).question;
+
         if (this.state.question.time) {
             this.remainingTime = question.time;
         } else {
             this.remainingTime = this.state.globalTimePerQuestion;
         }
-
-        let currentQuestion = this.props.question;
-        let question = JSON.parse(this.props.question).question;
 
         if (currentQuestion !== prevState.question) {
             this.setState({
