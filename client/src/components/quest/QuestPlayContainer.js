@@ -17,15 +17,16 @@ class QuestPlayContainer extends React.Component {
         }
     }
 
-    animateLinearGradient() {
-        console.log(this.state.characterMood / 100);
-        if (this.state.characterMood / 100 === 1) {
-            return 'linear-gradient(to bottom, #33FF33, #00CC00, #009900)'
-        } else if (this.state.characterMood / 100 === 0.5) {
-            setTimeout(() => { }, 2000);
-            return 'linear-gradient(to bottom, #FFFF66, #FFFF00, #999900)'
-        }
-    }
+    // Not in use, had some issues with getting it to work since React's this.setState's forced re-render messes things up
+    // animateLinearGradient() {
+    //     console.log(this.state.characterMood / 100);
+    //     if (this.state.characterMood / 100 === 1) {
+    //         return 'linear-gradient(to bottom, #33FF33, #00CC00, #009900)'
+    //     } else if (this.state.characterMood / 100 === 0.5) {
+    //         setTimeout(() => { }, 2000);
+    //         return 'linear-gradient(to bottom, #FFFF66, #FFFF00, #999900)'
+    //     }
+    // }
 
     render() {
         return (

@@ -17,7 +17,8 @@ class QuestPlay extends React.Component {
                 isLoadingScenario: 2,
                 isLoadingChoices: 3,
                 isLoadingExplanation: 4,
-                isFinished: 5,
+                isGameOver: 5,
+                isFinished: 6,
             },
             quest: {},
             scenarios: [],
@@ -25,6 +26,7 @@ class QuestPlay extends React.Component {
             maxScenarios: 0,
             currentChoice: {},
             characterName: 'Error',
+            startingMood: 0,
             characterMood: 0,
             eventTriggered: false,
             transitionDuration: 4,
@@ -50,15 +52,21 @@ class QuestPlay extends React.Component {
     };
 
     loadNextScenario = () => {
-        if (this.state.currentScenario < this.state.maxScenarios) {
-            this.setState({
-                state: this.state.stateTypes.isLoadingScenario,
-                currentScenario: this.state.currentScenario + 1,
-            });
+        if (this.state.characterMood !== 0) {
+            if (this.state.currentScenario < this.state.maxScenarios) {
+                this.setState({
+                    state: this.state.stateTypes.isLoadingScenario,
+                    currentScenario: this.state.currentScenario + 1,
+                });
+            } else {
+                this.updateFIQ();
+                this.setState({
+                    state: this.state.stateTypes.isFinished,
+                });
+            }
         } else {
-            this.updateFIQ();
             this.setState({
-                state: this.state.stateTypes.isFinished,
+                state: this.state.stateTypes.isGameOver,
             });
         }
     };
@@ -85,15 +93,24 @@ class QuestPlay extends React.Component {
             }
         }
 
-        this.setState({
+        let FIQmodifier = characterMood / this.state.startingMood;
+        let currentPoints = this.state.quest.points * FIQmodifier;
+
+        this.setState(prevState => ({
             currentChoice: choice,
             state: this.state.stateTypes.isLoadingExplanation,
             eventTriggered: eventTriggered,
             characterMood: characterMood,
-        });
+            quest: {
+                ...prevState.quest,
+                points: currentPoints
+            }
+        }));
     };
 
     updateFIQ() {
+
+
         if (!inProduction) {
             let user = JSON.parse(sessionStorage.getItem('user'));
             let newFIQ = user.FIQ + this.state.quest.points;
@@ -123,7 +140,7 @@ class QuestPlay extends React.Component {
                 delete data[0].scenario;
 
                 this.setState({ quest: data[0], scenarios: scenarios, maxScenarios: scenarios.length }, () => {
-                    this.setState({ characterName: data[0].characterName, characterMood: data[0].characterMood });
+                    this.setState({ characterName: data[0].characterName, startingMood: data[0].characterMood, characterMood: data[0].characterMood });
                 });
             });
         } else {
@@ -231,6 +248,30 @@ class QuestPlay extends React.Component {
                                 </h3>
                                 <Button color="teal" size="medium" onClick={this.loadNextScenario}>
                                     Next
+                                </Button>
+                            </div>
+                        </QuestPlayContainer>
+                    );
+                case stateTypes.isGameOver:
+                    return (
+                        <QuestPlayContainer
+                            characterName={this.state.characterName}
+                            characterMood={this.state.characterMood}
+                        >
+                            <div
+                                className="subContainer"
+                                style={{
+                                    paddingTop: '120px',
+                                    maxWidth: '80%',
+                                    margin: 'auto',
+                                }}
+                            >
+                                <h1>Game Over!</h1>
+                                <h3>
+                                    {this.state.characterName} is feeling way too depressed to continue! Tough luck!
+                                </h3>
+                                <Button color="teal" size="big" onClick={this.handleRestart}>
+                                    Retry?
                                 </Button>
                             </div>
                         </QuestPlayContainer>

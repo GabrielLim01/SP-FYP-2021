@@ -21,22 +21,22 @@ module.exports.containerStyle = {
 module.exports.adminAccountType = 1;
 module.exports.defaultAccountType = 2;
 
-module.exports.updateFIQ = (state) => {
-    if (!module.exports.inProduction) {
-        let user = JSON.parse(sessionStorage.getItem('user'));
-        let newFIQ = user.FIQ + state;
+// module.exports.updateFIQ = (state) => {
+//     if (!module.exports.inProduction) {
+//         let user = JSON.parse(sessionStorage.getItem('user'));
+//         let newFIQ = user.FIQ + state;
 
-        axios
-            .patch(`${module.exports.host}/fiq/${user.id}`, { FIQ: newFIQ })
-            .then(() => {
-                user.FIQ = newFIQ;
-                sessionStorage.setItem('user', JSON.stringify(user));
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-};
+//         axios
+//             .patch(`${module.exports.host}/fiq/${user.id}`, { FIQ: newFIQ })
+//             .then(() => {
+//                 user.FIQ = newFIQ;
+//                 sessionStorage.setItem('user', JSON.stringify(user));
+//             })
+//             .catch((error) => {
+//                 console.log(error);
+//             });
+//     }
+// };
 
 module.exports.getRandomInt = (max) => {
     return Math.floor(Math.random() * Math.floor(max)) + 1;
