@@ -26,6 +26,7 @@ class QuestPlay extends React.Component {
             maxScenarios: 0,
             currentChoice: {},
             characterName: 'Error',
+            startingPoints: 0,
             startingMood: 0,
             characterMood: 0,
             eventTriggered: false,
@@ -38,13 +39,17 @@ class QuestPlay extends React.Component {
     }
 
     handleRestart = () => {
-        this.setState({
+        this.setState(prevState => ({
             state: this.state.stateTypes.isStarting,
             currentScenario: 1,
             currentChoice: {},
             eventTriggered: false,
             characterMood: this.state.quest.characterMood,
-        });
+            quest: {
+                ...prevState.quest,
+                points: this.state.startingPoints
+            }
+        }));
     };
 
     viewScenario = () => {
@@ -136,7 +141,7 @@ class QuestPlay extends React.Component {
                 delete data[0].scenario;
 
                 this.setState({ quest: data[0], scenarios: scenarios, maxScenarios: scenarios.length }, () => {
-                    this.setState({ characterName: data[0].characterName, startingMood: data[0].characterMood, characterMood: data[0].characterMood });
+                    this.setState({ characterName: data[0].characterName, startingPoints: data[0].points, startingMood: data[0].characterMood, characterMood: data[0].characterMood });
                 });
             });
         } else {
