@@ -34,7 +34,7 @@ class QuestPlayContainer extends React.Component {
                 <DashboardMenu page="quests"></DashboardMenu>
                 <div className="innerContainer" style={{ height: '100%', maxWidth: '60%', margin: 'auto', }}>
                     <div className="personaGUI" style={{ float: 'right', paddingBottom: '10px' }}>
-                        <h2 style={{ paddingRight: '10px', display: 'table-cell' }}>{this.props.characterName}'s Mood</h2>
+                        <h2 style={{ paddingRight: '10px', display: 'table-cell' }}>{this.props.characterName}'s Mood ({this.state.characterMood})</h2>
                         <div id="healthBarContainer"
                             style={{
                                 height: '30px',
@@ -52,7 +52,6 @@ class QuestPlayContainer extends React.Component {
                                 }}>
                             </div>
                         </div>
-                        {/* <h2 style={{ display: 'table-cell' }}>{this.state.characterMood} / 100</h2> */}
                     </div>
                     <Segment inverted raised style={{
                         height: '500px',

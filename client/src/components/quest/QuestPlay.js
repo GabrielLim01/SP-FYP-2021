@@ -59,10 +59,7 @@ class QuestPlay extends React.Component {
                     currentScenario: this.state.currentScenario + 1,
                 });
             } else {
-                this.updateFIQ();
-                this.setState({
-                    state: this.state.stateTypes.isFinished,
-                });
+                this.updateFIQ(() => { this.setState({ state: this.state.stateTypes.isFinished }) });
             }
         } else {
             this.setState({
@@ -108,9 +105,7 @@ class QuestPlay extends React.Component {
         }));
     };
 
-    updateFIQ() {
-
-
+    updateFIQ(callback) {
         if (!inProduction) {
             let user = JSON.parse(sessionStorage.getItem('user'));
             let newFIQ = user.FIQ + this.state.quest.points;
@@ -120,12 +115,13 @@ class QuestPlay extends React.Component {
                 .then(() => {
                     user.FIQ = newFIQ;
                     sessionStorage.setItem('user', JSON.stringify(user));
+                    callback();
                 })
                 .catch((error) => {
                     console.log(error);
                 });
         }
-    }
+    };
 
     componentDidMount() {
         this._isMounted = true;
