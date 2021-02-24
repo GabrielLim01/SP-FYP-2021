@@ -113,7 +113,7 @@ class QuestScenarioUpdate extends React.Component {
     }
 
     componentDidMount() {
-        for (let i = 1; i < this.state.scenario.choices.length; i++) {
+        for (let i = 1; i < this.state.scenario.choices.length + 1; i++) {
             if (this.state.scenario.choices[i - 1].event) {
                 this.setState({ [`hasEvent-${this.state.number}-${i}`]: true });
             }
@@ -183,7 +183,7 @@ class QuestScenarioUpdate extends React.Component {
                                         <Grid.Row>
                                             <Grid.Column>
                                                 {this.state[`hasEvent-${number}-${value}`] !== undefined &&
-                                                this.state[`hasEvent-${number}-${value}`] !== false
+                                                    this.state[`hasEvent-${number}-${value}`] !== false
                                                     ? this.renderEventOptions(scenario, number, value)
                                                     : ''}
                                             </Grid.Column>
